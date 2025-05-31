@@ -1,59 +1,48 @@
-# Contributing Guidelines
+# 贡献指南
 
-Thank you for your interest in contributing to our project. Whether it's a bug report, new feature, correction, or additional
-documentation, we greatly value feedback and contributions from our community.
+感谢你有兴趣为我们的项目做出贡献。无论是报告 bug、新功能、修正还是补充文档，我们都非常重视来自社区的反馈和贡献。
 
-Please read through this document before submitting any issues or pull requests to ensure we have all the necessary
-information to effectively respond to your bug report or contribution.
+在提交任何 issue 或 pull request 之前，请先阅读本文档，以确保我们能有效响应你的 bug 报告或贡献。
 
+## 报告 Bug/功能请求
 
-## Reporting Bugs/Feature Requests
+欢迎你使用 GitHub issue 跟踪器报告 bug 或建议新功能。
 
-We welcome you to use the GitHub issue tracker to report bugs or suggest features.
+提交 issue 时，请先检查已有的 open 或最近关闭的 issue，确保没有人已经报告过同样的问题。请尽量提供尽可能多的信息，例如：
 
-When filing an issue, please check existing open, or recently closed, issues to make sure somebody else hasn't already
-reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
+* 可复现的测试用例或操作步骤
+* 使用的代码版本
+* 你对代码的相关修改
+* 你的环境或部署中有无特殊之处
 
-* A reproducible test case or series of steps
-* The version of our code being used
-* Any modifications you've made relevant to the bug
-* Anything unusual about your environment or deployment
+## 通过 Pull Request 贡献
+通过 pull request 贡献代码非常欢迎。在提交 pull request 之前，请确保：
 
+1. 你基于 *main* 分支的最新源码进行开发。
+2. 检查已有的 open 和最近合并的 pull request，确保没有人已经解决了同样的问题。
+3. 对于重要的工作，请先通过 issue 进行讨论——我们不希望你的努力被浪费。
 
-## Contributing via Pull Requests
-Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:
+提交 pull request 的步骤：
 
-1. You are working against the latest source on the *main* branch.
-2. You check existing open, and recently merged, pull requests to make sure someone else hasn't addressed the problem already.
-3. You open an issue to discuss any significant work - we would hate for your time to be wasted.
+1. Fork 本仓库。
+2. 修改源码；请专注于你要贡献的具体更改。如果你同时格式化了所有代码，我们很难聚焦于你的更改。
+3. 确保本地测试通过。
+4. 使用清晰的提交信息提交到你的 fork。
+5. 提交 pull request，并回答 pull request 页面中的默认问题。
+6. 关注 pull request 中自动化 CI 报告的错误，并积极参与讨论。
 
-To send us a pull request, please:
+GitHub 提供了关于 [fork 仓库](https://help.github.com/articles/fork-a-repo/) 和 [创建 pull request](https://help.github.com/articles/creating-a-pull-request/) 的更多文档。
 
-1. Fork the repository.
-2. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
-3. Ensure local tests pass.
-4. Commit to your fork using clear commit messages.
-5. Send us a pull request, answering any default questions in the pull request interface.
-6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
+## 如何寻找可参与的贡献
+查看现有 issue 是寻找可参与内容的好方法。我们的项目默认使用 GitHub 的默认 issue 标签（enhancement/bug/duplicate/help wanted/invalid/question/wontfix），其中 'help wanted' 标签是很好的起点。
 
-GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
-[creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
+## 行为准则
+本项目采用了 [Amazon 开源行为准则](https://aws.github.io/code-of-conduct)。更多信息请参见 [行为准则 FAQ](https://aws.github.io/code-of-conduct-faq) 或通过 opensource-codeofconduct@amazon.com 联系我们。
 
-
-## Finding contributions to work on
-Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
-
-
-## Code of Conduct
-This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
-For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq) or contact
-opensource-codeofconduct@amazon.com with any additional questions or comments.
+## 安全问题通知
+如果你在本项目中发现了潜在的安全问题，请通过我们的 [漏洞报告页面](http://aws.amazon.com/security/vulnerability-reporting/) 通知 AWS/Amazon 安全部门。请不要创建公开的 github issue。
 
 
-## Security issue notifications
-If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
+## 许可
 
-
-## Licensing
-
-See the [LICENSE](LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+有关我们项目许可的详细信息，请参阅 [LICENSE](LICENSE) 文件。我们会要求你确认对你贡献的许可协议。

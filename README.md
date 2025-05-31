@@ -1,3 +1,3 @@
 # FreeRTOS-Kernel-Book
 
-This repo contains the contents of [FreeRTOS Kernel Book](./toc.md).
+本仓库包含 [FreeRTOS 内核书籍](./toc.md) 的内容。

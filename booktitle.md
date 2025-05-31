@@ -6,13 +6,13 @@
 <img src="./media/freeRTOS.png" alt="" height="180" width="250"/>
 
 
-# Mastering the FreeRTOS™[^1][^2] Real Time Kernel
+# 精通 FreeRTOS™[^1][^2] 实时内核
 
-## A Hands-On Tutorial Guide ##
+## 实践教程指南 ##
 
-### Richard Barry -and- The FreeRTOS Team ###
+### Richard Barry 及 FreeRTOS 团队 ###
 
-**Release Version - 1.0**
+**发布版本 - 1.0**
 
 
 </br>

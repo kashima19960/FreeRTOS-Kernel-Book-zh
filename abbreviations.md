@@ -1,22 +1,22 @@
-###  List of Abbreviations
+# 缩略语表
 
-| Abbreviation | Meaning                             |
-|------|---------------------------------------------|
-| ADC  | Analog to Digital Converter                 |
-| API  | Application Programming Interface           |
-| DMA  | Direct Memory Access                        |
-| FAQ  | Frequently Asked Question                   |
-| FIFO | First In First Out                          |
-| HMI  | Human Machine Interface                     |
-| IDE  | Integrated Development Environment          |
-| IRQ  | Interrupt Request                           |
-| ISR  | Interrupt Service Routine                   |
-| LCD  | Liquid Crystal Display                      |
-| MCU  | Microcontroller                             |
-| RMS  | Rate Monotonic Scheduling                   |
-| RTOS | Real-time Operating System                  |
-| SIL  | Safety Integrity Level                      |
-| SPI  | Serial Peripheral Interface                 |
-| TCB  | Task Control Block                          |
-| UART | Universal Asynchronous Receiver/Transmitter |
+| 缩写 | 含义                             |
+|------|----------------------------------|
+| ADC  | 模数转换器                       |
+| API  | 应用程序编程接口                 |
+| DMA  | 直接内存访问                     |
+| FAQ  | 常见问题                         |
+| FIFO | 先进先出                         |
+| HMI  | 人机界面                         |
+| IDE  | 集成开发环境                     |
+| IRQ  | 中断请求                         |
+| ISR  | 中断服务程序                     |
+| LCD  | 液晶显示屏                       |
+| MCU  | 微控制器                         |
+| RMS  | 速率单调调度                     |
+| RTOS | 实时操作系统                     |
+| SIL  | 安全完整性等级                   |
+| SPI  | 串行外围接口                     |
+| TCB  | 任务控制块                       |
+| UART | 通用异步收发器                   |
 * * *

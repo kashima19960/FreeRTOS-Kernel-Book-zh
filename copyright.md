@@ -5,13 +5,12 @@
 
 <img src="./media/aws-logo-hr.png" alt="" height="100" width="190"/>
 
-
 </br>
 </br>
 
-*All text, source code, and diagrams are the exclusive property of Amazon Web Services unless otherwise noted inline.*
+*除非另有说明，所有文本、源代码和图表均为 Amazon Web Services 独家所有。*
 
-© 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+© 2023 Amazon.com, Inc. 或其关联公司。保留所有权利。
 
 <https://www.FreeRTOS.org> <https://forums.FreeRTOS.org> <https://github.com/FreeRTOS>
 

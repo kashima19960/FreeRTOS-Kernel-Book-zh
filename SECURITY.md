@@ -1,6 +1,5 @@
-## Reporting a Vulnerability
+## 漏洞报告
 
-If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security
-via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/) or directly via email to aws-security@amazon.com.
-Please do **not** create a public github issue.
+如果你在本项目中发现潜在的安全问题，请通过我们的 [漏洞报告页面](http://aws.amazon.com/security/vulnerability-reporting/) 或直接发送邮件至 aws-security@amazon.com 通知 AWS/Amazon 安全部门。
+请不要在 GitHub 上公开提交 issue。
 
