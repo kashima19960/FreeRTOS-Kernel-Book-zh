@@ -1,0 +1,2440 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>5 队列管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#5" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              5 队列管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    1 前言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    2 FreeRTOS 内核分发包
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    3 堆内存管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    4 任务管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    5 队列管理
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    5 队列管理
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 简介
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#511" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1.1 范围
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 队列的特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 队列的特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.1 数据存储
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.2 多任务访问
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#523" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.3 阻塞在队列读取上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#524" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.4 阻塞在队列写入上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#525" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.5 阻塞在多个队列上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#526" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.6 创建队列：静态分配和动态分配队列
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 使用队列
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 使用队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-xqueuecreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.1 xQueueCreate() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-xqueuesendtoback-xqueuesendtofront-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.2 xQueueSendToBack() 和 xQueueSendToFront() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-xqueuereceive-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.3 xQueueReceive() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#534-uxqueuemessageswaiting-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.4 uxQueueMessagesWaiting() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 从多个源接收数据
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5 处理大数据或可变大小数据
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.5 处理大数据或可变大小数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#551" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5.1 排队指针
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#552-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5.2 使用队列发送不同类型和长度的数据[^9]
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6 从多个队列接收
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.6 从多个队列接收">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#561" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.1 队列集
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#562-xqueuecreateset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.2 xQueueCreateSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#563-xqueueaddtoset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.3 xQueueAddToSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#564-xqueueselectfromset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.4 xQueueSelectFromSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#565" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.5 更现实的队列集用例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#57" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7 使用队列创建邮箱
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.7 使用队列创建邮箱">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#571-xqueueoverwrite-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7.1 xQueueOverwrite() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#572-xqueuepeek-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7.2 xQueuePeek() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    6 软件定时器管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    7 中断管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    8 资源管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    9 事件组
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    10 任务通知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    11 低功耗支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 开发者支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    13 故障排查
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    书名
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缩略语表
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 简介
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#511" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1.1 范围
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 队列的特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 队列的特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.1 数据存储
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.2 多任务访问
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#523" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.3 阻塞在队列读取上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#524" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.4 阻塞在队列写入上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#525" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.5 阻塞在多个队列上
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#526" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2.6 创建队列：静态分配和动态分配队列
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 使用队列
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 使用队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-xqueuecreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.1 xQueueCreate() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-xqueuesendtoback-xqueuesendtofront-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.2 xQueueSendToBack() 和 xQueueSendToFront() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-xqueuereceive-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.3 xQueueReceive() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#534-uxqueuemessageswaiting-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3.4 uxQueueMessagesWaiting() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 从多个源接收数据
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5 处理大数据或可变大小数据
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.5 处理大数据或可变大小数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#551" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5.1 排队指针
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#552-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5.2 使用队列发送不同类型和长度的数据[^9]
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6 从多个队列接收
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.6 从多个队列接收">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#561" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.1 队列集
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#562-xqueuecreateset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.2 xQueueCreateSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#563-xqueueaddtoset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.3 xQueueAddToSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#564-xqueueselectfromset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.4 xQueueSelectFromSet() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#565" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6.5 更现实的队列集用例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#57" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7 使用队列创建邮箱
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.7 使用队列创建邮箱">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#571-xqueueoverwrite-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7.1 xQueueOverwrite() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#572-xqueuepeek-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.7.2 xQueuePeek() API 函数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="5">5 队列管理</h1>
+<h2 id="51">5.1 简介</h2>
+<p>“队列”提供了一种任务到任务、任务到中断以及中断到任务的通信机制。</p>
+<h3 id="511">5.1.1 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>如何创建队列。</li>
+<li>队列如何管理其包含的数据。</li>
+<li>如何向队列发送数据。</li>
+<li>如何从队列接收数据。</li>
+<li>阻塞在队列上的含义。</li>
+<li>如何阻塞在多个队列上。</li>
+<li>如何覆盖队列中的数据。</li>
+<li>如何清空队列。</li>
+<li>任务优先级在写入和读取队列时的影响。</li>
+</ul>
+<p>本章仅涵盖任务到任务的通信。第 7 章将涵盖任务到中断和中断到任务的通信。</p>
+<h2 id="52">5.2 队列的特性</h2>
+<h3 id="521">5.2.1 数据存储</h3>
+<p>队列可以容纳有限数量的固定大小数据项[^8]。队列可以容纳的最大数据项数称为其“长度”。队列的长度和每个数据项的大小在创建队列时设置。</p>
+<p>[^8]: FreeRTOS 消息缓冲区（将在后续章节中描述）提供了一种更轻量级的替代方案，用于存储可变长度消息的队列。</p>
+<p>队列通常用作先进先出（FIFO）缓冲区，其中数据写入队列的末尾（尾部）并从队列的前端（头部）移除。图 5.1 演示了数据写入和读取队列的过程，该队列用作 FIFO。也可以将数据写入队列的前端，并覆盖队列前端已存在的数据。</p>
+<p><a name="fig5.1" title="图 5.1 写入和读取队列的示例序列"></a></p>
+<hr />
+<p><img alt="" src="../media/image31.png" /> <br />
+<strong><em>图 5.1</em></strong> <em>写入和读取队列的示例序列</em></p>
+<hr />
+<p>队列行为可以通过两种方式实现：</p>
+<ol>
+<li>
+<p>通过复制队列</p>
+<p>数据项的副本被复制到队列中。</p>
+</li>
+<li>
+<p>通过引用队列</p>
+<p>数据项的指针被发送到队列，而不是数据本身。</p>
+</li>
+</ol>
+<p>FreeRTOS 使用通过复制队列的方法，因为它比通过引用队列更强大且更易于使用：</p>
+<ul>
+<li>
+<p>通过复制队列不会阻止队列也被用作通过引用队列。例如，当被排队的数据的大小使得将数据复制到队列中不切实际时，可以将指向数据的指针复制到队列中。</p>
+</li>
+<li>
+<p>堆栈变量可以直接发送到队列，即使在声明它的函数退出后变量将不再存在。</p>
+</li>
+<li>
+<p>可以将数据发送到队列，而无需首先分配缓冲区来保存数据——然后将数据复制到分配的缓冲区中，并排队对缓冲区的引用。</p>
+</li>
+<li>
+<p>发送任务可以立即重新使用发送到队列的变量或缓冲区。</p>
+</li>
+<li>
+<p>发送任务和接收任务是完全解耦的；应用程序设计人员不需要关心哪个任务“拥有”数据，或者哪个任务负责释放数据。</p>
+</li>
+<li>
+<p>RTOS 对用于存储数据的内存分配承担全部责任。</p>
+</li>
+<li>
+<p>内存受保护的系统限制对 RAM 的访问，在这种情况下，只有在发送任务和接收任务都可以访问被引用的数据时，才能通过引用排队。通过复制队列允许数据跨越内存保护边界传递。</p>
+</li>
+</ul>
+<h3 id="522">5.2.2 多任务访问</h3>
+<p>队列本身就是对象，可以被任何知道其存在的任务或 ISR 访问。任何数量的任务可以写入同一个队列，任何数量的任务可以从同一个队列读取。在实践中，队列通常有多个写入者，但很少有多个读取者。</p>
+<h3 id="523">5.2.3 阻塞在队列读取上</h3>
+<p>当一个任务尝试从队列中读取数据时，它可以选择性地指定一个“阻塞”时间。这是任务在队列为空时被保持在阻塞状态以等待数据变为可用的时间。如果队列已经为空，则处于阻塞状态的任务会自动在另一个任务或中断将数据放入队列时转到就绪状态。如果在数据可用之前指定的阻塞时间到期，任务也会自动从阻塞状态转到就绪状态。</p>
+<p>队列可以有多个读取者，因此单个队列可能有多个任务因等待数据而阻塞。当发生这种情况时，只有一个任务在数据可用时被解除阻塞。被解除阻塞的任务始终是等待数据的最高优先级任务。如果两个或更多阻塞任务具有相同的优先级，则被解除阻塞的任务是等待时间最长的任务。</p>
+<h3 id="524">5.2.4 阻塞在队列写入上</h3>
+<p>与从队列读取时一样，任务在写入队列时也可以选择性地指定一个阻塞时间。在这种情况下，阻塞时间是任务在阻塞状态中等待队列上可用空间的最长时间，以防队列已满。</p>
+<p>队列可以有多个写入者，因此可能有多个任务因等待完成发送操作而阻塞在一个已满的队列上。当发生这种情况时，只有一个任务在队列上有空间时被解除阻塞。被解除阻塞的任务始终是等待空间的最高优先级任务。如果两个或更多阻塞任务具有相同的优先级，则被解除阻塞的任务是等待时间最长的任务。</p>
+<h3 id="525">5.2.5 阻塞在多个队列上</h3>
+<p>队列可以分组到集合中，允许任务进入阻塞状态以等待集合中任何队列的数据变为可用。第 5.6 节“从多个队列接收”演示了队列集的用法。</p>
+<h3 id="526">5.2.6 创建队列：静态分配和动态分配队列</h3>
+<p>队列通过句柄引用，句柄是 <code>QueueHandle_t</code> 类型的变量。队列必须在使用之前显式创建。</p>
+<p>有两个 API 函数可以创建队列：<code>xQueueCreate()</code>、<code>xQueueCreateStatic()</code>。</p>
+<p>每个队列需要两个 RAM 块，第一个用于保存其数据结构，第二个用于保存排队的数据。<code>xQueueCreate()</code> 从堆中分配所需的 RAM（动态）。<code>xQueueCreateStatic()</code> 使用预分配的 RAM，该 RAM 作为参数传递给函数。</p>
+<h2 id="53">5.3 使用队列</h2>
+<h3 id="531-xqueuecreate-api">5.3.1 xQueueCreate() API 函数</h3>
+<p>清单 5.1 显示了 <code>xQueueCreate()</code> 函数原型。<code>xQueueCreateStatic()</code> 有两个额外的参数，指向预分配的 RAM，以保存队列的数据结构和数据存储区域。</p>
+<p><a name="list5.1" title="清单 5.1 xQueueCreate() API 函数原型"></a></p>
+<pre><code class="language-c">QueueHandle_t xQueueCreate( UBaseType_t uxQueueLength, UBaseType_t uxItemSize );
+</code></pre>
+<p><strong><em>清单 5.1</em></strong> <em>xQueueCreate() API 函数原型</em></p>
+<p><strong>xQueueCreate() 参数和返回值：</strong></p>
+<ul>
+<li><code>uxQueueLength</code></li>
+</ul>
+<p>正在创建的队列一次可以容纳的最大项数。</p>
+<ul>
+<li><code>uxItemSize</code></li>
+</ul>
+<p>可以存储在队列中的每个数据项的大小（以字节为单位）。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>如果返回 NULL，则表示无法创建队列，因为 FreeRTOS 没有足够的堆内存来分配队列数据结构和存储区域。第 2 章提供了有关 FreeRTOS 堆的更多信息。</p>
+<p>如果返回非 NULL 值，则表示队列已成功创建，返回值是创建的队列的句柄。</p>
+<p><code>xQueueReset()</code> 是一个 API 函数，用于将先前创建的队列恢复到其原始空状态。</p>
+<h3 id="532-xqueuesendtoback-xqueuesendtofront-api">5.3.2 xQueueSendToBack() 和 xQueueSendToFront() API 函数</h3>
+<p>顾名思义，<code>xQueueSendToBack()</code> 将数据发送到队列的后面（尾部），而 <code>xQueueSendToFront()</code> 将数据发送到队列的前面（头部）。</p>
+<p><code>xQueueSend()</code> 等效于 <code>xQueueSendToBack()</code>，完全相同。</p>
+<blockquote>
+<p><em>注意：切勿从中断服务例程中调用 <code>xQueueSendToFront()</code> 或 <code>xQueueSendToBack()</code>。应使用中断安全版本 <code>xQueueSendToFrontFromISR()</code> 和 <code>xQueueSendToBackFromISR()</code> 代替。它们在第 7 章中进行了描述。</em></p>
+</blockquote>
+<p><a name="list5.2" title="清单 5.2 xQueueSendToFront() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueueSendToFront( QueueHandle_t xQueue,
+                              const void * pvItemToQueue,
+                              TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 5.2</em></strong> <em>xQueueSendToFront() API 函数原型</em></p>
+<p><a name="list5.3" title="清单 5.3 xQueueSendToBack() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueueSendToBack( QueueHandle_t xQueue,
+                             const void * pvItemToQueue,
+                             TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 5.3</em></strong> <em>xQueueSendToBack() API 函数原型</em></p>
+<p><strong>xQueueSendToFront() 和 xQueueSendToBack() 函数参数和返回值</strong></p>
+<ul>
+<li><code>xQueue</code></li>
+</ul>
+<p>正在发送（写入）数据的队列的句柄。队列句柄将是从 <code>xQueueCreate()</code> 或 <code>xQueueCreateStatic()</code> 返回的，用于创建队列。</p>
+<ul>
+<li><code>pvItemToQueue</code></li>
+</ul>
+<p>指向要复制到队列中的数据的指针。</p>
+<p>队列可以容纳的每个项目的大小在创建队列时设置，因此将从 <code>pvItemToQueue</code> 复制到队列存储区域的字节数。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>任务在阻塞状态中等待队列上可用空间的最长时间，以防队列已满。</p>
+<p>如果队列已满并且 <code>xTicksToWait</code> 为零，则 <code>xQueueSendToFront()</code> 和 <code>xQueueSendToBack()</code> 将立即返回。</p>
+<p>块时间以滴答周期为单位指定，因此它表示的绝对时间取决于滴答频率。宏 <code>pdMS_TO_TICKS()</code> 可用于将以毫秒为单位指定的时间转换为以滴答为单位的时间。</p>
+<p>将 <code>xTicksToWait</code> 设置为 <code>portMAX_DELAY</code> 将导致任务无限期等待（不超时），前提是 <code>INCLUDE_vTaskSuspend</code> 在 FreeRTOSConfig.h 中设置为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能有两个返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>数据已成功发送到队列。</p>
+<p>如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务可能被置于阻塞状态，以等待队列中可用空间，直到函数返回，但数据在块时间到期之前已成功写入队列。</p>
+</li>
+<li>
+<p><code>errQUEUE_FULL</code>（与 <code>pdFAIL</code> 相同的值）</p>
+<p>如果无法将数据写入队列，因为队列已满，则返回 <code>errQUEUE_FULL</code>。</p>
+<p>如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务将被置于阻塞状态，以等待另一个任务或中断在队列中腾出空间，但指定的块时间在发生之前已到期。</p>
+</li>
+</ul>
+<h3 id="533-xqueuereceive-api">5.3.3 xQueueReceive() API 函数</h3>
+<p><code>xQueueReceive()</code> 从队列接收（读取）项目。接收到的项目将从队列中移除。</p>
+<blockquote>
+<p><em>注意：切勿从中断服务例程中调用 <code>xQueueReceive()</code>。中断安全的 <code>xQueueReceiveFromISR()</code> API 函数在第 7 章中进行了描述。</em></p>
+</blockquote>
+<p><a name="list5.4" title="清单 5.4 xQueueReceive() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueueReceive( QueueHandle_t xQueue,
+                          void * const pvBuffer,
+                          TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 5.4</em></strong> <em>xQueueReceive() API 函数原型</em></p>
+<p><strong>xQueueReceive() 函数参数和返回值</strong></p>
+<ul>
+<li><code>xQueue</code></li>
+</ul>
+<p>正在接收（读取）数据的队列的句柄。队列句柄将是从 <code>xQueueCreate()</code> 或 <code>xQueueCreateStatic()</code> 返回的，用于创建队列。</p>
+<ul>
+<li><code>pvBuffer</code></li>
+</ul>
+<p>指向将接收的数据复制到的内存的指针。</p>
+<p>队列所持有的每个数据项的大小在创建队列时设置。指向 <code>pvBuffer</code> 的内存必须足够大，以容纳该字节数。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>任务在阻塞状态中等待数据变为可用的最长时间，如果队列已为空。</p>
+<p>如果 <code>xTicksToWait</code> 为零，则如果队列已为空，<code>xQueueReceive()</code> 将立即返回。</p>
+<p>块时间以滴答周期为单位指定，因此它表示的绝对时间取决于滴答频率。宏 <code>pdMS_TO_TICKS()</code> 可用于将以毫秒为单位指定的时间转换为以滴答为单位的时间。</p>
+<p>将 <code>xTicksToWait</code> 设置为 <code>portMAX_DELAY</code> 将导致任务无限期等待（不超时），前提是 <code>INCLUDE_vTaskSuspend</code> 在 FreeRTOSConfig.h 中设置为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能有两个返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>数据已成功从队列中读取。</p>
+<p>如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务可能被置于阻塞状态，以等待数据变为可用，但数据在块时间到期之前已成功从队列中读取。</p></p>
+</li>
+<li>
+<p><code>errQUEUE_EMPTY</code>（与 <code>pdFAIL</code> 相同的值）</p>
+<p>如果无法从队列中读取数据，因为队列为空，则返回 <code>errQUEUE_EMPTY</code>。</p>
+<p>如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务将被置于阻塞状态，以等待另一个任务或中断将数据发送到队列，但块时间在发生之前已到期。</p>
+</li>
+</ul>
+<h3 id="534-uxqueuemessageswaiting-api">5.3.4 uxQueueMessagesWaiting() API 函数</h3>
+<p><code>uxQueueMessagesWaiting()</code> 查询当前在队列中的项目数。</p>
+<blockquote>
+<p><em>注意：切勿从中断服务例程中调用 <code>uxQueueMessagesWaiting()</code>。中断安全的 <code>uxQueueMessagesWaitingFromISR()</code> 应该被用来代替。</em></p>
+</blockquote>
+<p><a name="list5.5" title="清单 5.5 uxQueueMessagesWaiting() API 函数原型"></a></p>
+<pre><code class="language-c">UBaseType_t uxQueueMessagesWaiting( QueueHandle_t xQueue );
+</code></pre>
+<p><strong><em>清单 5.5</em></strong> <em>uxQueueMessagesWaiting() API 函数原型</em></p>
+<p><strong>uxQueueMessagesWaiting() 函数参数和返回值</strong></p>
+<ul>
+<li><code>xQueue</code></li>
+</ul>
+<p>正在查询的队列的句柄。队列句柄将是从 <code>xQueueCreate()</code> 或 <code>xQueueCreateStatic()</code> 返回的，用于创建队列。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>当前队列中项目的数量。如果返回零，则队列为空。</p>
+<h2 id="_1"><a name="example5.1" title="示例 5.1 从队列接收时阻塞"></a></h2>
+<p><strong><em>示例 5.1</em></strong> <em>从队列接收时阻塞</em></p>
+<hr />
+<p>此示例演示了创建队列、从多个任务向队列发送数据以及从队列接收数据。该队列被创建为可以容纳 <code>int32_t</code> 类型的数据项。发送到队列的任务没有指定阻塞时间，而从队列接收数据的任务则指定了阻塞时间。</p>
+<p>发送到队列的任务的优先级低于从队列接收数据的任务。这意味着队列中不应包含多个项目，因为一旦数据被发送到队列，接收任务将解除阻塞、抢占发送任务（因为它具有更高的优先级）并移除数据，从而使队列再次为空。</p>
+<p>该示例创建了两个发送任务的实例，如清单 5.6 所示，一个任务不断向队列发送值 100，另一个任务不断向同一队列发送值 200。任务参数用于将这些值传递给每个任务实例。</p>
+<p><a name="list5.6" title="清单 5.6 示例 5.1 中发送任务的实现"></a></p>
+<pre><code class="language-c">static void vSenderTask( void *pvParameters )
+{
+
+    int32_t lValueToSend;
+
+    BaseType_t xStatus;
+
+    /* 此任务创建了两个实例，因此发送到队列的值通过任务参数传递
+       队列被创建为容纳 int32_t 类型的值，因此将参数转换为所需的类型。 */
+    lValueToSend = ( int32_t ) pvParameters;
+
+    /* 与大多数任务一样，此任务在无限循环中实现。 */
+    for( ;; )
+    {
+
+        /* 将值发送到队列。
+
+           第一个参数是数据要发送到的队列。队列是在调度程序启动之前创建的，因此在此任务开始执行之前。
+
+           第二个参数是要发送的数据的地址，在本例中是 lValueToSend 的地址。
+
+           第三个参数是阻塞时间——任务在队列已满时应保持在阻塞状态以等待可用空间的时间。在本例中未指定阻塞时间，因为队列不应包含多个项目，因此永远不会满。 */
+        xStatus = xQueueSendToBack( xQueue, &amp;lValueToSend, 0 );
+
+        if( xStatus != pdPASS )
+        {
+            /* 发送操作无法完成，因为队列已满——这一定是错误的，因为队列不应包含多个项目！ */
+            vPrintString( &quot;Could not send to the queue.\r\n&quot; );
+        }
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.6</em></strong> <em>示例 5.1 中发送任务的实现</em></p>
+<p>清单 5.7 显示了接收任务的实现。接收任务指定了 100 毫秒的阻塞时间，然后进入阻塞状态以等待数据变为可用。它在队列中接收到数据后解除阻塞，或者在 100 毫秒内未接收到数据后解除阻塞。在此示例中，有两个任务不断向队列写入数据，因此 100 毫秒的超时从未到期。</p>
+<p><a name="list5.7" title="清单 5.7 示例 5.1 中接收任务的实现"></a></p>
+<pre><code class="language-c">static void vReceiverTask( void *pvParameters )
+{
+    /* 声明将保存从队列接收到的值的变量。 */
+    int32_t lReceivedValue;
+    BaseType_t xStatus;
+    const TickType_t xTicksToWait = pdMS_TO_TICKS( 100 );
+
+    /* 此任务也在无限循环中定义。 */
+    for( ;; )
+    {
+        /* 此调用应该总是发现队列是空的，因为此任务将立即删除写入队列的任何数据。 */
+        if( uxQueueMessagesWaiting( xQueue ) != 0 )
+        {
+            vPrintString( &quot;Queue should have been empty!\r\n&quot; );
+        }
+
+        /* 从队列接收数据。
+
+           第一个参数是要接收数据的队列。
+           队列是在调度程序启动之前创建的，因此在此任务第一次运行之前。
+
+           第二个参数是接收数据将放置到的缓冲区。在本例中，缓冲区只是一个变量的地址，该变量的大小足以容纳接收到的数据。
+
+           最后一个参数是阻塞时间——任务在队列已空时应保持在阻塞状态以等待数据变为可用的最长时间。 */
+        xStatus = xQueueReceive( xQueue, &amp;lReceivedValue, xTicksToWait );
+
+        if( xStatus == pdPASS )
+        {
+            /* 数据已成功从队列接收，打印接收到的值。 */
+            vPrintStringAndNumber( &quot;Received = &quot;, lReceivedValue );
+        }
+        else
+        {
+            /* 即使在等待 100 毫秒后也未能从队列接收数据。这一定是错误的，因为发送任务是自由运行的，将不断向队列写入数据。 */
+            vPrintString( &quot;Could not receive from the queue.\r\n&quot; );
+        }
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.7</em></strong>  <em>示例 5.1 中接收任务的实现</em></p>
+<p>清单 5.8 包含 <code>main()</code> 函数的定义。它只是创建队列和三个任务，然后启动调度程序。尽管队列被创建为可以容纳最多五个 <code>int32_t</code> 值，但由于任务优先级的关系，队列一次永远不会包含多个项目。</p>
+<p><a name="list5.8" title="清单 5.8 示例 5.1 中 main() 的实现"></a></p>
+<pre><code class="language-c">/* 声明一个类型为 QueueHandle_t 的变量。这用于存储所有三个任务访问的队列的句柄。 */
+QueueHandle_t xQueue;
+
+int main( void )
+{
+    /* 队列被创建为可以容纳最多 5 个值，每个值足够大以容纳一个 int32_t 类型的变量。 */
+    xQueue = xQueueCreate( 5, sizeof( int32_t ) );
+
+    if( xQueue != NULL )
+    {
+        /* 创建两个将向队列发送数据的任务实例。任务参数用于传递任务将写入队列的值，因此一个任务将不断向队列发送 100，而另一个任务将不断向队列发送 200。两个任务都以优先级 1 创建。 */
+        xTaskCreate( vSenderTask, &quot;Sender1&quot;, 1000, ( void * ) 100, 1, NULL );
+        xTaskCreate( vSenderTask, &quot;Sender2&quot;, 1000, ( void * ) 200, 1, NULL );
+
+        /* 创建将从队列读取数据的任务。该任务以优先级 2 创建，高于发送任务的优先级。 */
+        xTaskCreate( vReceiverTask, &quot;Receiver&quot;, 1000, NULL, 2, NULL );
+
+        /* 启动调度程序，以便创建的任务开始执行。 */
+        vTaskStartScheduler();
+    }
+    else
+    {
+        /* 无法创建队列。 */
+    }
+
+    /* 如果一切正常，则 main() 永远不会到达这里，因为调度程序将运行任务。如果 main() 到达这里，则可能是由于没有足够的 FreeRTOS 堆内存可用于创建空闲任务。第 3 章提供了有关堆内存管理的更多信息。 */
+    for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 5.8</em></strong> <em>示例 5.1 中 main() 的实现</em></p>
+<p>图 5.2 显示了示例 5.1 执行时产生的输出。</p>
+<p><a name="fig5.2" title="图 5.2 执行示例 5.1 时产生的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image32.jpg" /> <br />
+<strong><em>图 5.2</em></strong> <em>执行示例 5.1 时产生的输出</em></p>
+<hr />
+<p>图 5.3 演示了执行序列。</p>
+<p><a name="fig5.3" title="图 5.3 执行示例 5.1 时产生的序列"></a></p>
+<hr />
+<p><img alt="" src="../media/image33.png" /> <br />
+<strong><em>图 5.3</em></strong> <em>执行示例 5.1 时产生的序列</em></p>
+<hr />
+<h2 id="54">5.4 从多个源接收数据</h2>
+<p>在 FreeRTOS 设计中，任务从多个源接收数据是很常见的。接收任务需要知道数据来自哪里，以便确定对数据的处理方式。一种简单的设计模式是使用单个队列传输包含数据值和数据源的结构，如图 5.4 所示。</p>
+<p><a name="fig5.4" title="图 5.4 发送结构的队列示例场景"></a></p>
+<hr />
+<p><img alt="" src="../media/image34.png" /> <br />
+<strong><em>图 5.4</em></strong> <em>发送结构的队列示例场景</em></p>
+<hr />
+<p>参见图 5.4：</p>
+<ul>
+<li>
+<p>创建的队列保存 <code>Data_t</code> 类型的结构。该结构允许在一个消息中发送数据值和指示数据含义的枚举类型。</p>
+</li>
+<li>
+<p>中央控制器任务执行主要的系统功能。它必须对通过队列发送给它的输入和系统状态的变化做出反应。</p>
+</li>
+<li>
+<p>CAN 总线任务用于封装 CAN 总线接口功能。当 CAN 总线任务接收到并解码消息时，它将已解码的消息作为 <code>Data_t</code> 结构发送给控制器任务。传输结构的 <code>eDataID</code> 成员告诉控制器任务数据是什么。在此示例中，它是电机速度值。传输结构的 <code>lDataValue</code> 成员告诉控制器任务实际的电机速度值。</p>
+</li>
+<li>
+<p>人机界面（HMI）任务用于封装所有 HMI 功能。机器操作员可能以多种方式输入命令和查询值，这些方式必须在 HMI 任务中检测和解释。当输入新命令时，HMI 任务将命令作为 <code>Data_t</code> 结构发送给控制器任务。传输结构的 <code>eDataID</code> 成员告诉控制器任务数据是什么。在此示例中，它是一个新的设定值。传输结构的 <code>lDataValue</code> 成员告诉控制器任务实际的设定值。</p>
+</li>
+</ul>
+<p>第（待定）章将演示如何扩展此设计模式，以便控制器任务可以直接回复将结构排队的任务。</p>
+<h2 id="_2"><a name="example5.2" title="示例 5.2 阻塞时发送到队列，并在队列上传送结构"></a></h2>
+<p><strong><em>示例 5.2</em></strong> <em>阻塞时发送到队列，并在队列上传送结构</em></p>
+<hr />
+<p>示例 5.2 类似于示例 5.1，但任务优先级相反，因此接收任务的优先级低于发送任务。此外，创建的队列保存结构，而不是整数。</p>
+<p>清单 5.9 显示了示例 5.2 使用的结构的定义。</p>
+<p><a name="list5.9" title="清单 5.9 要通过队列传递的结构的定义，以及供示例使用的两个变量的声明"></a></p>
+<pre><code class="language-c">/* 定义一个枚举类型，用于标识数据的来源。 */
+typedef enum
+{
+    eSender1,
+    eSender2
+} DataSource_t;
+
+/* 定义将通过队列传递的结构类型。 */
+typedef struct
+{
+    uint8_t ucValue;
+    DataSource_t eDataSource;
+} Data_t;
+
+/* 声明两个类型为 Data_t 的变量，将通过队列传递。 */
+static const Data_t xStructsToSend[ 2 ] =
+{
+    { 100, eSender1 }, /* Sender1 使用。 */
+    { 200, eSender2 }  /* Sender2 使用。 */
+};
+</code></pre>
+<p><strong><em>清单 5.9</em></strong> <em>要通过队列传递的结构的定义，以及供示例使用的两个变量的声明</em></p>
+<p>在示例 5.1 中，接收任务具有最高的优先级，因此队列中从不包含多个项目。这是因为接收任务在数据被放入队列后会抢占发送任务。在示例 5.2 中，发送任务具有更高的优先级，因此队列通常是满的。这是因为，当接收任务从队列中移除一个项目时，它会被一个发送任务抢占，发送任务会立即重新填充队列。然后，发送任务重新进入阻塞状态，等待队列中再次腾出空间。</p>
+<p>清单 5.10 显示了发送任务的实现。发送任务指定了 100 毫秒的阻塞时间，因此每当队列满时，它就会进入阻塞状态，等待空间变为可用。在本例中，接收任务不断地在队列中腾出空间，因此 100 毫秒的超时从未到期。</p>
+<p><a name="list5.10" title="清单 5.10 示例 5.2 中发送任务的实现"></a></p>
+<pre><code class="language-c">static void vSenderTask( void *pvParameters )
+{
+    BaseType_t xStatus;
+    const TickType_t xTicksToWait = pdMS_TO_TICKS( 100 );
+
+    /* 与大多数任务一样，此任务在无限循环中实现。 */
+    for( ;; )
+    {
+        /* 发送到队列。
+
+           第二个参数是要发送的结构的地址。地址作为任务参数传递，因此直接使用 pvParameters。
+
+           第三个参数是阻塞时间——任务在队列已满时应保持在阻塞状态以等待可用空间的时间。指定了阻塞时间，因为发送任务的优先级高于接收任务，因此预计队列会满。当两个发送任务都处于阻塞状态时，接收任务会从队列中删除项目。 */
+        xStatus = xQueueSendToBack( xQueue, pvParameters, xTicksToWait );
+
+        if( xStatus != pdPASS )
+        {
+            /* 发送操作无法完成，即使在等待 100 毫秒后也是如此。这一定是错误的，因为接收任务应该在两个发送任务都处于阻塞状态时立即清空队列。 */
+            vPrintString( &quot;Could not send to the queue.\r\n&quot; );
+        }
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.10</em></strong> <em>示例 5.2 中发送任务的实现</em></p>
+<p>接收任务的优先级最低，仅在两个发送任务都处于阻塞状态时运行。发送任务仅在队列满时才进入阻塞状态，因此接收任务仅在队列已满时执行。在本例中，接收任务始终期望接收数据，即使它没有指定阻塞时间。</p>
+<p>清单 5.11 显示了接收任务的实现。</p>
+<p><a name="list5.11" title="清单 5.11 示例 5.2 中接收任务的定义"></a></p>
+<pre><code class="language-c">static void vReceiverTask( void *pvParameters )
+{
+    /* 声明将保存从队列接收到的结构。 */
+    Data_t xReceivedStructure;
+    BaseType_t xStatus;
+
+    /* 此任务也在无限循环中定义。 */
+    for( ;; )
+    {
+        /* 由于优先级最低，此任务仅在发送任务处于阻塞状态时运行。当队列已满时，发送任务将进入阻塞状态，因此此任务仅在队列已满时运行。 */
+        if( uxQueueMessagesWaiting( xQueue ) != 3 )
+        {
+            vPrintString( &quot;Queue should have been full!\r\n&quot; );
+        }
+
+        /* 从队列接收。
+
+           第二个参数是接收数据将放置到的缓冲区。在本例中，缓冲区只是一个变量的地址，该变量的大小足以容纳接收到的结构。
+
+           最后一个参数是阻塞时间——任务在队列已空时应保持在阻塞状态以等待数据变为可用的最长时间。在本例中，由于此任务仅在队列已满时运行，因此不需要阻塞时间。 */
+        xStatus = xQueueReceive( xQueue, &amp;xReceivedStructure, 0 );
+
+        if( xStatus == pdPASS )
+        {
+            /* 数据已成功从队列接收，打印接收到的值和来源。 */
+            if( xReceivedStructure.eDataSource == eSender1 )
+            {
+                vPrintStringAndNumber( &quot;From Sender 1 = &quot;, 
+                                       xReceivedStructure.ucValue );
+            }
+            else
+            {
+                vPrintStringAndNumber( &quot;From Sender 2 = &quot;, 
+                                       xReceivedStructure.ucValue );
+            }
+        }
+        else
+        {
+            /* 未从队列接收数据。这一定是错误的，因为此任务应仅在队列已满时运行。 */
+            vPrintString( &quot;Could not receive from the queue.\r\n&quot; );
+        }
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.11</em></strong> <em>示例 5.2 中接收任务的定义</em></p>
+<p><code>main()</code> 的实现与上一个示例仅略有不同。队列被创建为可以容纳三个 <code>Data_t</code> 结构，发送和接收任务的优先级相反。清单 5.12 显示了 <code>main()</code> 的实现。</p>
+<p><a name="list5.12" title="清单 5.12 示例 5.2 中 main() 的实现"></a></p>
+<pre><code class="language-c">int main( void )
+{
+    /* 队列被创建为可以容纳最多 3 个 Data_t 类型的结构。 */
+    xQueue = xQueueCreate( 3, sizeof( Data_t ) );
+
+    if( xQueue != NULL )
+    {
+        /* 创建两个将向队列写入的任务实例。参数用于传递任务将写入队列的结构，因此一个任务将不断发送 xStructsToSend[ 0 ] 到队列，而另一个任务将不断发送 xStructsToSend[ 1 ]。两个任务都以优先级 2 创建，高于接收任务的优先级。 */
+        xTaskCreate( vSenderTask, &quot;Sender1&quot;, 1000, &amp;( xStructsToSend[ 0 ] ),
+                     2, NULL );
+        xTaskCreate( vSenderTask, &quot;Sender2&quot;, 1000, &amp;( xStructsToSend[ 1 ] ),
+                     2, NULL );
+
+        /* 创建将从队列读取数据的任务。该任务以优先级 1 创建，低于发送任务的优先级。 */
+        xTaskCreate( vReceiverTask, &quot;Receiver&quot;, 1000, NULL, 1, NULL );
+
+        /* 启动调度程序，以便创建的任务开始执行。 */
+        vTaskStartScheduler();
+    }
+    else
+    {
+        /* 无法创建队列。 */
+    }
+
+    /* 如果一切正常，则 main() 永远不会到达这里，因为调度程序将运行任务。如果 main() 到达这里，则可能是由于没有足够的 FreeRTOS 堆内存可用于创建空闲任务。第 3 章提供了有关堆内存管理的更多信息。 */
+    for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 5.12</em></strong> <em>示例 5.2 中 main() 的实现</em></p>
+<p>图 5.5 显示了示例 5.2 产生的输出。</p>
+<p><a name="fig5.5" title="图 5.5 示例 5.2 产生的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image35.jpg" /> <br />
+<strong><em>图 5.5</em></strong> <em>示例 5.2 产生的输出</em></p>
+<hr />
+<p>图 5.6 演示了执行此示例的序列。</p>
+<p><a name="fig5.6" title="图 5.6 示例 5.2 产生的执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/image36.png" /> <br />
+<strong><em>图 5.6</em></strong> <em>示例 5.2 产生的执行序列</em></p>
+<hr />
+<p><strong>图 5.6 说明</strong></p>
+<ul>
+<li>t1</li>
+</ul>
+<p>任务 Sender 1 执行并向队列发送 3 个数据项。</p>
+<ul>
+<li>t2</li>
+</ul>
+<p>队列已满，因此 Sender 1 进入阻塞状态，等待其下一个发送完成。任务 Sender 2 现在是可以运行的最高优先级任务，因此它进入运行状态。</p>
+<ul>
+<li>t3</li>
+</ul>
+<p>任务 Sender 2 发现队列已满，因此它进入阻塞状态，等待其第一次发送完成。任务 Receiver 现在是可以运行的最高优先级任务，因此它进入运行状态。</p>
+<ul>
+<li>t4</li>
+</ul>
+<p>两个优先级高于接收任务的任务正在等待队列中有空间可用，因此接收任务在从队列中删除一个项目后被抢占。任务 Sender 1 和 Sender 2 具有相同的优先级，因此调度程序选择等待时间最长的任务进入运行状态——在本例中是任务 Sender 1。</p>
+<ul>
+<li>t5</li>
+</ul>
+<p>任务 Sender 1向队列发送另一个数据项。队列中只有一个空位，因此任务 Sender 1 进入阻塞状态，等待其下一个发送完成。任务 Receiver 再次是可以运行的最高优先级任务，因此它进入运行状态。</p>
+<p>任务 Sender 1已经向队列发送了四个项目，而任务 Sender 2 仍在等待向队列发送第一个项目。</p>
+<ul>
+<li>t6</li>
+</ul>
+<p>两个优先级高于接收任务的任务正在等待队列中有空间可用，因此任务接收器在从队列中删除一个项目后被抢占。这次，等待时间比 Sender 1 更长的任务 Sender 2 进入运行状态。</p>
+<ul>
+<li>t7</li>
+</ul>
+<p>任务 Sender 2 向队列发送一个数据项。队列中只有一个空位，因此 Sender 2 进入阻塞状态，等待其下一个发送完成。任务 Sender 1 和 Sender 2 都在等待队列中有空间可用，因此任务 Receiver 是唯一可以进入运行状态的任务。</p>
+<h2 id="55">5.5 处理大数据或可变大小数据</h2>
+<h3 id="551">5.5.1 排队指针</h3>
+<p>如果队列中存储的数据很大，则最好使用队列传输指向数据的指针，而不是逐字节地将数据复制到队列中和从队列中取出。传输指针在处理时间和创建队列所需的 RAM 数量上更有效。但是，在排队指针时，必须非常小心，以确保：</p>
+<ul>
+<li>明确规定 RAM 的所有者。</li>
+</ul>
+<p>在任务之间通过指针共享内存时，必须确保两个任务不会同时修改内存内容，或采取任何其他可能导致内存内容无效或不一致的操作。理想情况下，只有发送任务在发送指针到队列之前可以访问内存，只有接收任务在从队列接收指针后可以访问内存。</p>
+<ul>
+<li>被指向的 RAM 保持有效。</li>
+</ul>
+<p>如果被指向的内存是动态分配的，或者是从预分配缓冲区池中获取的，则必须由一个任务负责释放内存。没有任务应该在内存被释放后尝试访问它。</p>
+<p>不应使用指针访问在任务堆栈上分配的数据。堆栈帧更改后，数据将无效。</p>
+<p>作为示例，清单 5.13、5.14 和 5.15 演示了如何使用队列从一个任务发送指向一个缓冲区的指针到另一个任务：</p>
+<ul>
+<li>
+<p>清单 5.13 创建一个可以容纳 5 个指针的队列。</p>
+</li>
+<li>
+<p>清单 5.14 分配一个缓冲区，将字符串写入缓冲区，然后将指向缓冲区的指针发送到队列。</p>
+</li>
+<li>
+<p>清单 5.15 从队列接收指向缓冲区的指针，然后打印缓冲区中包含的字符串。</p>
+</li>
+</ul>
+<p><a name="list5.13" title="清单 5.13 创建一个可以容纳指针的队列"></a></p>
+<pre><code class="language-c">/* 声明一个类型为 QueueHandle_t 的变量，以保存正在创建的队列的句柄。 */
+QueueHandle_t xPointerQueue;
+
+/* 创建一个可以容纳最多 5 个指针的队列，在本例中是字符指针。 */
+xPointerQueue = xQueueCreate( 5, sizeof( char * ) );
+</code></pre>
+<p><strong><em>清单 5.13</em></strong> <em>创建一个可以容纳指针的队列</em></p>
+<p><a name="list5.14" title="清单 5.14 使用队列发送指向缓冲区的指针"></a></p>
+<pre><code class="language-c">/* 一个任务，获取一个缓冲区，将字符串写入缓冲区，然后将缓冲区的地址发送到在清单 5.13 中创建的队列。 */
+void vStringSendingTask( void *pvParameters )
+{
+    char *pcStringToSend;
+    const size_t xMaxStringLength = 50;
+    BaseType_t xStringNumber = 0;
+
+    for( ;; )
+    {
+        /* 获取一个至少为 xMaxStringLength 字符大小的缓冲区。
+           prvGetBuffer() 的实现未显示——它可能从预分配的缓冲区池中获取缓冲区，或者只是动态分配缓冲区。 */
+        pcStringToSend = ( char * ) prvGetBuffer( xMaxStringLength );
+
+        /* 向缓冲区写入字符串。 */
+        snprintf( pcStringToSend, xMaxStringLength, &quot;String number %d\r\n&quot;,
+                  xStringNumber );
+
+        /* 增加计数器，以便每次任务迭代时字符串不同。 */
+        xStringNumber++;
+
+        /* 将缓冲区的地址发送到在清单 5.13 中创建的队列。缓冲区的地址存储在 
+           pcStringToSend 变量中。*/
+        xQueueSend( xPointerQueue,   /* 队列的句柄。 */
+                    &amp;pcStringToSend, /* 指向缓冲区的指针的地址。 */
+                    portMAX_DELAY );
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.14</em></strong> <em>使用队列发送指向缓冲区的指针</em></p>
+<p><a name="list5.15" title="清单 5.15 使用队列接收指向缓冲区的指针"></a></p>
+<pre><code class="language-c">/* 一个任务，从在清单 5.13 中创建的队列接收指向缓冲区的地址，并打印缓冲区中字符串。 */
+
+void vStringReceivingTask( void *pvParameters )
+{
+    char *pcReceivedString;
+
+    for( ;; )
+    {
+        /* 接收缓冲区的地址。 */
+        xQueueReceive( xPointerQueue,     /* 队列的句柄。 */
+                       &amp;pcReceivedString, /* 存储缓冲区地址的变量。 */
+                       portMAX_DELAY );
+
+        /* 缓冲区中保存了一个字符串，打印出来。 */
+        vPrintString( pcReceivedString );
+
+        /* 不再需要缓冲区——释放它以便可以被释放或重新使用。 */
+        prvReleaseBuffer( pcReceivedString );
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.15</em></strong> <em>使用队列接收指向缓冲区的指针</em></p>
+<h3 id="552-9">5.5.2 使用队列发送不同类型和长度的数据[^9]</h3>
+<p>[^9]: FreeRTOS 消息缓冲区是用于持有可变长度数据的队列的更轻量级替代方案。</p>
+<p>本书前面的章节演示了两种强大的设计模式；将结构发送到队列，将指针发送到队列。结合这些技术，任务可以使用单个队列从任何数据源接收任何数据类型。FreeRTOS+TCP TCP/IP 堆栈的实现提供了一个如何实现这一点的实际示例。</p>
+<p>在其自身的任务中运行的 TCP/IP 堆栈，必须处理来自许多不同源的事件。不同的事件类型与不同类型和长度的数据相关联。<code>IPStackEvent_t</code> 结构描述了发生在 TCP/IP 任务外部的所有事件，并通过队列发送到 TCP/IP 任务。清单 5.16 显示了 <code>IPStackEvent_t</code> 结构。<code>IPStackEvent_t</code> 结构的 <code>pvData</code> 成员是一个指针，可以用来直接保存一个值，或者指向一个缓冲区。</p>
+<p><a name="list5.16" title="清单 5.16 用于将事件发送到 TCP/IP 堆栈任务的结构体"></a></p>
+<pre><code class="language-c">/* TCP/IP 堆栈中用于标识事件的枚举类型的子集。 */
+typedef enum
+{
+    eNetworkDownEvent = 0, /* 网络接口丢失或需要（重新）连接。 */
+    eNetworkRxEvent,       /* 从网络接收到数据包。 */
+    eTCPAcceptEvent,       /* 调用 FreeRTOS_accept() 接受或等待新客户端连接。 */
+
+/* 此处还有其他事件类型，但在此清单中未显示。 */
+
+} eIPEvent_t;
+
+/* 描述事件的结构体，通过队列发送到 TCP/IP 任务。 */
+typedef struct IP_TASK_COMMANDS
+{
+    /* 标识事件的枚举类型。请参见上面的 eIPEvent_t 定义。 */
+    eIPEvent_t eEventType;
+
+    /* 一个通用指针，可以保存一个值，或指向一个缓冲区。 */
+    void *pvData;
+
+} IPStackEvent_t;
+</code></pre>
+<p><strong><em>清单 5.16</em></strong> <em>用于将事件发送到 TCP/IP 堆栈任务的结构体</em></p>
+<p>示例 TCP/IP 事件及其相关数据包括：</p>
+<ul>
+<li><code>eNetworkRxEvent</code>：从网络接收到数据包。</li>
+</ul>
+<p>网络接口使用 <code>IPStackEvent_t</code> 类型的结构将接收到的数据发送到 TCP/IP 任务。结构的 <code>eEventType</code> 成员设置为 <code>eNetworkRxEvent</code>，结构的 <code>pvData</code> 成员用于指向包含接收数据的缓冲区。清单 59 显示了一个伪代码示例。</p>
+<p><a name="list5.17" title="清单 5.17 如何使用 IPStackEvent_t 结构将从网络接收到的数据发送到 TCP/IP 任务的伪代码示例"></a></p>
+<p>```c
+  void vSendRxDataToTheTCPTask( NetworkBufferDescriptor_t *pxRxedData )
+  {
+      IPStackEvent_t xEventStruct;</p>
+<pre><code>  /* 完成 IPStackEvent_t 结构。接收到的数据存储在 pxRxedData 中。 */
+  xEventStruct.eEventType = eNetworkRxEvent;
+  xEventStruct.pvData = ( void * ) pxRxedData;
+
+  /* 将 IPStackEvent_t 结构发送到 TCP/IP 任务。 */
+  xSendEventStructToIPTask( &amp;xEventStruct );
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 5.17</em></strong> <em>如何使用 IPStackEvent_t 结构将从网络接收到的数据发送到 TCP/IP 任务的伪代码示例</em></p>
+<ul>
+<li><code>eTCPAcceptEvent</code>：套接字接受或等待来自客户端的新连接。</li>
+</ul>
+<p>调用 <code>FreeRTOS_accept()</code> 的任务使用 <code>IPStackEvent_t</code> 类型的结构将接受事件发送到 TCP/IP 任务。结构的 <code>eEventType</code> 成员设置为 <code>eTCPAcceptEvent</code>，结构的 <code>pvData</code> 成员设置为正在接受连接的套接字的句柄。清单 5.18 显示了一个伪代码示例。</p>
+<p><a name="list5.18" title="清单 5.18 如何使用 IPStackEvent_t 结构将正在接受连接的套接字的句柄发送到 TCP/IP 任务的伪代码示例"></a></p>
+<p>```c
+  void vSendAcceptRequestToTheTCPTask( Socket_t xSocket )
+  {
+      IPStackEvent_t xEventStruct;</p>
+<pre><code>  /* 完成 IPStackEvent_t 结构。 */
+  xEventStruct.eEventType = eTCPAcceptEvent;
+  xEventStruct.pvData = ( void * ) xSocket;
+
+  /* 将 IPStackEvent_t 结构发送到 TCP/IP 任务。 */
+  xSendEventStructToIPTask( &amp;xEventStruct );
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 5.18</em></strong> <em>如何使用 IPStackEvent_t 结构将正在接受连接的套接字的句柄发送到 TCP/IP 任务的伪代码示例</em></p>
+<ul>
+<li><code>eNetworkDownEvent</code>：网络需要连接或重新连接。</li>
+</ul>
+<p>网络接口使用 <code>IPStackEvent_t</code> 类型的结构将网络故障事件发送到 TCP/IP 任务。结构的 <code>eEventType</code> 成员设置为 <code>eNetworkDownEvent</code>。网络故障事件不与任何数据相关联，因此结构的 <code>pvData</code> 成员不使用。清单 5.19 显示了一个伪代码示例。</p>
+<p><a name="list5.19" title="清单 5.19 如何使用 IPStackEvent_t 结构将网络故障事件发送到 TCP/IP 任务的伪代码示例"></a></p>
+<p>```c
+  void vSendNetworkDownEventToTheTCPTask( Socket_t xSocket )
+  {
+      IPStackEvent_t xEventStruct;</p>
+<pre><code>  /* 完成 IPStackEvent_t 结构。 */
+  xEventStruct.eEventType = eNetworkDownEvent;
+
+  xEventStruct.pvData = NULL; /* 未使用，但为完整性而设置为 NULL。 */
+
+  /* 将 IPStackEvent_t 结构发送到 TCP/IP 任务。 */
+  xSendEventStructToIPTask( &amp;xEventStruct );
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 5.19</em></strong> <em>如何使用 IPStackEvent_t 结构将网络故障事件发送到 TCP/IP 任务的伪代码示例</em></p>
+<p>清单 5.20 显示了接收和处理这些事件的代码。</p>
+<p><a name="list5.20" title="清单 5.20 如何接收和处理 IPStackEvent_t 结构的伪代码示例"></a></p>
+<p>```c
+  IPStackEvent_t xReceivedEvent;</p>
+<p>/<em> 阻塞在网络事件队列上，直到接收到事件，或者在 xNextIPSleep 滴答数内未接收到事件。eEventType 在调用 xQueueReceive() 时被设置为 eNoEvent，以防由于超时而返回。 </em>/
+  xReceivedEvent.eEventType = eNoEvent;
+  xQueueReceive( xNetworkEventQueue, &amp;xReceivedEvent, xNextIPSleep );</p>
+<p>/<em> 收到了什么事件（如果有的话）？ </em>/
+  switch( xReceivedEvent.eEventType )
+  {
+      case eNetworkDownEvent :
+           /<em> 尝试（重新）建立连接。此事件不与数据相关联。 </em>/
+           prvProcessNetworkDownEvent();
+           break;</p>
+<pre><code>  case eNetworkRxEvent:
+       /* 网络接口接收到新数据包。接收到的数据的指针存储在接收到的 
+          IPStackEvent_t 结构的 pvData 成员中。处理接收到的数据。 */
+       prvHandleEthernetPacket( ( NetworkBufferDescriptor_t * )
+                                ( xReceivedEvent.pvData ) );
+       break;
+
+  case eTCPAcceptEvent:
+       /* 调用了 FreeRTOS_accept() API 函数。接受连接的套接字的句柄存储在接收到的 IPStackEvent_t 结构的 pvData 成员中。 */
+       xSocket = ( FreeRTOS_Socket_t * ) ( xReceivedEvent.pvData );
+       xTCPCheckNewClient( xSocket );
+       break;
+
+  /* 以同样的方式处理其他事件类型，但在此未显示。 */
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 5.20</em></strong> <em>如何接收和处理 IPStackEvent_t 结构的伪代码示例</em>  </p>
+<h2 id="56">5.6 从多个队列接收</h2>
+<h3 id="561">5.6.1 队列集</h3>
+<p>应用程序设计中，单个任务需要接收不同大小、不同含义和来自不同源的数据是很常见的。上一节演示了如何使用单个队列接收这些数据。然而，有时应用程序设计人员在工作时受到限制，必须使用单独的队列用于某些数据源。例如，集成的第三方代码可能假设存在专用队列。在这种情况下，可以使用“队列集”。</p>
+<p>队列集允许任务从多个队列接收数据，而无需轮询每个队列以确定哪个队列（如果有的话）包含数据。</p>
+<p>使用队列集的设计不如使用单个接收结构的队列的设计整洁和高效。因此，建议仅在设计限制使其使用绝对必要时才使用队列集。</p>
+<p>以下各节将通过以下方式描述如何使用队列集：</p>
+<ul>
+<li>
+<p>创建队列集。</p>
+</li>
+<li>
+<p>向集合中添加队列。</p>
+</li>
+</ul>
+<p>还可以将信号量添加到队列集中。信号量将在本书后面描述。</p>
+<ul>
+<li>从队列集中读取以确定集合中哪些队列包含数据。</li>
+</ul>
+<p>当属于集合的队列接收到数据时，接收队列的句柄将发送到队列集，并在任务调用从队列集读取的函数时返回。因此，如果从队列集中返回队列句柄，则表示该句柄引用的队列包含数据，任务可以直接从该队列读取数据。</p>
+<blockquote>
+<p><em>注意：如果队列是队列集的成员，则必须在其句柄从队列集中接收到之前，读取队列中的数据；并且在其句柄从队列集中接收到之后，才可以读取队列中的数据。</em></p>
+</blockquote>
+<p>通过在 FreeRTOSConfig.h 中将 <code>configUSE_QUEUE_SETS</code> 编译时配置常量设置为 1，启用队列集功能。</p>
+<h3 id="562-xqueuecreateset-api">5.6.2 xQueueCreateSet() API 函数</h3>
+<p>必须显式创建队列集才能使用。目前尚未实现 <code>xQueueCreateSetStatic()</code>。但是，队列集本身就是队列，因此可以通过对 <code>xQueueCreateStatic()</code> 的特殊调用来使用预分配的内存创建一个集合。</p>
+<p>队列集通过句柄引用，句柄是 <code>QueueSetHandle_t</code> 类型的变量。<code>xQueueCreateSet()</code> API 函数创建一个队列集并返回一个引用所创建队列集的 <code>QueueSetHandle_t</code>。</p>
+<p><a name="list5.21" title="清单 5.21 xQueueCreateSet() API 函数原型"></a></p>
+<pre><code class="language-c">QueueSetHandle_t xQueueCreateSet( const UBaseType_t uxEventQueueLength);
+</code></pre>
+<p><strong><em>清单 5.21</em></strong> <em>xQueueCreateSet() API 函数原型</em></p>
+<p><strong>xQueueCreateSet() 参数和返回值</strong></p>
+<ul>
+<li><code>uxEventQueueLength</code></li>
+</ul>
+<p>当队列集的成员队列接收到数据时，接收队列的句柄将发送到队列集。
+  <code>uxEventQueueLength</code> 定义了正在创建的队列集一次可以容纳的队列句柄的最大数量。</p>
+<p>仅当队列满时，队列句柄才会发送到队列集，因此队列集一次必须能够容纳集合中所有队列长度的总和。</p>
+<p>例如，如果有三个空队列，每个队列的长度为五，则集合中的队列总共可以接收十五个项目（三个队列乘以每个队列五个项目），然后所有队列都满了。在这种情况下，<code>uxEventQueueLength</code> 必须设置为十五，以确保队列集可以接收发送给它的每个项目。</p>
+<p>还可以将信号量添加到队列集中。信号量在本书后面介绍。对于计算所需的 <code>uxEventQueueLength</code>，二进制信号量的长度为 1，互斥锁的长度为 1，计数信号量的长度由信号量的最大计数值给出。</p>
+<p>另一个例子是，如果一个队列集包含一个长度为三的队列和一个二进制信号量（长度为一），则 <code>uxEventQueueLength</code> 必须设置为四（3 加 1）。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>如果返回 NULL，则表示无法创建队列集，因为 FreeRTOS 没有足够的堆内存来分配队列集数据结构和存储区域。第 3 章提供了有关 FreeRTOS 堆的更多信息。</p>
+<p>如果返回非 NULL 值，则表示队列集已成功创建，返回值是所创建队列集的句柄。</p>
+<h3 id="563-xqueueaddtoset-api">5.6.3 xQueueAddToSet() API 函数</h3>
+<p><code>xQueueAddToSet()</code> 将队列或信号量添加到队列集中。信号量将在本书后面描述。</p>
+<p><a name="list5.22" title="清单 5.22 xQueueAddToSet() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
+                           QueueSetHandle_t xQueueSet );
+</code></pre>
+<p><strong><em>清单 5.22</em></strong> <em>xQueueAddToSet() API 函数原型</em></p>
+<p><strong>xQueueAddToSet() 参数和返回值</strong></p>
+<ul>
+<li><code>xQueueOrSemaphore</code></li>
+</ul>
+<p>正在添加到队列集的队列或信号量的句柄。</p>
+<p>队列句柄和信号量句柄都可以转换为 <code>QueueSetMemberHandle_t</code> 类型。</p>
+<ul>
+<li><code>xQueueSet</code></li>
+</ul>
+<p>正在向其添加队列或信号量的队列集的句柄。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能有两个返回值：</p>
+<ol>
+<li>
+<p><code>pdPASS</code></p>
+<p>表示队列集已成功创建。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>表示队列或信号量无法添加到队列集中。</p>
+</li>
+</ol>
+<p>队列和二进制信号量只能在空状态下添加到集合中。计数信号量只能在计数为零时添加到集合中。队列和信号量一次只能是一个集合的成员。</p>
+<h3 id="564-xqueueselectfromset-api">5.6.4 xQueueSelectFromSet() API 函数</h3>
+<p><code>xQueueSelectFromSet()</code> 从队列集中读取一个队列句柄。</p>
+<p>当属于集合的队列或信号量接收到数据时，接收队列或信号量的句柄将发送到队列集，并在任务调用 <code>xQueueSelectFromSet()</code> 时返回。如果从 <code>xQueueSelectFromSet()</code> 返回了一个句柄，则表示该句柄引用的队列或信号量包含数据，调用任务必须直接从该队列或信号量读取数据。</p>
+<blockquote>
+<p><em>注意：在从队列集接收到句柄之前，请勿读取作为队列集成员的队列或信号量的数据；并且在从队列集接收到句柄之后，才可以读取作为队列集成员的队列或信号量的数据。每次从队列集调用 <code>xQueueSelectFromSet()</code> 时，只读取队列或信号量中的一项数据。</em></p>
+</blockquote>
+<p><a name="list5.23" title="清单 5.23 xQueueSelectFromSet() API 函数原型"></a></p>
+<pre><code class="language-c">QueueSetMemberHandle_t xQueueSelectFromSet( QueueSetHandle_t xQueueSet,
+                                            const TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 5.23</em></strong> <em>xQueueSelectFromSet() API 函数原型</em></p>
+<p><strong>xQueueSelectFromSet() 参数和返回值</strong></p>
+<ul>
+<li><code>xQueueSet</code></li>
+</ul>
+<p>正在接收队列句柄或信号量句柄的队列集的句柄。队列集句柄将是用于创建队列集的 <code>xQueueCreateSet()</code> 调用返回的。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>调用任务在阻塞状态中等待从队列集接收到队列或信号量句柄的最长时间，如果集合中的所有队列和信号量都为空。</p>
+<p>如果 <code>xTicksToWait</code> 为零，则如果集合中的所有队列和信号量都为空，<code>xQueueSelectFromSet()</code> 将立即返回。</p>
+<p>块时间以滴答周期为单位指定，因此它表示的绝对时间取决于滴答频率。宏 <code>pdMS_TO_TICKS()</code> 可用于将以毫秒为单位指定的时间转换为以滴答为单位的时间。</p>
+<p>将 <code>xTicksToWait</code> 设置为 <code>portMAX_DELAY</code> 将导致任务无限期等待（不超时），前提是 <code>INCLUDE_vTaskSuspend</code> 在 FreeRTOSConfig.h 中设置为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>非 NULL 的返回值将是一个队列或信号量的句柄，已知该句柄包含数据。如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务可能被置于阻塞状态，以等待队列或信号量中的数据变为可用，但在块时间到期之前成功读取了句柄。句柄作为 <code>QueueSetMemberHandle_t</code> 类型返回，可以转换为 <code>QueueHandle_t</code> 类型或 <code>SemaphoreHandle_t</code> 类型。</p>
+<p>如果返回值为 NULL，则无法从队列集中读取句柄。如果指定了块时间（<code>xTicksToWait</code> 不为零），则调用任务被置于阻塞状态，等待另一个任务或中断将数据发送到集合中的队列或信号量，但块时间在发生之前已到期。</p>
+<h2 id="_3"><a name="example5.3" title="示例 5.3 使用队列集"></a></h2>
+<p><strong><em>示例 5.3</em></strong> *使用队列集</i></h3></p>
+<hr />
+<p>此示例创建两个发送任务和一个接收任务。发送任务通过两个单独的队列向接收任务发送数据，一个队列对应一个任务。两个队列被添加到一个队列集中，接收任务从队列集中读取以确定哪个队列包含数据。</p>
+<p>任务、队列和队列集都在 <code>main()</code> 中创建——请参见清单 5.24 以获取其实现。</p>
+<p><a name="list5.24" title="清单 5.24 示例 5.3 中 main() 的实现"></a></p>
+<pre><code class="language-c">/* 声明两个类型为 QueueHandle_t 的变量。两个队列被添加到同一个队列集中。 */
+static QueueHandle_t xQueue1 = NULL, xQueue2 = NULL;
+
+/* 声明一个类型为 QueueSetHandle_t 的变量。这是队列集
+   两个队列被添加到其中。 */
+static QueueSetHandle_t xQueueSet = NULL;
+
+int main( void )
+{
+    /* 创建两个队列，两个队列都发送字符指针。接收任务的优先级高于发送任务的优先级，因此队列一次永远不会包含多个项目。*/
+    xQueue1 = xQueueCreate( 1, sizeof( char * ) );
+    xQueue2 = xQueueCreate( 1, sizeof( char * ) );
+
+    /* 创建队列集。将有两个队列添加到集合中，每个队列可以包含 1 个项目，因此队列集一次最多只能容纳 2 个队列句柄（2 个队列乘以每个队列 1 个项目）。 */
+    xQueueSet = xQueueCreateSet( 1 * 2 );
+
+    /* 将两个队列添加到集合中。 */
+    xQueueAddToSet( xQueue1, xQueueSet );
+    xQueueAddToSet( xQueue2, xQueueSet );
+
+    /* 创建将数据发送到队列的任务。 */
+    xTaskCreate( vSenderTask1, &quot;Sender1&quot;, 1000, NULL, 1, NULL );
+    xTaskCreate( vSenderTask2, &quot;Sender2&quot;, 1000, NULL, 1, NULL );
+
+    /* 创建从队列集中读取以确定两个队列中哪个队列包含数据的任务。 */
+    xTaskCreate( vReceiverTask, &quot;Receiver&quot;, 1000, NULL, 2, NULL );
+
+    /* 启动调度程序，以便创建的任务开始执行。 */
+    vTaskStartScheduler();
+
+    /* 像往常一样，vTaskStartScheduler() 不应返回，因此以下行将永远不会执行。 */
+    for( ;; );
+    return 0;
+}
+</code></pre>
+<p><strong><em>清单 5.24</em></strong> <em>示例 5.3 中 main() 的实现</em></p>
+<p>第一个发送任务使用 <code>xQueue1</code> 每 100 毫秒向接收任务发送一个字符指针。第二个发送任务使用 <code>xQueue2</code> 每 200 毫秒向接收任务发送一个字符指针。字符指针指向标识发送任务的字符串。清单 5.25 显示了这两个任务的实现。</p>
+<p><a name="list5.25" title="清单 5.25 示例 5.3 中的发送任务"></a></p>
+<pre><code class="language-c">void vSenderTask1( void *pvParameters )
+{
+    const TickType_t xBlockTime = pdMS_TO_TICKS( 100 );
+    const char * const pcMessage = &quot;Message from vSenderTask1\r\n&quot;;
+
+    /* 与大多数任务一样，此任务在无限循环中实现。 */
+
+    for( ;; )
+    {
+
+        /* 阻塞 100 毫秒。 */
+        vTaskDelay( xBlockTime );
+
+        /* 将此任务的字符串发送到 xQueue1。没有必要使用阻塞时间，即使队列一次只能容纳一个项目。这是因为读取队列的任务的优先级高于此任务的优先级；当此任务写入队列时，它将被读取任务抢占，因此在调用 xQueueSend() 返回时，队列已经是空的。阻塞时间设置为 0。 */
+        xQueueSend( xQueue1, &amp;pcMessage, 0 );
+    }
+}
+
+/*-----------------------------------------------------------*/
+
+void vSenderTask2( void *pvParameters )
+{
+    const TickType_t xBlockTime = pdMS_TO_TICKS( 200 );
+    const char * const pcMessage = &quot;Message from vSenderTask2\r\n&quot;;
+
+    /* 与大多数任务一样，此任务在无限循环中实现。 */
+    for( ;; )
+    {
+        /* 阻塞 200 毫秒。 */
+        vTaskDelay( xBlockTime );
+
+        /* 将此任务的字符串发送到 xQueue2。没有必要使用阻塞时间，即使队列一次只能容纳一个项目。这是因为读取队列的任务的优先级高于此任务的优先级；当此任务写入队列时，它将被读取任务抢占，因此在调用 xQueueSend() 返回时，队列已经是空的。阻塞时间设置为 0。 */
+        xQueueSend( xQueue2, &amp;pcMessage, 0 );
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.25</em></strong> <em>示例 5.3 中的发送任务</em></p>
+<p>写入发送任务的队列是同一个队列集的成员。每当任务向其中一个队列发送数据时，队列的句柄就会发送到队列集。接收任务调用 <code>xQueueSelectFromSet()</code> 从队列集中读取队列句柄。在接收任务从集合中接收到队列句柄后，它知道该句柄引用的队列包含数据，因此直接从该队列读取数据。它从队列中读取的数据是指向字符串的指针，接收任务将其打印出来。</p>
+<p>如果对 <code>xQueueSelectFromSet()</code> 的调用超时，它将返回 NULL。在示例 5.3 中，<code>xQueueSelectFromSet()</code> 的调用具有无限阻塞时间，因此它只会返回有效的队列句柄。因此，接收任务在使用返回值之前不需要检查 <code>xQueueSelectFromSet()</code> 是否返回 NULL。</p>
+<p><code>xQueueSelectFromSet()</code> 仅在队列引用的句柄包含数据时才返回该句柄，因此在从队列读取时不需要指定阻塞时间。</p>
+<p>清单 5.26 显示了接收任务的实现。</p>
+<p><a name="list5.26" title="清单 5.26 示例 5.3 中接收任务的实现"></a></p>
+<pre><code class="language-c">void vReceiverTask( void *pvParameters )
+{
+    QueueHandle_t xQueueThatContainsData;
+    char *pcReceivedString;
+
+    /* 与大多数任务一样，此任务在无限循环中实现。 */
+    for( ;; )
+    {
+        /* 阻塞在队列集上，等待集合中一个成员包含数据。将从 xQueueSelectFromSet() 返回的 QueueSetMemberHandle_t 值转换为 QueueHandle_t，因为已知集合的所有成员都是队列（队列集不包含任何信号量）。 */
+        xQueueThatContainsData = ( QueueHandle_t ) xQueueSelectFromSet(
+                                                     xQueueSet, portMAX_DELAY );
+
+        /* 使用无限阻塞时间从队列集读取句柄，因此 xQueueSelectFromSet() 不会返回，除非集合中的一个队列包含数据，并且 xQueueThatContainsData 不能为 NULL。读取队列。由于已知队列包含数据，因此无需指定阻塞时间，阻塞时间设置为 0。 */
+        xQueueReceive( xQueueThatContainsData, &amp;pcReceivedString, 0 );
+
+        /* 打印从队列接收到的字符串。 */
+        vPrintString( pcReceivedString );
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.26</em></strong> <em>示例 5.3 中接收任务的实现</em></p>
+<p>图 5.7 显示了示例 5.3 产生的输出。接收任务从两个发送任务接收字符串。<code>vSenderTask1()</code> 使用的阻塞时间是 <code>vSenderTask2()</code> 使用的阻塞时间的一半，这导致 <code>vSenderTask1()</code> 发送的字符串打印的频率是 <code>vSenderTask2()</code> 发送的字符串的两倍。</p>
+<p><a name="fig5.7" title="图 5.7 执行示例 5.3 时产生的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image37.jpg" /> <br />
+<strong><em>图 5.7</em></strong> <em>执行示例 5.3 时产生的输出</em></p>
+<hr />
+<h3 id="565">5.6.5 更现实的队列集用例</h3>
+<p>示例 5.3 演示了一个非常简单的情况；队列集仅包含队列，并且两个队列用于发送相同的字符指针。在实际应用中，队列集可能同时包含队列和信号量，并且队列可能并不都保存相同类型的数据。在这种情况下，有必要在使用返回的值之前，测试 <code>xQueueSelectFromSet()</code> 返回的值，清单 5.27 演示了如何在集合具有以下成员时使用 <code>xQueueSelectFromSet()</code>：</p>
+<ul>
+<li>一个二进制信号量。</li>
+<li>一个接收字符指针的队列。</li>
+<li>一个接收 <code>uint32_t</code> 值的队列。</li>
+</ul>
+<p>清单 5.27 假定队列和信号量已经被创建并添加到队列集中。</p>
+<p><a name="list5.27" title="清单 5.27 使用包含队列和信号量的队列集"></a></p>
+<pre><code class="language-c">/* 接收字符指针的队列的句柄。 */
+QueueHandle_t xCharPointerQueue;
+
+/* 接收 uint32_t 值的队列的句柄。 */
+QueueHandle_t xUint32tQueue;
+
+/* 二进制信号量的句柄。 */
+SemaphoreHandle_t xBinarySemaphore;
+
+/* 包含两个队列和一个二进制信号量的队列集。 */
+QueueSetHandle_t xQueueSet;
+
+void vAMoreRealisticReceiverTask( void *pvParameters )
+{
+    QueueSetMemberHandle_t xHandle;
+    char *pcReceivedString;
+    uint32_t ulRecievedValue;
+    const TickType_t xDelay100ms = pdMS_TO_TICKS( 100 );
+
+    for( ;; )
+    {
+        /* 阻塞在队列集，最多等待 100 毫秒以获取一个成员的数据。 */
+        xHandle = xQueueSelectFromSet( xQueueSet, xDelay100ms );
+
+        /* 测试 xQueueSelectFromSet() 返回的值。如果返回的值为 NULL，则表示 xQueueSelectFromSet() 的调用超时。如果返回的值不为 NULL，则返回的值将是集合中一个成员的句柄。返回的 QueueSetMemberHandle_t 值可以转换为 QueueHandle_t 或 SemaphoreHandle_t。是否需要显式转换取决于编译器。 */
+
+        if( xHandle == NULL )
+        {
+            /* xQueueSelectFromSet() 的调用超时。 */
+        }
+        else if( xHandle == ( QueueSetMemberHandle_t ) xCharPointerQueue )
+        {
+            /* xQueueSelectFromSet() 返回接收字符指针的队列的句柄。从队列中读取数据。已知队列包含数据，因此使用阻塞时间 0。 */
+            xQueueReceive( xCharPointerQueue, &amp;pcReceivedString, 0 );
+
+            /* 可以在此处处理接收到的字符指针... */
+        }
+        else if( xHandle == ( QueueSetMemberHandle_t ) xUint32tQueue )
+        {
+            /* xQueueSelectFromSet() 返回接收 uint32_t 类型的队列的句柄。从队列中读取数据。已知队列包含数据，因此使用阻塞时间 0。 */
+            xQueueReceive(xUint32tQueue, &amp;ulRecievedValue, 0 );
+
+            /* 可以在此处处理接收到的值... */
+        }
+        else if( xHandle == ( QueueSetMemberHandle_t ) xBinarySemaphore )
+        {
+            /* xQueueSelectFromSet() 返回信号量的句柄。立即获取信号量。已知信号量可用，因此使用阻塞时间 0。 */
+            xSemaphoreTake( xBinarySemaphore, 0 );
+
+            /* 在此处执行获取信号量时所需的处理... */
+        }
+    }
+}
+</code></pre>
+<p><strong><em>清单 5.27</em></strong> <em>使用包含队列和信号量的队列集</em></p>
+<h2 id="57">5.7 使用队列创建邮箱</h2>
+<p>在嵌入式社区中，术语没有统一的定义，“邮箱”在不同的 RTOS 中可能意味着不同的东西。在本书中，邮箱一词用于指代长度为一的队列。队列可能会因为应用程序的使用而被描述为邮箱，而不是因为它在功能上与邮箱有区别：</p>
+<ul>
+<li>队列用于将数据从一个任务发送到另一个任务，或从中断服务例程发送到任务。发送方将项目放入队列，接收方从队列中移除项目。</li>
+<li>邮箱用于保存任何任务或中断服务例程都可以读取的数据。数据不会通过邮箱传递，而是保留在邮箱中，直到被覆盖。发送方覆盖邮箱中值。接收方从邮箱中读取值，但不删除邮箱中的值。</li>
+</ul>
+<p>本章描述了两个 API 函数，使队列可以用作邮箱。</p>
+<p>清单 5.28 显示了如何创建一个队列以用作邮箱。</p>
+<p><a name="list5.28" title="清单 5.28 创建一个用作邮箱的队列"></a></p>
+<pre><code class="language-c">/* 一个邮箱可以容纳一个固定大小的数据项。数据项的大小在创建邮箱（队列）时设置。
+   在本例中，邮箱被创建为可以容纳一个 Example_t 结构。 Example_t 包含一个时间戳，以便邮箱中保存的数据可以记录最后更新时间。此示例中使用的时间戳仅用于演示目的——邮箱可以容纳应用程序编写者所需的任何数据，数据不需要包含时间戳。 */
+typedef struct xExampleStructure
+{
+    TickType_t xTimeStamp;
+    uint32_t ulValue;
+} Example_t;
+
+/* 邮箱是一个队列，因此它的句柄保存在一个类型为 QueueHandle_t 的变量中。 */
+QueueHandle_t xMailbox;
+
+void vAFunction( void )
+{
+    /* 创建将用作邮箱的队列。队列的长度为 1，以便可以与下面描述的 xQueueOverwrite() API 函数一起使用。 */
+    xMailbox = xQueueCreate( 1, sizeof( Example_t ) );
+}
+</code></pre>
+<p><strong><em>清单 5.28</em></strong> <em>创建一个用作邮箱的队列</em></p>
+<h3 id="571-xqueueoverwrite-api">5.7.1 xQueueOverwrite() API 函数</h3>
+<p>与 <code>xQueueSendToBack()</code> API 函数一样，<code>xQueueOverwrite()</code> API 函数将数据发送到队列。与 <code>xQueueSendToBack()</code> 不同，如果队列已经满了，则 <code>xQueueOverwrite()</code> 会覆盖队列中已经存在的数据。</p>
+<p><code>xQueueOverwrite()</code> 只能与长度为一的队列一起使用。覆盖模式将始终写入队列的前端并更新队列的前端指针，但不会更新等待的消息。如果定义了 <code>configASSERT</code>，则当队列长度大于 1 时，将发生断言失败。</p>
+<blockquote>
+<p><em>注意：切勿从中断服务例程中调用 <code>xQueueOverwrite()</code>。应使用中断安全版本 <code>xQueueOverwriteFromISR()</code> 代替。</em></p>
+</blockquote>
+<p><a name="list5.29" title="清单 5.29 xQueueOverwrite() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueueOverwrite( QueueHandle_t xQueue, const void * pvItemToQueue );
+</code></pre>
+<p><strong><em>清单 5.29</em></strong> <em>xQueueOverwrite() API 函数原型</em></p>
+<p><strong>xQueueOverwrite() 参数和返回值</strong></p>
+<ul>
+<li><code>xQueue</code></li>
+</ul>
+<p>正在发送（写入）数据的队列的句柄。队列句柄将是从 <code>xQueueCreate()</code> 或 <code>xQueueCreateStatic()</code> 返回的，用于创建队列。</p>
+<ul>
+<li><code>pvItemToQueue</code></li>
+</ul>
+<p>指向要复制到队列中的数据的指针。</p>
+<p>队列可以容纳的每个项目的大小在创建队列时设置，因此将从 <code>pvItemToQueue</code> 复制到队列存储区域的字节数。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p><code>xQueueOverwrite()</code> 即使在队列已满时也会写入队列，因此 <code>pdPASS</code> 是唯一可能的返回值。</p>
+<p>清单 5.30 显示了如何使用 <code>xQueueOverwrite()</code> 向在清单 5.28 中创建的邮箱（队列）写入数据。</p>
+<p><a name="list5.30" title="清单 5.30 使用 xQueueOverwrite() API 函数"></a></p>
+<pre><code class="language-c">void vUpdateMailbox( uint32_t ulNewValue )
+{
+    /* Example_t 在清单 5.28 中定义。 */
+    Example_t xData;
+
+    /* 将新数据写入 Example_t 结构。*/
+    xData.ulValue = ulNewValue;
+
+    /* 使用 RTOS 滴答计数器作为存储在 Example_t 中的时间戳。
+       结构。 */
+    xData.xTimeStamp = xTaskGetTickCount();
+
+    /* 发送结构到邮箱——覆盖邮箱中已经存在的任何数据。 */
+    xQueueOverwrite( xMailbox, &amp;xData );
+}
+</code></pre>
+<p><strong><em>清单 5.30</em></strong> <em>使用 xQueueOverwrite() API 函数</em></p>
+<h3 id="572-xqueuepeek-api">5.7.2 xQueuePeek() API 函数</h3>
+<p><code>xQueuePeek()</code> 从队列接收（读取）项目 <em>而不</em> 移除队列中的项目。<code>xQueuePeek()</code> 从队列的头部接收数据，而不修改存储在队列中的数据或数据的存储顺序。</p>
+<blockquote>
+<p><em>注意：切勿从中断服务例程中调用 <code>xQueuePeek()</code>。应使用中断安全版本 <code>xQueuePeekFromISR()</code> 代替。</em></p>
+</blockquote>
+<p><em><code>xQueuePeek()</code> 具有与 <code>xQueueReceive()</code> 相同的函数参数和返回值。</em></p>
+<p><a name="list5.31" title="清单 5.31 xQueuePeek() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xQueuePeek( QueueHandle_t xQueue,
+                       void * const pvBuffer,
+                       TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 5.31</em></strong> <em>xQueuePeek() API 函数原型</em></p>
+<p>清单 5.32 显示了如何使用 <code>xQueuePeek()</code> 接收在清单 5.30 中发布到邮箱（队列）的项目。</p>
+<p><a name="list5.32" title="清单 5.32 使用 xQueuePeek() API 函数"></a></p>
+<pre><code class="language-c">BaseType_t vReadMailbox( Example_t *pxData )
+{
+    TickType_t xPreviousTimeStamp;
+    BaseType_t xDataUpdated;
+
+    /* 此函数使用从邮箱接收到的最新值更新 Example_t 结构。在覆盖新数据之前记录 pxData 中包含的时间戳。 */
+    xPreviousTimeStamp = pxData-&gt;xTimeStamp;
+
+    /* 使用存储在邮箱中的数据更新指向 pxData 的 Example_t 结构。如果在这里使用 xQueueReceive()，则邮箱将被清空，无法被其他任务读取。使用 xQueuePeek() 而不是 xQueueReceive() 可确保数据保留在邮箱中。
+
+       指定了阻塞时间，因此调用任务将在邮箱为空时被置于阻塞状态，以等待邮箱中数据变为可用。使用无限块时间，因此不需要检查 xQueuePeek() 返回值，因为 xQueuePeek() 仅在数据可用时返回。 */
+    xQueuePeek( xMailbox, pxData, portMAX_DELAY );
+
+    /* 如果读取的值自上次调用以来已更新，则返回 pdTRUE；否则返回 pdFALSE。 */
+    if( pxData-&gt;xTimeStamp &gt; xPreviousTimeStamp )
+    {
+        xDataUpdated = pdTRUE;
+    }
+    else
+    {
+        xDataUpdated = pdFALSE;
+    }
+
+    return xDataUpdated;
+}
+</code></pre>
+<p><strong><em>清单 5.32</em></strong> <em>使用 xQueuePeek() API 函数</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

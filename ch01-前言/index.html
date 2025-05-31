@@ -1,0 +1,955 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch01-%E5%89%8D%E8%A8%80/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>1 前言 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1 前言
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    1 前言
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    1 前言
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 小型嵌入式系统中的多任务
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1 小型嵌入式系统中的多任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.1 关于 FreeRTOS 内核
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.2 价值主张
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#113" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.3 关于术语的说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#114-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.4 为什么要使用 RTOS？
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#115-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.5 FreeRTOS 内核特性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#116-freertosopenrtos-safertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.6 许可协议及 FreeRTOS、OpenRTOS 和 SafeRTOS 家族
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 附带的源文件和工程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 附带的源文件和工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.1 获取本书配套示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    2 FreeRTOS 内核分发包
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    3 堆内存管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    4 任务管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    5 队列管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    6 软件定时器管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    7 中断管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    8 资源管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    9 事件组
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    10 任务通知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    11 低功耗支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 开发者支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    13 故障排查
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    书名
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缩略语表
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 小型嵌入式系统中的多任务
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1 小型嵌入式系统中的多任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.1 关于 FreeRTOS 内核
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.2 价值主张
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#113" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.3 关于术语的说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#114-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.4 为什么要使用 RTOS？
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#115-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.5 FreeRTOS 内核特性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#116-freertosopenrtos-safertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1.6 许可协议及 FreeRTOS、OpenRTOS 和 SafeRTOS 家族
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 附带的源文件和工程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 附带的源文件和工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.1 获取本书配套示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="1">1 前言</h1>
+<h2 id="11">1.1 小型嵌入式系统中的多任务</h2>
+<h3 id="111-freertos">1.1.1 关于 FreeRTOS 内核</h3>
+<p>FreeRTOS 是一组 C 语言库，包括一个实时内核和一组实现补充功能的模块化库。</p>
+<p>Richard Barry 于 2003 年左右最初开发了 FreeRTOS。Richard 的公司 Real-Time Engineers Ltd 与全球领先的芯片公司密切合作，持续开发 FreeRTOS，直到 2016 年 Amazon Web Services (AWS) 接管了 FreeRTOS 的管理。现在 Richard 作为 AWS IoT 团队的高级首席工程师继续从事 FreeRTOS 的相关工作。FreeRTOS 采用 MIT 开源许可证，任何用途均可免费使用。你无需成为 AWS 客户也能受益于 AWS 的管理！</p>
+<p>FreeRTOS 内核非常适合运行在微控制器或小型微处理器上的深度嵌入式实时应用。这类应用通常包含硬实时和软实时需求的混合。</p>
+<p>软实时需求要求在某个时间点前完成任务，但超时不会导致系统失效。例如，响应按键过慢可能让系统显得反应迟缓，但并不会让系统无法使用。</p>
+<p>硬实时需求要求在某个时间点前完成任务，超时将导致系统彻底失效。例如，安全气囊如果对碰撞传感器输入响应过慢，可能会造成更大的伤害。</p>
+<p>FreeRTOS 内核是一个实时内核（或实时调度器），使基于 FreeRTOS 的应用能够满足其硬实时需求。它允许应用被组织为一组独立的执行线程。例如，在只有一个内核的处理器上，同一时刻只能有一个线程在执行。内核通过检查应用设计者为每个线程分配的优先级来决定执行哪个线程。最简单的情况下，设计者可以为实现硬实时需求的线程分配更高优先级，为实现软实时需求的线程分配较低优先级。这种分配可以确保硬实时线程总是优先于软实时线程执行，但实际优先级分配并不总是如此简单。</p>
+<p>如果你还没有完全理解上面段落中的概念，不必担心。后续章节会通过详细解释和大量示例，帮助你理解如何使用实时内核，尤其是 FreeRTOS。</p>
+<h3 id="112">1.1.2 价值主张</h3>
+<p>FreeRTOS 内核取得全球性成功，源于其极具吸引力的价值主张：FreeRTOS 由专业团队开发，严格质量控制，健壮可靠，支持完善，无知识产权归属歧义，并且在商业应用中真正免费，无需公开你的专有源代码。此外，AWS 的管理带来了全球影响力、专业的安全事件响应流程、庞大且多元化的开发团队、形式化验证、渗透测试、内存安全证明和长期支持——同时保持 FreeRTOS 作为硬件、开发工具和云服务中立的开源项目。FreeRTOS 的开发在 GitHub 上透明且由社区驱动，无需特殊工具或开发流程。</p>
+<p>你可以直接用 FreeRTOS 推出产品，无需告知我们，更无需支付任何费用，成千上万家公司正是这样做的。如果你希望获得额外支持，或你的法务团队需要额外的书面担保或赔偿，我们的战略合作伙伴也提供简单低价的商业授权选项。你可以随时选择商业授权，获得更高的保障。</p>
+<h3 id="113">1.1.3 关于术语的说明</h3>
+<p>在 FreeRTOS 中，每个执行线程被称为“任务”（task）。嵌入式领域对术语并无统一标准，但我更喜欢“任务”而不是“线程”，因为“线程”在某些领域有更具体的含义。</p>
+<h3 id="114-rtos">1.1.4 为什么要使用 RTOS？</h3>
+<p>有许多成熟的方法可以在不使用多线程内核的情况下编写优秀的嵌入式软件。如果开发的系统很简单，这些方法可能是最合适的解决方案。对于更复杂的系统，使用内核通常更有优势，但两者的分界点总是主观的。</p>
+<p>如前所述，任务优先级有助于确保应用满足处理时限，但内核还能带来其他不那么明显的好处，部分如下：</p>
+<ul>
+<li>屏蔽时序信息
+  RTOS 负责执行时序，并为应用提供与时间相关的 API，使应用代码结构更清晰，整体代码量更小。</li>
+<li>可维护性/可扩展性
+  屏蔽时序细节减少了模块间的依赖，使软件能够以可控、可预测的方式演进。内核负责时序，因此应用性能对底层硬件变化不敏感。</li>
+<li>模块化
+  任务是独立的模块，每个任务应有明确的功能。</li>
+<li>团队开发
+  任务应有明确的接口，便于团队协作开发。</li>
+<li>更易测试
+  结构清晰、接口干净的独立任务更易于单独测试。</li>
+<li>代码复用
+  模块化和低耦合的代码更易于复用。</li>
+<li>提高效率
+  使用 RTOS 的应用可以完全事件驱动，无需为未发生的事件轮询浪费处理时间。
+  当然，事件驱动带来的效率提升需要处理 RTOS 的时钟中断和任务切换，但不使用 RTOS 的应用通常也会有某种时钟中断。</li>
+<li>空闲时间
+  当没有应用任务需要处理时，自动创建的空闲任务会执行。空闲任务可用于测量剩余处理能力、执行后台检查或将处理器置于低功耗模式。</li>
+<li>电源管理
+  使用 RTOS 提高的效率使处理器能有更多时间处于低功耗模式。每次空闲任务运行时将处理器置于低功耗状态，可显著降低功耗。FreeRTOS 还支持特殊的无时钟（tick-less）模式，使处理器能进入更深的低功耗状态并保持更长时间。</li>
+<li>灵活的中断处理
+  可通过将处理延迟到应用创建的任务或自动创建的 RTOS 守护任务（定时器任务）来缩短中断处理程序。</li>
+<li>混合处理需求
+  简单的设计模式即可实现周期性、持续性和事件驱动的处理。通过合理选择任务和中断优先级，还能同时满足硬实时和软实时需求。</li>
+</ul>
+<h3 id="115-freertos">1.1.5 FreeRTOS 内核特性</h3>
+<p>FreeRTOS 内核具备以下标准特性：</p>
+<ul>
+<li>抢占式或协作式运行</li>
+<li>可选时间片轮转</li>
+<li>非常灵活的任务优先级分配</li>
+<li>灵活、快速且轻量的任务通知机制</li>
+<li>队列</li>
+<li>二值信号量</li>
+<li>计数信号量</li>
+<li>互斥量</li>
+<li>递归互斥量</li>
+<li>软件定时器</li>
+<li>事件组</li>
+<li>流缓冲区</li>
+<li>消息缓冲区</li>
+<li>协程（已弃用）</li>
+<li>时钟钩子函数</li>
+<li>空闲钩子函数</li>
+<li>堆栈溢出检查</li>
+<li>跟踪宏</li>
+<li>任务运行时统计</li>
+<li>可选商业授权与支持</li>
+<li>完整的中断嵌套模型（部分架构支持）</li>
+<li>针对极低功耗应用的无时钟能力（部分架构支持）</li>
+<li>支持内存保护单元以隔离任务并提升应用安全性（部分架构支持）</li>
+<li>适当时可由软件管理的中断堆栈（有助于节省 RAM）</li>
+<li>支持静态或动态分配 RTOS 对象</li>
+</ul>
+<h3 id="116-freertosopenrtos-safertos">1.1.6 许可协议及 FreeRTOS、OpenRTOS 和 SafeRTOS 家族</h3>
+<p><strong>FreeRTOS</strong> 采用 MIT 开源许可证，旨在确保：</p>
+<ul>
+<li>FreeRTOS 可用于商业应用。</li>
+<li>FreeRTOS 本身对所有人免费开放。</li>
+<li>FreeRTOS 用户保留其知识产权所有权。</li>
+</ul>
+<p>最新开源许可信息见 <a href="https://www.FreeRTOS.org/license">https://www.FreeRTOS.org/license</a>。</p>
+<p><strong>OpenRTOS</strong> 是由第三方在 AWS 授权下提供的 FreeRTOS 商业授权版本。</p>
+<p><strong>SafeRTOS</strong> 与 FreeRTOS 使用模式相同，但其开发过程符合多项国际安全标准的合规要求。</p>
+<h2 id="12">1.2 附带的源文件和工程</h2>
+<h3 id="121">1.2.1 获取本书配套示例</h3>
+<p>可通过 <a href="https://www.FreeRTOS.org/Documentation/code">https://www.FreeRTOS.org/Documentation/code</a> 下载的 zip 文件包含本书示例所需的全部源代码、预配置工程文件和构建运行说明。注意该 zip 文件未必包含 FreeRTOS 的最新版本。</p>
+<p>本书中的截图展示了在 Microsoft Windows 环境下运行的示例，使用的是 FreeRTOS Windows 移植版。该工程已预配置为使用免费版 Visual Studio Community 进行构建，下载地址为 <a href="https://www.visualstudio.com/">https://www.visualstudio.com/</a>。需要注意，FreeRTOS Windows 移植版仅用于评估、测试和开发，并不具备真正的实时行为。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
