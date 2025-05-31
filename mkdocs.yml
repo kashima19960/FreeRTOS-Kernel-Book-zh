@@ -1,0 +1,4 @@
+site_name: FreeRTOS Kernel Book zh
+site_url: https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh
+theme:
+  name: material
