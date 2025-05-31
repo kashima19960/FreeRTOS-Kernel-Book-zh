@@ -10,9 +10,9 @@
 </br>
 </br>
   
-***献给 Caroline、India 和 Max。*** **- R.B.**
+***To Caroline, India and Max.*** **- R.B.**
 
-***献给由 FreeRTOS 驱动的下一代伟大系统。*** **- J.J.**
+***Dedicated to the next generation of great systems powered by FreeRTOS.*** **- J.J.**
 
 </br>
 </br>
