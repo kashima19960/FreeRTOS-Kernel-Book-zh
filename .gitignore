@@ -1,1 +1,4 @@
 .venv
+
+# MkDocs 构建输出
+site/
