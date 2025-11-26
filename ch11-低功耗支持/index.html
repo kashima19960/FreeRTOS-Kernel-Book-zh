@@ -1,0 +1,1205 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/">
+      
+      
+        <link rel="prev" href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/">
+      
+      
+        <link rel="next" href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>11 低功耗支持 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#11" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              11 低功耗支持
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 节能简介
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#112-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 FreeRTOS 睡眠模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#113" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3 启用内置无滴答空闲功能的方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.3 启用内置无滴答空闲功能的方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1131-the-portsuppress_ticks_and_sleep-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.1 The portSUPPRESS_TICKS_AND_SLEEP() Macro
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1132-the-vportsuppressticksandsleep-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.2 The vPortSuppressTicksAndSleep Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1133-the-etaskconfirmsleepmodestatus-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.3 The eTaskConfirmSleepModeStatus Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1134-the-configpre_sleep_processing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.4 The configPRE_SLEEP_PROCESSING configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1135-the-configpost_sleep_processing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.5 The configPOST_SLEEP_PROCESSING configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#114-implementing-portsuppress_ticks_and_sleep-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.4 Implementing portSUPPRESS_TICKS_AND_SLEEP() Macro
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#115-idle-task-hook-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.5 Idle Task Hook Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 节能简介
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#112-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 FreeRTOS 睡眠模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#113" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3 启用内置无滴答空闲功能的方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.3 启用内置无滴答空闲功能的方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1131-the-portsuppress_ticks_and_sleep-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.1 The portSUPPRESS_TICKS_AND_SLEEP() Macro
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1132-the-vportsuppressticksandsleep-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.2 The vPortSuppressTicksAndSleep Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1133-the-etaskconfirmsleepmodestatus-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.3 The eTaskConfirmSleepModeStatus Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1134-the-configpre_sleep_processing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.4 The configPRE_SLEEP_PROCESSING configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1135-the-configpost_sleep_processing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3.5 The configPOST_SLEEP_PROCESSING configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#114-implementing-portsuppress_ticks_and_sleep-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.4 Implementing portSUPPRESS_TICKS_AND_SLEEP() Macro
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#115-idle-task-hook-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.5 Idle Task Hook Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="11">11 低功耗支持</h1>
+<h2 id="111">11.1 节能简介</h2>
+<p>FreeRTOS 通过 IDLE 任务钩子和无滴答空闲模式（tickless Idle）为低功耗模式提供了便捷支持。</p>
+<p>通常可以通过在 IDLE 任务钩子中让微控制器进入低功耗状态来降低功耗。但这种方法的节能效果受限于需要定期退出并重新进入低功耗状态以处理滴答中断。如果滴答中断频率过高（唤醒过于频繁），则每次进入和退出低功耗状态所消耗的能量和时间会抵消节能收益，除非采用极轻量级的省电模式。</p>
+<p>FreeRTOS 支持一种低功耗状态，允许微控制器周期性地进入和退出低功耗。FreeRTOS 的无滴答空闲模式会在空闲期间（没有可运行的应用任务时）停止周期性滴答中断，使 MCU 能够保持在深度省电状态，直到发生中断或 RTOS 内核需要将任务切换到就绪状态。恢复滴答中断时，内核会对滴答计数值进行修正。无滴答模式的原理是在 MCU 执行空闲任务时让其进入低功耗模式以节省系统功耗。</p>
+<h2 id="112-freertos">11.2 FreeRTOS 睡眠模式</h2>
+<p>FreeRTOS 支持三种睡眠模式：</p>
+<ol>
+<li>
+<p>eAbortSleep - 表示有任务变为就绪、挂起了上下文切换或滴答中断已发生但因调度器挂起而挂起。此模式通知 RTOS 放弃进入睡眠模式。</p>
+</li>
+<li>
+<p>eStandardSleep - 允许进入不会超过预期空闲时间的睡眠模式。</p>
+</li>
+<li>
+<p>eNoTasksWaitingTimeout - 当没有任务等待超时时进入此模式，此时可以安全地进入只能通过外部中断或复位唤醒的睡眠模式。</p>
+</li>
+</ol>
+<h2 id="113">11.3 启用内置无滴答空闲功能的方法</h2>
+<p>通过在 FreeRTOSConfig.h 中将 <code>configUSE_TICKLESS_IDLE</code> 定义为 1（对于支持该特性的端口）即可启用内置无滴答空闲功能。对于任何 FreeRTOS 端口（包括已内置该功能的端口），也可以通过将 <code>configUSE_TICKLESS_IDLE</code> 定义为 2 来提供用户自定义的无滴答空闲功能。 </p>
+<p>启用无滴答空闲功能后，内核会在满足以下两个条件时调用 <code>portSUPPRESS_TICKS_AND_SLEEP()</code> 宏：</p>
+<ol>
+<li>
+<p>只有空闲任务可运行，因为所有应用任务都处于阻塞或挂起状态。</p>
+</li>
+<li>
+<p>在内核需要将应用任务从阻塞状态转换为就绪状态之前，至少会经过 n 个完整的滴答周期，其中 n 由 FreeRTOSConfig.h 中的 <code>configEXPECTED_IDLE_TIME_BEFORE_SLEEP</code> 定义设置。</p>
+</li>
+</ol>
+<h3 id="1131-the-portsuppress_ticks_and_sleep-macro">11.3.1 The portSUPPRESS_TICKS_AND_SLEEP() Macro</h3>
+<p><a name="list11.1" title="Listing 11.1 The prototype for the portSUPPRESS\_TICKS\_AND\_SLEEP macro"></a></p>
+<pre><code class="language-c">portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime )
+</code></pre>
+<p><strong><em>Listing 11.1</em></strong> <em>The prototype for the portSUPPRESS_TICKS_AND_SLEEP macro</em></p>
+<p>The value of the <code>xExpectedIdleTime</code> parameter in <code>portSUPPRESS_TICKS_AND_SLEEP()</code> equals the total number 
+of tick periods before a task is due to be moved into the Ready state. The parameter value is therefore the 
+time the microcontroller can safely remain in a deep sleep state, with the tick interrupt suppressed. </p>
+<h3 id="1132-the-vportsuppressticksandsleep-function">11.3.2 The vPortSuppressTicksAndSleep Function</h3>
+<p>The <code>vPortSuppressTicksAndSleep()</code> function is defined in FreeRTOS and it can be used to implement the 
+tickless mode. This function is weakly defined in the FreeRTOS Cortex-M port layer and can be overridden 
+by the application writer.</p>
+<p><a name="list11.2" title="Listing 11.2 The vPortSuppressTicksAndSleep API function prototype"></a></p>
+<pre><code class="language-c">void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+</code></pre>
+<p><strong><em>Listing 11.2</em></strong> <em>The vPortSuppressTicksAndSleep API function prototype</em></p>
+<h3 id="1133-the-etaskconfirmsleepmodestatus-function">11.3.3 The eTaskConfirmSleepModeStatus Function</h3>
+<p>The API <em>eTaskConfirmSleepModeStatus</em> returns the sleep mode status to determine if it is ok to proceed 
+with the sleep and if it is ok to sleep indefinitely. This functionality is only available when <code>configUSE_TICKLESS_IDLE</code> 
+is set to 1.</p>
+<p><a name="list11.3" title="Listing 11.3 The eTaskConfirmSleepModeStatus API function prototype"></a></p>
+<pre><code class="language-c">eSleepModeStatus eTaskConfirmSleepModeStatus( void );
+</code></pre>
+<p><strong><em>Listing 11.3</em></strong> <em>The eTaskConfirmSleepModeStatus API function prototype</em></p>
+<p>If <code>eTaskConfirmSleepModeStatus()</code> returns <code>eNoTasksWaitingTimeout</code> when it is called from 
+within <code>portSUPPRESS_TICKS_AND_SLEEP()</code>, then the microcontroller can remain in a deep sleep state 
+indefinitely. <code>eTaskConfirmSleepModeStatus()</code> will only return <code>eNoTasksWaitingTimeout</code> when the 
+following conditions are true:</p>
+<ul>
+<li>
+<p>Software timers are not being used, so the scheduler is not due to execute a timer callback function 
+  at any time in the future.</p>
+</li>
+<li>
+<p>All the application tasks are either in the Suspended state, or in the Blocked state with a timeout value 
+  of <code>portMAX_DELAY</code>, so the scheduler is not due to transition a task out of the Blocked state at any fixed 
+  time in the future.</p>
+</li>
+</ul>
+<p>To avoid race conditions, the FreeRTOS scheduler is suspended before <code>portSUPPRESS_TICKS_AND_SLEEP()</code> is 
+called, and resumed when <code>portSUPPRESS_TICKS_AND_SLEEP()</code> completes. This ensures application tasks cannot 
+execute between the microcontroller exiting its low power state and <code>portSUPPRESS_TICKS_AND_SLEEP()</code> 
+completing its execution. Further, it is necessary for the <code>portSUPPRESS_TICKS_AND_SLEEP()</code> function to 
+create a small critical section between the timer being stopped and the sleep mode being entered to ensure 
+it is ok to proceed into the sleep mode. <code>eTaskConfirmSleepModeStatus()</code> should be called from this critical 
+section.</p>
+<p>In addition, FreeRTOS provides users with two other interface functions defined in FreeRTOSConfig.h. These 
+macros allow the application writer to add additional steps before and after the MCU is placed into the low 
+power state, respectively.</p>
+<h3 id="1134-the-configpre_sleep_processing-configuration">11.3.4 The configPRE_SLEEP_PROCESSING configuration</h3>
+<p><a name="list11.4" title="Listing 11.4 The prototype for the configPRE\_SLEEP\_PROCESSING macro"></a></p>
+<pre><code class="language-c">configPRE_SLEEP_PROCESSING( xExpectedIdleTime )
+</code></pre>
+<p><strong><em>Listing 11.4</em></strong> <em>The prototype for the configPRE_SLEEP_PROCESSING macro</em></p>
+<p>Before the user can make the MCU enter the low-power mode, <code>configPRE_SLEEP_PROCESSING()</code> must be called to 
+configure the system parameters to reduce the system power consumption, such as turning off other peripheral 
+clocks, reducing the system frequency. </p>
+<h3 id="1135-the-configpost_sleep_processing-configuration">11.3.5 The configPOST_SLEEP_PROCESSING configuration</h3>
+<p><a name="list11.5" title="Listing 11.5 The prototype for the configPOST\_SLEEP\_PROCESSING macro"></a></p>
+<pre><code class="language-c">configPOST_SLEEP_PROCESSING( xExpectedIdleTime )
+</code></pre>
+<p><strong><em>Listing 11.5</em></strong> <em>The prototype for the configPOST_SLEEP_PROCESSING macro</em></p>
+<p>After exiting the low-power mode, the user should call the <code>configPOST_SLEEP_PROCESSING()</code> function 
+to restore the system's main frequency and peripheral functions.</p>
+<h2 id="114-implementing-portsuppress_ticks_and_sleep-macro">11.4 Implementing portSUPPRESS_TICKS_AND_SLEEP() Macro</h2>
+<p>If the FreeRTOS port in use does not provide a default implementation of <code>portSUPPRESS_TICKS_AND_SLEEP()</code>, 
+then the application writer can provide their own implementation by defining <code>portSUPPRESS_TICKS_AND_SLEEP()</code> 
+in FreeRTOSConfig.h. If the FreeRTOS port in use does provide a default implementation of <code>portSUPPRESS_TICKS_AND_SLEEP()</code>, 
+then the application writer can override the default implementation by defining <code>portSUPPRESS_TICKS_AND_SLEEP()</code> 
+in FreeRTOSConfig.h. </p>
+<p>The following source code is an example of how <code>portSUPPRESS_TICKS_AND_SLEEP()</code> might be implemented by an 
+application writer. The example is basic, and will introduce some slippage between the time maintained by 
+the kernel and calendar time. Of the function calls shown in the example, only <code>vTaskStepTick()</code> 
+and <code>eTaskConfirmSleepModeStatus()</code> are part of the FreeRTOS API. The other functions are specific to the 
+clocks and power saving modes available on the hardware in use, and as such, must be provided by the 
+application writer.</p>
+<p><a name="list11.6" title="Listing 11.6 An example of a user defined implementation of portSUPPRESS\_TICKS\_AND\_SLEEP()"></a></p>
+<pre><code class="language-c">/* First define the portSUPPRESS_TICKS_AND_SLEEP() macro.  The parameter is the
+   time, in ticks, until the kernel next needs to execute. */
+
+#define portSUPPRESS_TICKS_AND_SLEEP( xIdleTime ) vApplicationSleep( xIdleTime )
+
+/* Define the function that is called by portSUPPRESS_TICKS_AND_SLEEP(). */
+void vApplicationSleep( TickType_t xExpectedIdleTime )
+{
+    unsigned long ulLowPowerTimeBeforeSleep, ulLowPowerTimeAfterSleep;
+
+    eSleepModeStatus eSleepStatus;
+
+    /* Read the current time from a time source that will remain operational
+       while the microcontroller is in a low power state. */
+    ulLowPowerTimeBeforeSleep = ulGetExternalTime();
+
+    /* Stop the timer that is generating the tick interrupt. */
+    prvStopTickInterruptTimer();
+
+    /* Enter a critical section that will not effect interrupts bringing the MCU
+       out of sleep mode. */
+    disable_interrupts();
+
+    /* Ensure it is still ok to enter the sleep mode. */
+    eSleepStatus = eTaskConfirmSleepModeStatus();
+
+    if( eSleepStatus == eAbortSleep )
+    {
+        /* A task has been moved out of the Blocked state since this macro was
+           executed, or a context siwth is being held pending.  Do not enter a
+           sleep state.  Restart the tick and exit the critical section. */
+        prvStartTickInterruptTimer();
+        enable_interrupts();
+    }
+    else
+    {
+        if( eSleepStatus == eNoTasksWaitingTimeout )
+        {
+            /* It is not necessary to configure an interrupt to bring the
+               microcontroller out of its low power state at a fixed time in 
+               the future. */
+            prvSleep();
+        }
+        else
+        {
+            /* Configure an interrupt to bring the microcontroller out of its low
+               power state at the time the kernel next needs to execute.  The
+               interrupt must be generated from a source that remains operational
+               when the microcontroller is in a low power state. */
+            vSetWakeTimeInterrupt( xExpectedIdleTime );
+
+            /* Enter the low power state. */
+            prvSleep();
+
+            /* Determine how long the microcontroller was actually in a low power
+               state for, which will be less than xExpectedIdleTime if the
+               microcontroller was brought out of low power mode by an interrupt
+               other than that configured by the vSetWakeTimeInterrupt() call.
+               Note that the scheduler is suspended before
+               portSUPPRESS_TICKS_AND_SLEEP() is called, and resumed when
+               portSUPPRESS_TICKS_AND_SLEEP() returns.  Therefore no other tasks will
+               execute until this function completes. */
+            ulLowPowerTimeAfterSleep = ulGetExternalTime();
+
+            /* Correct the kernels tick count to account for the time the
+               microcontroller spent in its low power state. */
+            vTaskStepTick( ulLowPowerTimeAfterSleep - ulLowPowerTimeBeforeSleep );
+        }
+
+        /* Exit the critical section - it might be possible to do this immediately
+           after the prvSleep() calls. */
+        enable_interrupts();
+
+        /* Restart the timer that is generating the tick interrupt. */
+        prvStartTickInterruptTimer();
+    }
+}
+</code></pre>
+<p><strong><em>Listing 11.6</em></strong> <em>An example of a user defined implementation of portSUPPRESS_TICKS_AND_SLEEP()</em></p>
+<h2 id="115-idle-task-hook-function">11.5 Idle Task Hook Function</h2>
+<p>The Idle task can optionally call an application defined hook (or callback) function - the idle hook. 
+The idle task runs at the lowest priority, so such an idle hook function will only get executed when 
+there are no tasks of higher priority that are able to run. This makes the Idle hook function an ideal 
+place to put the processor into a low power state - providing an automatic power saving whenever there 
+is no processing to be performed. The Idle hook will only get called if <code>configUSE_IDLE_HOOK</code> is set 
+to 1 within FreeRTOSConfig.h.</p>
+<p><a name="list11.7" title="Listing 11.7 The vApplicationIdleHook API function prototype"></a></p>
+<pre><code class="language-c">void vApplicationIdleHook( void );
+</code></pre>
+<p><strong><em>Listing 11.7</em></strong> <em>The vApplicationIdleHook API function prototype</em></p>
+<p>The idle hook is called repeatedly as long as the idle task is running. It is paramount that the idle 
+hook function does not call any API functions that could cause it to block. Also, if the application 
+makes use of the <code>vTaskDelete()</code> API function then the idle task hook must be allowed to periodically 
+return, since the idle task is responsible for cleaning up the resources that were allocated by the RTOS 
+kernel to the task that has been deleted.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
