@@ -313,16 +313,15 @@ FreeRTOS
 ```c
 int main( void )
 {
-	 /* Perform any hardware setup necessary. */
+	 /* 执行必要的硬件初始化。 */
 	 prvSetupHardware();
 
-	 /* --- APPLICATION TASKS CAN BE CREATED HERE --- */
+	 /* --- 在此创建应用任务 --- */
 
-	 /* Start the created tasks running. */
+	 /* 启动已创建的任务。 */
 	 vTaskStartScheduler();
 
-	 /* Execution will only reach here if there was insufficient heap to
-		 start the scheduler. */
+	 /* 只有在堆内存不足以启动调度器时才会执行到这里。 */
 	 for( ;; );
 	 return 0;
 }
