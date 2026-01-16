@@ -1,0 +1,3586 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>4 任务管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#4" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              4 任务管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#411" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 任务函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 顶层任务状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 任务创建
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 任务创建">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#441-xtaskcreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4.1 xTaskCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 任务优先级
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 任务优先级">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#451" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5.1 通用调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#452" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5.2 架构优化调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 时间测量与滴答中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-not-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 扩展 Not Running 状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.7 扩展 Not Running 状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#471-blocked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.1 Blocked 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#472-suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.2 Suspended 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#473-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.3 Ready 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#474" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.4 完整的状态转换图
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#475-vtaskdelayuntil-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.5 vTaskDelayUntil() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8 空闲任务与空闲任务钩子
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.8 空闲任务与空闲任务钩子">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#481" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8.1 空闲任务钩子函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#482" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8.2 空闲任务钩子函数实现的限制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#49" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9 更改任务优先级
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.9 更改任务优先级">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#491-vtaskpriorityset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9.1 vTaskPrioritySet() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#492-uxtaskpriorityget-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9.2 uxTaskPriorityGet() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#410" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.10 删除任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.10 删除任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4101-vtaskdelete-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.10.1 vTaskDelete() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#411_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11 线程本地存储与可重入性
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.11 线程本地存储与可重入性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4111-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.1 C 运行库线程本地存储实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4112-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.2 自定义 C 运行库线程本地存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4113" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.3 应用级线程本地存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#412" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12 调度算法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.12 调度算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4121" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.1 任务状态与事件回顾
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4122" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.2 选择调度算法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4123" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.3 带时间片的优先级抢占式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4124" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.4 不带时间片的优先级抢占式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4125" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.5 协作式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#411" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 任务函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 顶层任务状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 任务创建
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 任务创建">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#441-xtaskcreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4.1 xTaskCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 任务优先级
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 任务优先级">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#451" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5.1 通用调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#452" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5.2 架构优化调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 时间测量与滴答中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-not-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 扩展 Not Running 状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.7 扩展 Not Running 状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#471-blocked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.1 Blocked 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#472-suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.2 Suspended 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#473-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.3 Ready 状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#474" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.4 完整的状态转换图
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#475-vtaskdelayuntil-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7.5 vTaskDelayUntil() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8 空闲任务与空闲任务钩子
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.8 空闲任务与空闲任务钩子">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#481" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8.1 空闲任务钩子函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#482" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8.2 空闲任务钩子函数实现的限制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#49" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9 更改任务优先级
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.9 更改任务优先级">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#491-vtaskpriorityset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9.1 vTaskPrioritySet() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#492-uxtaskpriorityget-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.9.2 uxTaskPriorityGet() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#410" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.10 删除任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.10 删除任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4101-vtaskdelete-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.10.1 vTaskDelete() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#411_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11 线程本地存储与可重入性
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.11 线程本地存储与可重入性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4111-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.1 C 运行库线程本地存储实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4112-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.2 自定义 C 运行库线程本地存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4113" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.11.3 应用级线程本地存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#412" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12 调度算法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.12 调度算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4121" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.1 任务状态与事件回顾
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4122" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.2 选择调度算法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4123" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.3 带时间片的优先级抢占式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4124" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.4 不带时间片的优先级抢占式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4125" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.12.5 协作式调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="4">4 任务管理</h1>
+<h2 id="41">4.1 简介</h2>
+<h3 id="411">4.1.1 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>FreeRTOS 如何为应用中的每个任务分配处理时间。</li>
+<li>FreeRTOS 如何选择在任意时刻执行哪个任务。</li>
+<li>各任务相对优先级如何影响系统行为。</li>
+<li>任务可处于的状态。</li>
+</ul>
+<p>本章还讨论：</p>
+<ul>
+<li>如何实现任务。</li>
+<li>如何创建一个或多个任务实例。</li>
+<li>如何使用任务参数。</li>
+<li>如何更改已创建任务的优先级。</li>
+<li>如何删除任务。</li>
+<li>如何使用任务实现周期性处理。（后续章节还会介绍使用软件定时器实现同样效果。）</li>
+<li>空闲任务何时执行以及可如何利用它。</li>
+</ul>
+<p>本章中的概念是理解 FreeRTOS 用法与 FreeRTOS 应用行为的基础，因此这是本书中
+最为详细的章节。</p>
+<h2 id="42">4.2 任务函数</h2>
+<p>任务以 C 函数的形式实现。任务必须实现清单 4.1 所示的函数原型，该原型接收
+一个 <code>void *</code> 参数并返回 <code>void</code>。</p>
+<p><a name="list4.1" title="清单 4.1 任务函数原型"></a></p>
+<pre><code class="language-c">void vATaskFunction( void * pvParameters );
+</code></pre>
+<p><strong><em>清单 4.1</em></strong> <em>任务函数原型</em></p>
+<p>每个任务本身就是一个小程序。它有入口点，通常会在无限循环中运行，并不会退出。
+清单 4.2 展示了典型任务的结构。</p>
+<p>FreeRTOS 任务绝不能以任何方式从实现它的函数返回。它不应包含 <code>return</code> 语句，
+也不能让执行流越过实现函数的末尾。如果任务不再需要，应显式删除，如清单 4.2
+所示。</p>
+<p>一个任务函数定义可以用来创建任意数量的任务，每个创建出的任务都是独立的执行
+实例。每个实例都有自己的栈，因此拥有任务内部定义的任何自动（栈）变量的独立副本。</p>
+<p><a name="list4.2" title="清单 4.2 典型任务函数结构"></a></p>
+<pre><code class="language-c">void vATaskFunction( void * pvParameters )
+{
+        /*
+         * 在函数内部可以像平常一样声明栈分配变量。
+         * 使用此示例函数创建的每个任务实例，都会在任务栈上
+         * 分配自己独立的 lStackVariable 实例。
+         */
+        long lStackVariable = 0;
+
+        /*
+         * 与栈分配变量相对，使用 `static` 关键字声明的变量由链接器
+         * 分配到特定内存位置。这意味着所有调用 vATaskFunction 的任务
+         * 将共享同一个 lStaticVariable 实例。
+         */
+        static long lStaticVariable = 0;
+
+        for( ;; )
+        {
+                /* 任务功能的实现代码放在这里。 */
+        }
+
+        /*
+         * 如果任务实现退出了上述循环，则必须在到达实现函数末尾前
+         * 删除该任务。当向 vTaskDelete() API 函数传入 NULL 参数时，
+         * 表示要删除的是调用该函数的（本）任务。
+         */
+        vTaskDelete( NULL );
+}
+</code></pre>
+<p><strong><em>清单 4.2</em></strong> <em>典型任务函数结构</em></p>
+<h2 id="43">4.3 顶层任务状态</h2>
+<p>一个应用可能包含多个任务。如果运行应用的处理器只有一个核心，那么任一时刻
+只能有一个任务在执行。这意味着任务可能处于两种状态之一：<em>Running</em> 与
+<em>Not Running</em>。先从这种简化模型开始，稍后本章会介绍 <em>Not Running</em> 状态下的
+多个子状态。</p>
+<p>当处理器正在执行某任务的代码时，该任务处于 <em>Running</em> 状态。当任务处于
+<em>Not Running</em> 状态时，任务会被暂停，其状态被保存，以便调度器下次决定它进入
+<em>Running</em> 状态时能够继续执行。任务恢复执行时，会从其离开 <em>Running</em> 状态前
+即将执行的指令处继续。</p>
+<p><a name="fig4.1" title="图 4.1 顶层任务状态与转换"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.1_top_level_task_states.png" />
+<strong><em>图 4.1</em></strong> <em>顶层任务状态与转换</em></p>
+<hr />
+<p>任务从 <em>Not Running</em> 状态转换到 <em>Running</em> 状态称为 “switched in” 或
+“swapped in”。相反，任务从 <em>Running</em> 状态转换到 <em>Not Running</em> 状态称为
+“switched out” 或 “swapped out”。FreeRTOS 调度器是唯一能够将任务在
+<em>Running</em> 状态内外切换的实体。</p>
+<h2 id="44">4.4 任务创建</h2>
+<p>可用于创建任务的 API 函数共有六个：
+<code>xTaskCreate()</code>、
+<code>xTaskCreateStatic()</code>、
+<code>xTaskCreateRestricted()</code>、
+<code>xTaskCreateRestrictedStatic()</code>、
+<code>xTaskCreateAffinitySet()</code> 和
+<code>xTaskCreateStaticAffinitySet()</code>。</p>
+<p>每个任务需要两块 RAM：一块用于保存任务控制块（TCB），一块用于保存任务栈。
+名称中包含 “Static” 的 FreeRTOS API 函数使用由参数传入的预分配 RAM。相反，
+名称中不包含 “Static” 的 API 函数会在运行时从系统堆中动态分配所需 RAM。</p>
+<p>部分 FreeRTOS port 支持任务在“受限”或“非特权”模式下运行。名称中包含
+“Restricted” 的 API 函数创建执行时对系统内存访问受限的任务；名称中不包含
+“Restricted” 的 API 函数创建在“特权模式”下执行、可访问系统完整内存映射的任务。</p>
+<p>支持对称多处理（SMP）的 FreeRTOS port 允许不同任务在同一 CPU 的多个核心上
+同时运行。对于这些 port，可以使用名称中包含 “Affinity” 的函数来指定任务将运行
+在哪个核心上。</p>
+<p>FreeRTOS 的任务创建 API 比较复杂。本书大多数示例使用 <code>xTaskCreate()</code>，因为
+它是这些函数中最简单的一个。</p>
+<h3 id="441-xtaskcreate-api">4.4.1 xTaskCreate() API 函数</h3>
+<p>清单 4.3 给出了 <code>xTaskCreate()</code> API 函数原型。<code>xTaskCreateStatic()</code> 额外增加
+两个参数，分别指向预先分配用于保存任务数据结构和栈的内存。有关使用的数据类型
+与命名规范，请参阅 <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#25-数据类型与编码风格指南">第 2.5 节：数据类型与编码风格指南</a>。</p>
+<p><a name="list4.3" title="清单 4.3 xTaskCreate() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTaskCreate( TaskFunction_t pvTaskCode,
+                                                const char * const pcName,
+                                                configSTACK_DEPTH_TYPE usStackDepth,
+                                                void * pvParameters,
+                                                UBaseType_t uxPriority,
+                                                TaskHandle_t * pxCreatedTask );
+</code></pre>
+<p><strong><em>清单 4.3</em></strong> <em>xTaskCreate() API 函数原型</em></p>
+<p><strong>xTaskCreate() 参数与返回值：</strong></p>
+<ul>
+<li>
+<p><code>pvTaskCode</code></p>
+<p>任务本质上是永不退出的 C 函数，因此通常以无限循环实现。
+<code>pvTaskCode</code> 参数就是指向实现该任务的函数的指针（实际上就是函数名）。</p>
+</li>
+<li>
+<p><code>pcName</code></p>
+<p>任务的描述性名称。FreeRTOS 不会以任何方式使用该名称，加入它仅用于调试。
+用可读名称识别任务比使用任务句柄更容易。</p>
+<p>应用定义常量 <code>configMAX_TASK_NAME_LEN</code> 指定任务名的最大长度（包含 NULL 终止符）。
+若字符串更长，将被截断。</p>
+</li>
+<li>
+<p><code>usStackDepth</code></p>
+<p>指定为任务分配的栈大小。
+若要使用预分配内存而非动态分配内存，请使用 <code>xTaskCreateStatic()</code> 代替
+<code>xTaskCreate()</code>。</p>
+<p>注意该值表示栈可容纳的 <em>字数</em>，而非字节数。例如，若栈宽为 32 位且
+<code>usStackDepth</code> 为 128，则 <code>xTaskCreate()</code> 分配 512 字节栈空间（128 * 4 字节）。</p>
+<p><code>configSTACK_DEPTH_TYPE</code> 是宏，用于指定保存栈大小的数据类型。
+若未定义，<code>configSTACK_DEPTH_TYPE</code> 默认是 <code>uint16_t</code>，因此当栈深度
+乘以栈宽度大于 65535（16 位最大值）时，请在 FreeRTOSConfig.h 中将
+<code>configSTACK_DEPTH_TYPE</code> 定义为 <code>unsigned long</code> 或 <code>size_t</code>。</p>
+<p><a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#133-栈溢出">第 13.3 节：栈溢出</a> 介绍了选择最优栈大小的实用方法。</p>
+</li>
+<li>
+<p><code>pvParameters</code></p>
+<p>任务函数接受一个 <code>void *</code> 参数。<code>pvParameters</code> 是通过该参数传入任务的值。</p>
+</li>
+<li>
+<p><code>uxPriority</code></p>
+<p>指定任务优先级。0 为最低优先级，<code>(configMAX_PRIORITIES – 1)</code> 为最高优先级。
+<a href="#45-任务优先级">第 4.5 节</a> 描述了用户定义的 <code>configMAX_PRIORITIES</code> 常量。</p>
+<p>若定义的 <code>uxPriority</code> 大于 <code>(configMAX_PRIORITIES – 1)</code>，将被自动限制为
+<code>(configMAX_PRIORITIES – 1)</code>。</p>
+</li>
+<li>
+<p><code>pxCreatedTask</code></p>
+<p>指向用于保存已创建任务句柄的位置。该句柄可用于后续 API 调用，例如修改任务
+优先级或删除任务。</p>
+<p><code>pxCreatedTask</code> 是可选参数，若不需要任务句柄可设为 NULL。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>表示任务创建成功。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>表示堆内存不足，无法创建任务。
+<a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#3-堆内存管理">第 3 章</a> 提供了堆内存管理的更多信息。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="_1"><a name="example4.1" title="示例 4.1 创建任务"></a></h2>
+<p><strong><em>示例 4.1</em></strong> <em>创建任务</em></p>
+<hr />
+<p>以下示例演示如何创建两个简单任务并启动它们。任务通过一个粗糙的忙等循环
+来产生周期性延迟，从而周期性打印字符串。两个任务在相同优先级创建，且完全相同，
+仅输出字符串不同——各自实现见清单 4.4 与清单 4.5。关于在任务中使用 <code>printf()</code>
+的警告请参见第 8 章。</p>
+<p><a name="list4.4" title="清单 4.4 示例 4.1 中第一个任务的实现"></a></p>
+<pre><code class="language-c">void vTask1( void * pvParameters )
+{
+        /* ulCount 声明为 volatile，以确保不会被优化掉。 */
+        volatile unsigned long ulCount;
+
+        for( ;; )
+        {
+                /* 打印当前任务的名称。 */
+                vPrintLine( &quot;Task 1 is running&quot; );
+
+                /* 延时一段时间。 */
+                for( ulCount = 0; ulCount &lt; mainDELAY_LOOP_COUNT; ulCount++ )
+                {
+                        /*
+                         * 该循环只是一个非常粗糙的延时实现。
+                         * 这里没有任何事情要做。后续示例会用
+                         * 合适的延时/休眠函数替代该粗糙循环。
+                         */
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.4</em></strong> <em>示例 4.1 中第一个任务的实现</em></p>
+<p><a name="list4.5" title="清单 4.5 示例 4.1 中第二个任务的实现"></a></p>
+<pre><code class="language-c">void vTask2( void * pvParameters )
+{
+        /* ulCount 声明为 volatile，以确保不会被优化掉。 */
+        volatile unsigned long ulCount;
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( &quot;Task 2 is running&quot; );
+
+                /* 延时一段时间。 */
+                for( ulCount = 0; ulCount &lt; mainDELAY_LOOP_COUNT; ulCount++ )
+                {
+                        /*
+                         * 该循环只是一个非常粗糙的延时实现。
+                         * 这里没有任何事情要做。后续示例会用
+                         * 合适的延时/休眠函数替代该粗糙循环。
+                         */
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.5</em></strong> <em>示例 4.1 中第二个任务的实现</em></p>
+<p><code>main()</code> 函数在启动调度器之前创建任务——其实现见清单 4.6。</p>
+<p><a name="list4.6" title="清单 4.6 启动示例 4.1 的任务"></a></p>
+<pre><code class="language-c">int main( void )
+{
+        /*
+         * 启动 FreeRTOS 调度器后，此处声明的变量可能不再存在。
+         * 不要在任务中访问 main() 所用栈上声明的变量。
+         */
+
+        /*
+         * 创建两个任务中的一个。注意，真实应用应检查 xTaskCreate()
+         * 的返回值，以确保任务创建成功。
+         */
+        xTaskCreate( vTask1,  /* 指向实现该任务的函数的指针。*/
+                             &quot;Task 1&quot;,/* 任务的文本名称。 */
+                             1000,    /* 以字为单位的栈深度。 */
+                             NULL,    /* 本示例不使用任务参数。 */
+                             1,       /* 该任务以优先级 1 运行。 */
+                             NULL );  /* 本示例不使用任务句柄。 */
+
+        /* 以完全相同方式、相同优先级创建另一个任务。*/
+        xTaskCreate( vTask2, &quot;Task 2&quot;, 1000, NULL, 1, NULL );
+
+        /* 启动调度器，使任务开始执行。 */
+        vTaskStartScheduler();
+
+        /*
+         * 一切正常时 main() 不会到达这里，因为调度器已在运行已创建的任务。
+         * 如果 main() 到达这里，说明堆内存不足，无法创建空闲任务或定时器任务
+         *（本书后续章节描述）。第 3 章提供更多堆内存管理信息。
+         */
+        for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 4.6</em></strong> <em>启动示例 4.1 的任务</em></p>
+<p>执行示例会产生图 4.2 所示的输出。</p>
+<p><a name="fig4.2" title="图 4.2 执行示例 4.1 的输出"></a></p>
+<hr />
+<pre><code class="language-console">C:\Temp&gt;rtosdemo
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+</code></pre>
+<p><strong><em>图 4.2</em></strong> <em>执行示例 4.1 的输出<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">1</a></sup></em></p>
+<hr />
+<p>图 4.2 看起来像是两个任务同时执行；然而两个任务都在同一处理器核心上执行，
+因此不可能真正并行。实际上，两者都在快速进入并退出 <em>Running</em> 状态。两个任务
+在相同优先级运行，因此共享该核心的时间。图 4.3 展示了真实的执行模式。</p>
+<p>图 4.3 底部的箭头表示时间从 t1 开始推进。彩色线段表示每个时间点正在执行的
+任务——例如，Task 1 在 t1 与 t2 之间执行。</p>
+<p>任一时刻只能有一个任务处于 <em>Running</em> 状态。因此，当一个任务进入 <em>Running</em>
+状态（被切入），另一个任务进入 <em>Not Running</em> 状态（被切出）。</p>
+<p><a name="fig4.3" title="图 4.3 示例 4.1 中两个任务的实际执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.3_example_4.1_execution_pattern.png" />
+<strong><em>图 4.3</em></strong> <em>示例 4.1 中两个任务的实际执行模式</em></p>
+<hr />
+<p>示例 4.1 在启动调度器之前在 <code>main()</code> 中创建了两个任务。也可以在任务内部
+创建另一个任务。例如，可在 Task 1 内创建 Task 2，如清单 4.7 所示。</p>
+<p><a name="list4.7" title="清单 4.7 在调度器启动后由一个任务创建另一个任务"></a></p>
+<pre><code class="language-c">void vTask1( void * pvParameters )
+{
+        const char *pcTaskName = &quot;Task 1 is running\r\n&quot;;
+        volatile unsigned long ul; /* 声明为 volatile，确保 ul 不被优化掉。 */
+
+        /*
+         * 如果该任务代码正在执行，则调度器必然已经启动。
+         * 在进入无限循环前创建另一个任务。
+         */
+        xTaskCreate( vTask2, &quot;Task 2&quot;, 1000, NULL, 1, NULL );
+
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( pcTaskName );
+
+                /* 延时一段时间。 */
+                for( ul = 0; ul &lt; mainDELAY_LOOP_COUNT; ul++ )
+                {
+                        /*
+                         * 该循环只是一个非常粗糙的延时实现。
+                         * 这里没有任何事情要做。后续示例会用
+                         * 合适的延时/休眠函数替代该粗糙循环。
+                         */
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.7</em></strong> <em>在调度器启动后由一个任务创建另一个任务</em></p>
+<h2 id="_2"><a name="example4.2" title="示例 4.2 使用任务参数"></a></h2>
+<p><strong><em>示例 4.2</em></strong> <em>使用任务参数</em></p>
+<hr />
+<p>示例 4.1 中创建的两个任务几乎完全相同，唯一差别是打印的字符串。如果使用一个
+任务实现函数创建两个实例，并使用任务参数把字符串传入各实例，就能消除代码
+重复。</p>
+<p>示例 4.2 用一个名为 <code>vTaskFunction()</code> 的任务函数替代示例 4.1 中的两个任务函数，
+如清单 4.8 所示。注意任务参数被强制转换为 <code>char *</code> 以获得任务要打印的字符串。</p>
+<p><a name="list4.8" title="清单 4.8 示例 4.2 中用于创建两个任务的单一任务函数"></a></p>
+<pre><code class="language-c">void vTaskFunction( void * pvParameters )
+{
+
+        char *pcTaskName;
+        volatile unsigned long ul; /* 声明为 volatile，确保 ul 不被优化掉。 */
+
+        /*
+         * 要打印的字符串通过参数传入，将其强制转换为字符指针。
+         */
+        pcTaskName = ( char * ) pvParameters;
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( pcTaskName );
+
+                /* 延时一段时间。 */
+                for( ul = 0; ul &lt; mainDELAY_LOOP_COUNT; ul++ )
+                {
+                        /*
+                         * 该循环只是一个非常粗糙的延时实现。
+                         * 这里没有任何事情要做。后续示例会用
+                         * 合适的延时/休眠函数替代该粗糙循环。
+                         */
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.8</em></strong> <em>示例 4.2 中用于创建两个任务的单一任务函数</em></p>
+<p>清单 4.9 创建了 <code>vTaskFunction()</code> 的两个实例，通过任务参数为每个实例传入不同
+字符串。两个任务在 FreeRTOS 调度器控制下独立运行，且各自拥有自己的栈，因此
+也拥有 <code>pcTaskName</code> 与 <code>ul</code> 变量的独立副本。</p>
+<p><a name="list4.9" title="清单 4.9 示例 2 的 main() 函数"></a></p>
+<pre><code class="language-c">/*
+ * 定义将作为任务参数传入的字符串。
+ * 这些字符串声明为 const，并且不放在 main() 使用的栈上，
+ * 以确保在任务执行期间始终有效。
+ */
+static const char * pcTextForTask1 = &quot;Task 1 is running&quot;;
+static const char * pcTextForTask2 = &quot;Task 2 is running&quot;;
+
+int main( void )
+{
+        /*
+         * 启动 FreeRTOS 调度器后，此处声明的变量可能不再存在。
+         * 不要在任务中访问 main() 所用栈上声明的变量。
+         */
+
+        /* 创建两个任务中的一个。 */
+        xTaskCreate( vTaskFunction,             /* 指向实现该任务的函数指针。 */
+                             &quot;Task 1&quot;,                  /* 任务的文本名称，仅用于调试。 */
+                             1000,                      /* 栈深度——小型 MCU 使用的栈会远小于此值。*/
+                             ( void * ) pcTextForTask1, /* 通过任务参数传入要打印的文本。 */
+                             1,                         /* 该任务以优先级 1 运行。 */
+                             NULL );                    /* 本示例不使用任务句柄。 */
+
+        /*
+         * 以完全相同的方式创建另一个任务。注意这次是从同一个
+         * 任务实现（vTaskFunction）创建多个任务实例。只有传入参数
+         * 的值不同，即创建了同一任务定义的两个实例。
+         */
+        xTaskCreate( vTaskFunction,
+                                 &quot;Task 2&quot;,
+                                 1000,
+                                 ( void * ) pcTextForTask2,
+                                 1,
+                                 NULL );
+
+        /* 启动调度器，使任务开始执行。 */
+        vTaskStartScheduler();
+
+        /*
+         * 一切正常时 main() 不会到达这里，因为调度器已在运行已创建的任务。
+         * 如果 main() 到达这里，说明堆内存不足，无法创建空闲任务或定时器任务
+         *（本书后续章节描述）。第 3 章提供更多堆内存管理信息。
+         */
+        for( ;; )
+        {
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.9</em></strong> <em>示例 2 的 main() 函数</em></p>
+<p>示例 4.2 的输出与图 4.2 所示的示例 1 输出完全相同。</p>
+<h2 id="45">4.5 任务优先级</h2>
+<p>FreeRTOS 调度器始终确保能运行的最高优先级任务被选中进入 <em>Running</em> 状态。
+同一优先级的任务会轮流进入与退出 <em>Running</em> 状态。</p>
+<p>用于创建任务的 API 的 <code>uxPriority</code> 参数指定任务的初始优先级。
+<code>vTaskPrioritySet()</code> API 函数可在任务创建后修改其优先级。</p>
+<p>应用定义的 <code>configMAX_PRIORITIES</code> 编译期配置常量决定可用优先级数量。数值较小
+表示较低优先级，优先级 0 为最低优先级——因此有效优先级范围为 0 到
+<code>(configMAX_PRIORITIES – 1)</code>。任意数量的任务都可以共享同一优先级。</p>
+<p>FreeRTOS 调度器用于选择 <em>Running</em> 状态任务的算法有两种实现，<code>configMAX_PRIORITIES</code>
+的最大可取值取决于所使用的实现：</p>
+<h3 id="451">4.5.1 通用调度器</h3>
+<p>通用调度器用 C 编写，可用于所有 FreeRTOS 架构移植。它不对
+<code>configMAX_PRIORITIES</code> 施加上限。一般建议尽量减小 <code>configMAX_PRIORITIES</code>，
+因为更大的值需要更多 RAM，并会增加最坏情况执行时间。</p>
+<h3 id="452">4.5.2 架构优化调度器</h3>
+<p>架构优化实现用特定架构的汇编编写，性能优于通用 C 实现，且对所有
+<code>configMAX_PRIORITIES</code> 值具有相同的最坏情况执行时间。</p>
+<p>架构优化实现对 <code>configMAX_PRIORITIES</code> 有最大限制：在 32 位架构上为 32，
+在 64 位架构上为 64。与通用方法相同，建议将 <code>configMAX_PRIORITIES</code> 设为尽可能
+低的实际值，因为更高的值需要更多 RAM。</p>
+<p>在 FreeRTOSConfig.h 中将 <code>configUSE_PORT_optimized_TASK_SELECTION</code> 设为 1 以使用
+架构优化实现，设为 0 则使用通用实现。并非所有 FreeRTOS port 都提供架构优化实现。
+提供该实现的 port 会在该宏未定义时默认设为 1；未提供该实现的 port 会在未定义时
+默认设为 0。</p>
+<h2 id="46">4.6 时间测量与滴答中断</h2>
+<p><a href="#412-调度算法">第 4.12 节：调度算法</a> 描述了一项可选特性——
+“时间片”。此前示例都使用了时间片，且其输出符合该行为。在示例中，两个任务在
+同一优先级创建且始终可运行。因此每个任务会执行一个“时间片”，即在时间片开始时
+进入 <em>Running</em> 状态，在时间片结束时退出 <em>Running</em> 状态。在图 4.3 中，t1 与 t2
+之间的时间等于一个时间片。</p>
+<p>调度器会在每个时间片结束时运行，以选择下一个任务<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">2</a></sup>。为此使用周期性中断，
+称为 “tick 中断”。编译期配置常量 <code>configTICK_RATE_HZ</code> 设定 tick 中断频率，
+从而决定每个时间片长度。例如，将 <code>configTICK_RATE_HZ</code> 设为 100（Hz），时间片
+长度为 10 毫秒。两次 tick 中断之间的时间称为 “tick 周期”——因此一个时间片
+等于一个 tick 周期。</p>
+<p>图 4.4 在图 4.3 的基础上扩展，显示调度器的执行。在图 4.4 中，上方的线表示调度器
+执行的时刻，细箭头表示执行序列：从任务到 tick 中断，再从 tick 中断切换到不同任务。</p>
+<p><code>configTICK_RATE_HZ</code> 的最佳值取决于应用，典型值为 100。</p>
+<p><a name="fig4.4" title="图 4.4 展示 tick 中断执行的扩展执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.4_expanded_execution_sequence_with_tick_interrupt.png" />
+<strong><em>图 4.4</em></strong> <em>展示 tick 中断执行的扩展执行序列</em></p>
+<hr />
+<p>FreeRTOS API 调用以 tick 周期的倍数指定时间，通常称为 “ticks”。
+<code>pdMS_TO_TICKS()</code> 宏把以毫秒指定的时间转换为以 tick 指定的时间。可用分辨率
+取决于 tick 频率，且当 tick 频率高于 1KHz（<code>configTICK_RATE_HZ</code> 大于 1000）时，
+不能使用 <code>pdMS_TO_TICKS()</code>。清单 4.10 展示如何将 200 毫秒转换为等效的 tick 数。</p>
+<p><a name="list4.10" title="清单 4.10 使用 pdMS\_TO\_TICKS() 将 200 毫秒转换为 tick"></a></p>
+<pre><code class="language-c">/*
+ * pdMS_TO_TICKS() 仅接受一个以毫秒表示的时间参数，
+ * 并计算得到等效的 tick 周期数。本示例演示将
+ * xTimeInTicks 设置为等价于 200 毫秒的 tick 数。
+ */
+TickType_t xTimeInTicks = pdMS_TO_TICKS( 200 );
+</code></pre>
+<p><strong><em>清单 4.10</em></strong> <em>使用 pdMS_TO_TICKS() 将 200 毫秒转换为等效 tick</em></p>
+<p>使用 <code>pdMS_TO_TICKS()</code> 以毫秒指定时间，而不是直接用 tick，可确保当 tick 频率
+改变时应用中的时间参数保持一致。</p>
+<p>“tick 计数”是自调度器启动以来发生的 tick 中断总数（假定未溢出）。用户应用
+在指定延迟时无需考虑溢出，因为 FreeRTOS 会在内部保证时间一致性。</p>
+<p><a href="#412-调度算法">第 4.12 节：调度算法</a> 介绍了影响调度器何时选择新任务
+以及 tick 中断何时执行的配置常量。</p>
+<h2 id="_3"><a name="example4.3" title="示例 4.3 体验优先级"></a></h2>
+<p><strong><em>示例 4.3</em></strong> <em>体验优先级</em></p>
+<hr />
+<p>调度器始终保证能运行的最高优先级任务被选中进入 <em>Running</em> 状态。此前示例创建了
+两个相同优先级的任务，因此它们轮流进入与退出 <em>Running</em> 状态。本示例观察当任务
+具有不同优先级时会发生什么。清单 4.11 显示创建两个任务的代码：第一个优先级为 1，
+第二个为 2。两任务共享同一个实现函数，该函数未变化，仍会周期性打印字符串，
+并用空循环产生延迟。</p>
+<p><a name="list4.11" title="清单 4.11 创建两个不同优先级任务"></a></p>
+<pre><code class="language-c">/*
+ * 定义将作为任务参数传入的字符串。
+ * 这些字符串声明为 const，并且不放在栈上，以确保在任务执行期间有效。
+ */
+static const char * pcTextForTask1 = &quot;Task 1 is running&quot;;
+static const char * pcTextForTask2 = &quot;Task 2 is running&quot;;
+
+int main( void )
+{
+        /* 创建第一个任务，优先级为 1。 */
+        xTaskCreate( vTaskFunction,             /* 任务函数 */
+                             &quot;Task 1&quot;,                  /* 任务名称 */
+                             1000,                      /* 任务栈深度 */
+                             ( void * ) pcTextForTask1, /* 任务参数 */
+                             1,                         /* 任务优先级 */
+                             NULL );
+
+        /* 创建第二个任务，优先级更高，为 2。 */
+        xTaskCreate( vTaskFunction,             /* 任务函数 */
+                             &quot;Task 2&quot;,                  /* 任务名称 */
+                             1000,                      /* 任务栈深度 */
+                             ( void * ) pcTextForTask2, /* 任务参数 */
+                             2,                         /* 任务优先级 */
+                             NULL );
+
+        /* 启动调度器，使任务开始执行。 */
+        vTaskStartScheduler();
+
+        /* 不会到达这里。 */
+        return 0;
+}
+</code></pre>
+<p><strong><em>清单 4.11</em></strong> <em>创建两个不同优先级任务</em></p>
+<p>图 4.5 显示了示例 4.3 的输出。</p>
+<p>调度器总是选择能运行的最高优先级任务。Task 2 的优先级高于 Task 1 且始终可运行，
+因此调度器总是选择 Task 2，而 Task 1 永远不执行。Task 1 被称为被 Task 2 “饿死”
+了处理时间——它无法打印字符串，因为它从未进入 <em>Running</em> 状态。</p>
+<p><a name="fig4.5" title="图 4.5 以不同优先级运行两个任务"></a></p>
+<hr />
+<pre><code class="language-console">C:\Temp&gt;rtosdemo
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+Task 2 is running
+</code></pre>
+<p><strong><em>图 4.5</em></strong> <em>以不同优先级运行两个任务</em></p>
+<hr />
+<p>Task 2 总能运行，因为它从不需要等待任何东西——要么在空循环中自旋，要么输出到终端。</p>
+<p><a name="fig4.6" title="图 4.6 当一个任务优先级高于另一个任务时的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.6_execution_pattern_higher_priority_task.png" />
+<strong><em>图 4.6</em></strong> <em>示例 4.3 中一个任务优先级更高时的执行模式</em></p>
+<h2 id="47-not-running">4.7 扩展 <em>Not Running</em> 状态</h2>
+<p>到目前为止，已创建的任务总是有处理可做且无需等待任何事件——因此始终能够进入
+<em>Running</em> 状态。这类“持续处理”任务实用性有限，因为它们只能以最低优先级创建。
+若在更高优先级运行，它们将阻止更低优先级任务运行。</p>
+<p>为了使这些任务有用，必须将其改写为事件驱动。事件驱动任务只有在事件触发后才
+有工作需要处理，在此之前不能进入 <em>Running</em> 状态。调度器总是选择能运行的最高
+优先级任务。如果高优先级任务正在等待事件而无法运行，调度器必须选择能运行的
+低优先级任务。因此，编写事件驱动任务可以让任务以不同优先级创建，而不会出现
+最高优先级任务饿死低优先级任务的情况。</p>
+<h3 id="471-blocked">4.7.1 <em>Blocked</em> 状态</h3>
+<p>等待事件的任务处于 <em>Blocked</em> 状态，这是 <em>Not Running</em> 的子状态。</p>
+<p>任务可以进入 <em>Blocked</em> 状态等待两类事件：</p>
+<ol>
+<li>
+<p>时间（时间相关）事件——当延迟到期或达到某个绝对时间时发生。例如，任务可
+     进入 <em>Blocked</em> 状态等待 10 毫秒过去。</p>
+</li>
+<li>
+<p>同步事件——由其他任务或中断发起。例如，任务可进入 <em>Blocked</em> 状态等待
+     队列中到达数据。同步事件覆盖了广泛的事件类型。</p>
+</li>
+</ol>
+<p>FreeRTOS 队列、二值信号量、计数信号量、互斥量、递归互斥量、事件组、流缓冲区、
+消息缓冲区以及直接任务通知都可以产生同步事件。本书后续章节将介绍其中的大部分。</p>
+<p>任务可以带超时地阻塞在同步事件上，从而相当于同时等待两类事件。例如，任务可以
+最多等待 10 毫秒以接收队列数据。若 10 毫秒内有数据到达，任务会离开 <em>Blocked</em>
+状态；若 10 毫秒内无数据到达，也会离开 <em>Blocked</em> 状态。</p>
+<h3 id="472-suspended">4.7.2 <em>Suspended</em> 状态</h3>
+<p><em>Suspended</em> 也是 <em>Not Running</em> 的子状态。处于 <em>Suspended</em> 状态的任务不被调度器
+考虑。进入 <em>Suspended</em> 状态的唯一方式是调用 <code>vTaskSuspend()</code> API 函数，离开该
+状态的唯一方式是调用 <code>vTaskResume()</code> 或 <code>xTaskResumeFromISR()</code> API 函数。大多数
+应用不会使用 <em>Suspended</em> 状态。</p>
+<h3 id="473-ready">4.7.3 Ready 状态</h3>
+<p>处于 <em>Not Running</em> 状态且既非 <em>Blocked</em> 也非 <em>Suspended</em> 的任务称为处于 <em>Ready</em>
+状态。它们可以运行，因此“就绪”运行，但当前并未处于 <em>Running</em> 状态。</p>
+<h3 id="474">4.7.4 完整的状态转换图</h3>
+<p>图 4.7 在简化状态图基础上扩展，包含了本节描述的所有 <em>Not Running</em> 子状态。
+目前示例中的任务尚未使用 <em>Blocked</em> 或 <em>Suspended</em> 状态，它们只在 <em>Ready</em> 与
+<em>Running</em> 状态之间转换，如图 4.7 中粗线所示。</p>
+<p><a name="fig4.7" title="图 4.7 完整任务状态机"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.7_full_task_state_machine.png" />
+<strong><em>图 4.7</em></strong> <em>完整任务状态机</em></p>
+<hr />
+<h2 id="_4"><a name="example4.4" title="示例 4.4 使用 Blocked 状态创建延迟"></a></h2>
+<p><strong><em>示例 4.4</em></strong> <em>使用 </em>Blocked* 状态创建延迟</i></h3></p>
+<hr />
+<p>到目前为止示例中的任务都是“周期性”任务——它们先延迟一段时间再打印字符串，
+然后再次延迟，如此循环。延迟通过空循环粗糙地产生——任务轮询递增的循环计数器
+直到达到固定值。示例 4.3 清楚展示了该方法的缺点：高优先级任务在执行空循环时
+仍处于 <em>Running</em> 状态，从而“饿死”低优先级任务。</p>
+<p>任何形式的轮询都有其他缺点，其中最重要的是效率低。在轮询期间，任务实际上
+没有工作可做，却仍占用最大处理时间，浪费处理器周期。示例 4.4 通过将轮询空
+循环替换为 <code>vTaskDelay()</code> API 函数调用来纠正这一行为，其原型见清单 4.12。
+新的任务定义见清单 4.13。注意 <code>vTaskDelay()</code> 仅在 FreeRTOSConfig.h 中
+<code>INCLUDE_vTaskDelay</code> 设为 1 时可用。</p>
+<p><code>vTaskDelay()</code> 将调用任务置于 <em>Blocked</em> 状态固定数量的 tick 中断。任务在
+<em>Blocked</em> 状态时不占用处理时间，因此只有真正有工作可做时才使用处理时间。</p>
+<p><a name="list4.12" title="清单 4.12 vTaskDelay() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskDelay( TickType_t xTicksToDelay );
+</code></pre>
+<p><strong><em>清单 4.12</em></strong> <em>vTaskDelay() API 函数原型</em></p>
+<p><strong>vTaskDelay 参数：</strong></p>
+<ul>
+<li>
+<p><code>xTicksToDelay</code></p>
+<p>调用任务将保持在 <em>Blocked</em> 状态的 tick 中断数量，之后会被转回 <em>Ready</em> 状态。</p>
+<p>例如，若任务在 tick 计数为 10,000 时调用 <code>vTaskDelay( 100 )</code>，则它会立刻进入
+<em>Blocked</em> 状态，并保持该状态直到 tick 计数达到 10,100。</p>
+<p><code>pdMS_TO_TICKS()</code> 宏可将毫秒转换为 tick。例如调用
+<code>vTaskDelay( pdMS_TO_TICKS( 100 ) )</code> 会使任务在 <em>Blocked</em> 状态保持 100 毫秒。</p>
+</li>
+</ul>
+<p><a name="list4.13" title="清单 4.13 用 vTaskDelay() 替换空循环后的任务源码"></a></p>
+<pre><code class="language-c">void vTaskFunction( void * pvParameters )
+{
+        char * pcTaskName;
+        const TickType_t xDelay250ms = pdMS_TO_TICKS( 250 );
+
+        /*
+         * 要打印的字符串通过参数传入，将其强制转换为字符指针。
+         */
+        pcTaskName = ( char * ) pvParameters;
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( pcTaskName );
+
+                /*
+                 * 延时一段时间。本次使用 vTaskDelay()，它会让任务进入
+                 * Blocked 状态直到延时到期。参数以 tick 为单位，
+                 * 并使用 pdMS_TO_TICKS() 宏（xDelay250ms 常量的定义处）
+                 * 将 250 毫秒转换为等效的 tick 数。
+                 */
+                vTaskDelay( xDelay250ms );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.13</em></strong> <em>用 vTaskDelay() 替换空循环后的任务源码</em></p>
+<p>即使两个任务仍以不同优先级创建，它们现在都将运行。示例 4.4 的输出如图 4.8 所示，
+符合预期行为。</p>
+<p><a name="fig4.8" title="图 4.8 执行示例 4.4 的输出"></a></p>
+<hr />
+<pre><code class="language-console">C:\Temp&gt;rtosdemo
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+Task 2 is running
+Task 1 is running
+</code></pre>
+<p><strong><em>图 4.8</em></strong> <em>执行示例 4.4 的输出</em></p>
+<hr />
+<p>图 4.9 所示的执行序列解释了为何两个任务都能运行，即使它们以不同优先级创建。
+为简化起见，图中省略了调度器自身的执行。</p>
+<p>当调度器启动时会自动创建空闲任务，以确保始终至少有一个任务可以运行（至少有
+一个任务处于 <em>Ready</em> 状态）。<a href="#48-空闲任务与空闲任务钩子">第 4.8 节：空闲任务与空闲任务钩子</a>
+将更详细介绍空闲任务。</p>
+<p><a name="fig4.9" title="图 4.9 当任务用 vTaskDelay() 替代空循环的执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.9_vTaskDelay_execution_sequence.png" />
+<strong><em>图 4.9</em></strong> <em>当任务用 vTaskDelay() 替代空循环的执行序列</em></p>
+<hr />
+<p>只有两个任务的实现发生了变化，其功能并未改变。将图 4.9 与图 4.4 对比可以清楚
+看出，这种实现方式效率更高。</p>
+<p>图 4.4 显示任务使用空循环产生延迟时的执行模式，因为它们始终可运行，因而占用
+了全部可用处理器时间。图 4.9 显示任务在整个延迟期间进入 <em>Blocked</em> 状态的执行
+模式。它们只在真正有工作要做时使用处理器时间（此处只是打印一条消息），因此
+仅占用可用处理器时间的一小部分。</p>
+<p>在图 4.9 的场景中，每次任务离开 <em>Blocked</em> 状态后只执行很短一段时间就再次进入
+<em>Blocked</em> 状态。大部分时间里没有任何应用任务可运行（没有任务处于 <em>Ready</em> 状态），
+因此没有应用任务可以被选为进入 <em>Running</em> 状态。在这种情况下，空闲任务会运行。
+空闲任务获得的处理时间可衡量系统的空闲处理能力。使用 RTOS 可显著提高空闲处理
+能力，因为它允许应用完全事件驱动。</p>
+<p>图 4.10 中的粗线展示了示例 4.4 中任务的状态转换，此时每个任务在回到 <em>Ready</em> 状态
+之前都会经过 <em>Blocked</em> 状态。</p>
+<p><a name="fig4.10" title="图 4.10 粗线表示示例 4.4 中任务执行的状态转换"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.10_example_4.4_state_machine.png" />
+<strong><em>图 4.10</em></strong> <em>粗线表示示例 4.4 中任务执行的状态转换</em></p>
+<hr />
+<h3 id="475-vtaskdelayuntil-api">4.7.5 vTaskDelayUntil() API 函数</h3>
+<p><code>vTaskDelayUntil()</code> 与 <code>vTaskDelay()</code> 类似。正如上文所示，<code>vTaskDelay()</code> 的参数
+指定调用 <code>vTaskDelay()</code> 到同一任务再次从 <em>Blocked</em> 状态转出之间经历的 tick 中断
+数量。任务在 <em>Blocked</em> 状态中停留的时间由 <code>vTaskDelay()</code> 参数决定，而任务离开
+<em>Blocked</em> 状态的时间是相对于调用 <code>vTaskDelay()</code> 的时刻而言的。</p>
+<p><code>vTaskDelayUntil()</code> 的参数则指定调用任务应在某个 <strong>绝对</strong> tick 计数值时从
+<em>Blocked</em> 状态转为 <em>Ready</em> 状态。若需要固定执行周期（希望任务以固定频率周期性
+执行），应使用 <code>vTaskDelayUntil()</code>，因为其解阻塞时间是绝对时间，而非相对于
+函数调用时刻（如 <code>vTaskDelay()</code>）。</p>
+<p><a name="list4.14" title="清单 4.14 vTaskDelayUntil() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskDelayUntil( TickType_t * pxPreviousWakeTime,
+                                            TickType_t xTimeIncrement );
+</code></pre>
+<p><strong><em>清单 4.14</em></strong> <em>vTaskDelayUntil() API 函数原型</em></p>
+<p><strong>vTaskDelayUntil() 参数</strong></p>
+<ul>
+<li>
+<p><code>pxPreviousWakeTime</code></p>
+<p>该参数假定 <code>vTaskDelayUntil()</code> 用于实现固定频率的周期性任务。
+在此情况下，<code>pxPreviousWakeTime</code> 保存任务上一次离开 <em>Blocked</em> 状态（被“唤醒”）
+的时间，用于计算任务下一次离开 <em>Blocked</em> 状态的时刻。</p>
+<p><code>pxPreviousWakeTime</code> 指向的变量会在 <code>vTaskDelayUntil()</code> 内自动更新；
+应用通常不应修改它，但在首次使用前必须将其初始化为当前 tick 计数。
+清单 4.15 演示了如何初始化该变量。</p>
+</li>
+<li>
+<p><code>xTimeIncrement</code></p>
+<p>该参数同样假定 <code>vTaskDelayUntil()</code> 用于固定频率的周期性任务，频率由
+<code>xTimeIncrement</code> 指定。</p>
+<p><code>xTimeIncrement</code> 以 tick 为单位。<code>pdMS_TO_TICKS()</code> 宏可将毫秒转换为 tick。</p>
+</li>
+</ul>
+<h2 id="_5"><a name="example4.5" title="示例 4.5 将示例任务改为使用 vTaskDelayUntil()"></a></h2>
+<p><strong><em>示例 4.5</em></strong> <em>将示例任务改为使用 vTaskDelayUntil()</em></p>
+<hr />
+<p>示例 4.4 中的两个任务都是周期性任务，但使用 <code>vTaskDelay()</code> 无法保证执行频率
+固定，因为任务离开 <em>Blocked</em> 状态的时间是相对于调用 <code>vTaskDelay()</code> 的时刻。
+将任务改为使用 <code>vTaskDelayUntil()</code> 可解决该潜在问题。</p>
+<p><a name="list4.15" title="清单 4.15 使用 vTaskDelayUntil() 的示例任务实现"></a></p>
+<pre><code class="language-c">void vTaskFunction( void * pvParameters )
+{
+        char * pcTaskName;
+        TickType_t xLastWakeTime;
+
+        /*
+         * 要打印的字符串通过参数传入，将其强制转换为字符指针。
+         */
+        pcTaskName = ( char * ) pvParameters;
+
+        /*
+         * xLastWakeTime 变量需要用当前 tick 计数进行初始化。
+         * 注意这是该变量唯一一次被显式写入。之后 xLastWakeTime
+         * 会在 vTaskDelayUntil() 内自动更新。
+         */
+        xLastWakeTime = xTaskGetTickCount();
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( pcTaskName );
+
+                /*
+                 * 该任务应精确每 250 毫秒执行一次。与 vTaskDelay()
+                 * 一样，时间以 tick 计量，并使用 pdMS_TO_TICKS() 宏
+                 * 将毫秒转换为 tick。xLastWakeTime 会在 vTaskDelayUntil()
+                 * 内自动更新，因此任务无需显式更新。
+                 */
+                vTaskDelayUntil( &amp;xLastWakeTime, pdMS_TO_TICKS( 250 ) );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.15</em></strong> <em>使用 vTaskDelayUntil() 的示例任务实现</em></p>
+<p>示例 4.5 的输出与图 4.8 所示的示例 4.4 输出完全相同。</p>
+<h2 id="_6"><a name="example4.6" title="示例 4.6 结合阻塞与非阻塞任务"></a></h2>
+<p><strong><em>示例 4.6</em></strong> <em>结合阻塞与非阻塞任务</em></p>
+<hr />
+<p>前面的示例分别观察了轮询任务与阻塞任务的行为。本示例重申我们已经说明的预期系统
+行为，并展示当两种方案结合使用时的执行序列：</p>
+<ol>
+<li>
+<p>创建两个优先级为 1 的任务。这两个任务仅不断打印字符串。</p>
+<p>这类任务不会调用可能使其进入 <em>Blocked</em> 状态的 API，因此始终处于 <em>Ready</em> 或
+ <em>Running</em> 状态。这类任务被称为“持续处理”任务，因为它们总有工作要做（此处虽
+ 只是很简单的工作）。清单 4.16 给出持续处理任务的源码。</p>
+</li>
+<li>
+<p>再创建一个优先级为 2 的任务，高于前两个任务。该任务也打印字符串，但以周期
+     方式打印，因此使用 <code>vTaskDelayUntil()</code> 在每次打印间进入 <em>Blocked</em> 状态。</p>
+</li>
+</ol>
+<p>清单 4.17 给出周期性任务源码。</p>
+<p><a name="list4.16" title="清单 4.16 示例 4.6 中的持续处理任务"></a></p>
+<pre><code class="language-c">void vContinuousProcessingTask( void * pvParameters )
+{
+        char * pcTaskName;
+
+        /*
+         * 要打印的字符串通过参数传入，将其强制转换为字符指针。
+         */
+        pcTaskName = ( char * ) pvParameters;
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /*
+                 * 打印该任务的名称。该任务仅反复执行此操作，
+                 * 从不阻塞或延时。
+                 */
+                vPrintLine( pcTaskName );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.16</em></strong> <em>示例 4.6 中的持续处理任务</em></p>
+<p><a name="list4.17" title="清单 4.17 示例 4.6 中的周期性任务"></a></p>
+<pre><code class="language-c">void vPeriodicTask( void * pvParameters )
+{
+        TickType_t xLastWakeTime;
+
+        const TickType_t xDelay3ms = pdMS_TO_TICKS( 3 );
+
+        /*
+         * xLastWakeTime 变量需要用当前 tick 计数初始化。
+         * 注意这是该变量唯一一次被显式写入。之后 xLastWakeTime
+         * 由 vTaskDelayUntil() API 函数自动管理。
+         */
+        xLastWakeTime = xTaskGetTickCount();
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( &quot;Periodic task is running&quot; );
+
+                /*
+                 * 该任务应精确每 3 毫秒执行一次——见本函数中 xDelay3ms 的定义。
+                 */
+                vTaskDelayUntil( &amp;xLastWakeTime, xDelay3ms );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.17</em></strong> <em>示例 4.6 中的周期性任务</em></p>
+<p>图 4.11 显示了示例 4.6 的输出，图 4.12 的执行序列解释了观察到的行为。</p>
+<p><a name="fig4.11" title="图 4.11 执行示例 4.6 的输出"></a></p>
+<hr />
+<pre><code class="language-console">Continuous task 2 running
+Continuous task 2 running
+Periodic task is running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 2 running
+Continuous task 2 running
+Continuous task 2 running
+Continuous task 2 running
+Continuous task 2 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Continuous task 1 running
+Periodic task is running
+Continuous task 2 running
+Continuous task 2 running
+</code></pre>
+<p><strong><em>图 4.11</em></strong> <em>执行示例 4.6 的输出</em></p>
+<hr />
+<p><a name="fig4.12" title="图 4.12 示例 4.6 的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.11_example_4.6_execution_pattern.png" />
+<strong><em>图 4.12</em></strong> <em>示例 4.6 的执行模式</em></p>
+<hr />
+<h2 id="48">4.8 空闲任务与空闲任务钩子</h2>
+<p>示例 4.4 中创建的任务大部分时间处于 <em>Blocked</em> 状态。在此状态下任务无法运行，
+因此不能被调度器选中。</p>
+<p>必须始终至少有一个任务能够进入 <em>Running</em> 状态<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">3</a></sup>。为此，调度器在调用
+<code>vTaskStartScheduler()</code> 时会自动创建空闲任务。空闲任务几乎只是在循环中空转，
+因此与前面示例中的任务一样，它始终可运行。</p>
+<p>空闲任务具有最低可能优先级（优先级 0），以确保它不会阻止更高优先级的应用任务
+进入 <em>Running</em> 状态。不过，也没有任何东西阻止应用设计者创建与空闲任务同优先级
+（即优先级 0）的任务。FreeRTOSConfig.h 中的 <code>configIDLE_SHOULD_YIELD</code> 编译期
+配置常量可用于防止空闲任务消耗本应更有效分配给同为优先级 0 的应用任务的处理时间。
+第 4.12 节《调度算法》描述了 <code>configIDLE_SHOULD_YIELD</code>。</p>
+<p>以最低优先级运行可确保空闲任务在更高优先级任务进入 <em>Ready</em> 状态时立刻被切出。
+这可在图 4.9 的时间 <strong>tn</strong> 看到：当 Task 2 离开 <em>Blocked</em> 状态的瞬间，空闲任务被
+立即切出以让 Task 2 运行。Task 2 被称为抢占了空闲任务。抢占会自动发生，且被抢占的
+任务并不知情。</p>
+<blockquote>
+<p><em>注意：如果任务使用 <code>vTaskDelete()</code> API 函数删除自身，必须确保空闲任务不会
+被完全饿死，因为空闲任务负责清理由任务自删所占用的内核资源。</em></p>
+</blockquote>
+<h3 id="481">4.8.1 空闲任务钩子函数</h3>
+<p>可以通过空闲钩子（或空闲回调）函数将应用特定功能直接添加到空闲任务中。
+空闲钩子函数由空闲任务在其循环的每次迭代中自动调用。</p>
+<p>空闲任务钩子的常见用途包括：</p>
+<ul>
+<li>
+<p>在无需创建额外应用任务（避免其 RAM 开销）的情况下执行低优先级、后台或
+    持续处理功能。</p>
+</li>
+<li>
+<p>测量空闲处理能力。（空闲任务仅在所有更高优先级的应用任务都无工作可做时才运行；
+    因此测量空闲任务所占用的处理时间能清晰反映系统的空闲处理时间。）</p>
+</li>
+<li>
+<p>将处理器置于低功耗模式，为在无应用处理时自动节能提供简便方法（尽管节能程度
+    不如无节拍空闲模式）。</p>
+</li>
+</ul>
+<h3 id="482">4.8.2 空闲任务钩子函数实现的限制</h3>
+<p>空闲任务钩子函数必须遵守以下规则：</p>
+<ul>
+<li>
+<p>空闲任务钩子函数绝不能试图阻塞或挂起自身。</p>
+<p><em>注意：以任何方式阻塞空闲任务都可能导致没有任务能够进入 </em>Running<em> 状态。</em></p>
+</li>
+<li>
+<p>如果应用任务使用 <code>vTaskDelete()</code> 删除自身，则空闲任务钩子必须在合理时间内
+    返回给其调用者。这是因为空闲任务负责清理已自删任务使用的内核资源。如果空闲任务
+    永久停留在钩子函数中，这一清理就无法进行。</p>
+</li>
+</ul>
+<p>空闲任务钩子函数必须具有清单 4.18 所示的名称与原型。</p>
+<p><a name="list4.18" title="清单 4.18 空闲任务钩子函数名称与原型"></a></p>
+<pre><code class="language-c">void vApplicationIdleHook( void );
+</code></pre>
+<p><strong><em>清单 4.18</em></strong> <em>空闲任务钩子函数名称与原型</em></p>
+<h2 id="_7"><a name="example4.7" title="示例 4.7 定义空闲任务钩子函数"></a></h2>
+<p><strong><em>示例 4.7</em></strong> *定义空闲任务钩子函数</i></h3></p>
+<hr />
+<p>示例 4.4 中使用阻塞的 <code>vTaskDelay()</code> 调用产生了大量空闲时间，即应用任务处于
+<em>Blocked</em> 状态时空闲任务执行的时间。示例 4.7 通过添加空闲钩子函数来利用这些
+空闲时间，其源码见清单 4.19。</p>
+<p><a name="list4.19" title="清单 4.19 一个非常简单的空闲钩子函数"></a></p>
+<pre><code class="language-c">/* 声明一个将由钩子函数递增的变量。 */
+volatile unsigned long ulIdleCycleCount = 0UL;
+
+/*
+ * 空闲任务钩子函数必须命名为 vApplicationIdleHook()，
+ * 不接受参数，返回 void。
+ */
+void vApplicationIdleHook( void )
+{
+        /* 该钩子函数只做一件事：递增计数器。 */
+        ulIdleCycleCount++;
+}
+</code></pre>
+<p><strong><em>清单 4.19</em></strong> <em>一个非常简单的空闲钩子函数</em></p>
+<p>必须在 FreeRTOSConfig.h 中将 <code>configUSE_IDLE_HOOK</code> 设为 1，空闲钩子函数才会被调用。</p>
+<p>示例中的任务实现稍作修改，以打印 <code>ulIdleCycleCount</code> 的值，如清单 4.20 所示。</p>
+<p><a name="list4.20" title="清单 4.20 示例任务现在输出 ulIdleCycleCount 的值"></a></p>
+<pre><code class="language-c">void vTaskFunction( void * pvParameters )
+{
+        char * pcTaskName;
+        const TickType_t xDelay250ms = pdMS_TO_TICKS( 250 );
+
+        /*
+         * 要打印的字符串通过参数传入，将其强制转换为字符指针。
+         */
+        pcTaskName = ( char * ) pvParameters;
+
+        /* 按多数任务的惯例，该任务以无限循环实现。 */
+        for( ;; )
+        {
+                /*
+                 * 打印该任务的名称以及 ulIdleCycleCount 的递增次数。
+                 */
+                vPrintLineAndNumber( pcTaskName, ulIdleCycleCount );
+
+                /* 延时 250 毫秒。 */
+                vTaskDelay( xDelay250ms );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.20</em></strong> <em>示例任务现在输出 ulIdleCycleCount 的值</em></p>
+<p>图 4.13 显示示例 4.7 的输出。可以看到空闲任务钩子函数在两次应用任务迭代之间
+执行约 400 万次（具体次数取决于硬件速度）。</p>
+<p><a name="fig4.13" title="图 4.13 执行示例 4.7 的输出"></a></p>
+<hr />
+<pre><code class="language-console">C:\Temp&gt;rtosdemo
+Task 2 is running
+ulIdleCycleCount = 0
+Task 1 is running
+ulIdleCycleCount = 0
+Task 2 is running
+ulIdleCycleCount = 3869504
+Task 1 is running
+ulIdleCycleCount = 3869504
+Task 2 is running
+ulIdleCycleCount = 8564623
+Task 1 is running
+ulIdleCycleCount = 8564623
+Task 2 is running
+ulIdleCycleCount = 13181489
+Task 1 is running
+ulIdleCycleCount = 13181489
+Task 2 is running
+ulIdleCycleCount = 17838406
+Task 1 is running
+ulIdleCycleCount = 17838406
+Task 2 is running
+</code></pre>
+<p><strong><em>图 4.13</em></strong> <em>执行示例 4.7 的输出</em></p>
+<hr />
+<h2 id="49">4.9 更改任务优先级</h2>
+<h3 id="491-vtaskpriorityset-api">4.9.1 vTaskPrioritySet() API 函数</h3>
+<p><code>vTaskPrioritySet()</code> API 函数在调度器启动后修改任务优先级。该函数仅在
+FreeRTOSConfig.h 中 <code>INCLUDE_vTaskPrioritySet</code> 设为 1 时可用。</p>
+<p><a name="list4.21" title="清单 4.21 vTaskPrioritySet() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskPrioritySet( TaskHandle_t xTask,
+                                             UBaseType_t uxNewPriority );
+</code></pre>
+<p><strong><em>清单 4.21</em></strong> <em>vTaskPrioritySet() API 函数原型</em></p>
+<p><strong>vTaskPrioritySet() 参数</strong></p>
+<ul>
+<li>
+<p><code>pxTask</code></p>
+<p>被修改优先级的任务句柄（目标任务）。获取任务句柄的方法见 <code>xTaskCreate()</code> 的
+<code>pxCreatedTask</code> 参数或 <code>xTaskCreateStatic()</code> 的返回值。</p>
+<p>任务可通过传入 NULL 来修改自身优先级。</p>
+</li>
+<li>
+<p><code>uxNewPriority</code></p>
+<p>目标任务的新优先级。该值会自动限制为最大可用优先级
+<code>(configMAX_PRIORITIES – 1)</code>，其中 <code>configMAX_PRIORITIES</code> 为 FreeRTOSConfig.h
+中的编译期常量。</p>
+</li>
+</ul>
+<h3 id="492-uxtaskpriorityget-api">4.9.2 uxTaskPriorityGet() API 函数</h3>
+<p><code>uxTaskPriorityGet()</code> API 函数返回任务的优先级。该函数仅在
+FreeRTOSConfig.h 中 <code>INCLUDE_uxTaskPriorityGet</code> 设为 1 时可用。</p>
+<p><a name="list4.22" title="清单 4.22 uxTaskPriorityGet() API 函数原型"></a></p>
+<pre><code class="language-c">UBaseType_t uxTaskPriorityGet( TaskHandle_t xTask );
+</code></pre>
+<p><strong><em>清单 4.22</em></strong> <em>uxTaskPriorityGet() API 函数原型</em></p>
+<p><strong>uxTaskPriorityGet() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>pxTask</code></p>
+<p>需要查询优先级的任务句柄（目标任务）。获取任务句柄的方法见 <code>xTaskCreate()</code>
+的 <code>pxCreatedTask</code> 参数或 <code>xTaskCreateStatic()</code> 的返回值。</p>
+<p>任务可通过传入 NULL 来查询自身优先级。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>被查询任务的当前优先级。</p>
+</li>
+</ul>
+<h2 id="_8"><a name="example4.8" title="示例 4.8 修改任务优先级"></a></h2>
+<p><strong><em>示例 4.8</em></strong> <em>修改任务优先级</em></p>
+<hr />
+<p>调度器始终选择最高优先级的 <em>Ready</em> 状态任务进入 <em>Running</em> 状态。示例 4.8
+通过 <code>vTaskPrioritySet()</code> API 函数改变两个任务的相对优先级来演示这一点。</p>
+<p>示例 4.8 创建两个不同优先级的任务。两个任务都不会调用可能进入 <em>Blocked</em> 状态
+的 API，因此它们始终处于 <em>Ready</em> 或 <em>Running</em> 状态。因此，具有更高相对优先级
+的任务将总是被调度器选中进入 <em>Running</em> 状态。</p>
+<p>示例 4.8 行为如下：</p>
+<ol>
+<li>
+<p>Task 1（清单 4.23）以最高优先级创建，保证最先运行。Task 1 打印几条消息后
+     将 Task 2（清单 4.24）的优先级提升到高于自身。</p>
+</li>
+<li>
+<p>Task 2 一旦成为最高优先级任务就会开始运行（进入 <em>Running</em> 状态）。任一时刻
+     只能有一个任务处于 <em>Running</em> 状态，因此当 Task 2 处于 <em>Running</em> 状态时，
+     Task 1 处于 <em>Ready</em> 状态。</p>
+</li>
+<li>
+<p>Task 2 打印消息后将自身优先级降低到低于 Task 1。</p>
+</li>
+<li>
+<p>当 Task 2 降低优先级后，Task 1 再次成为最高优先级任务，于是重新进入
+     <em>Running</em> 状态，将 Task 2 迫使回 <em>Ready</em> 状态。</p>
+</li>
+</ol>
+<p><a name="list4.23" title="清单 4.23 示例 4.8 中 Task 1 的实现"></a></p>
+<pre><code class="language-c">void vTask1( void * pvParameters )
+{
+        UBaseType_t uxPriority;
+
+        /*
+         * 该任务以更高优先级创建，因此总会先于 Task 2 运行。
+         * Task 1 和 Task 2 都不会阻塞，因此始终处于 Running 或 Ready 状态。
+         */
+
+        /*
+         * 查询该任务当前运行的优先级——传入 NULL 表示
+         * “返回调用任务的优先级”。
+         */
+        uxPriority = uxTaskPriorityGet( NULL );
+
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( &quot;Task 1 is running&quot; );
+
+                /*
+                 * 将 Task 2 的优先级设为高于 Task 1 会使 Task 2 立即开始运行
+                 *（因为此时 Task 2 在两个已创建任务中优先级最高）。注意在
+                 * vTaskPrioritySet() 调用中使用了 Task 2 的句柄（xTask2Handle）。
+                 * 清单 4.25 展示了该句柄的获取方式。
+                 */
+                vPrintLine( &quot;About to raise the Task 2 priority&quot; );
+                vTaskPrioritySet( xTask2Handle, ( uxPriority + 1 ) );
+
+                /*
+                 * 只有当 Task 1 的优先级高于 Task 2 时，Task 1 才能运行。
+                 * 因此该任务要执行到此处，Task 2 必须已经运行并将其优先级
+                 * 调回到低于本任务的水平。
+                 */
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.23</em></strong> <em>示例 4.8 中 Task 1 的实现</em></p>
+<p><a name="list4.24" title="清单 4.24 示例 4.8 中 Task 2 的实现"></a></p>
+<pre><code class="language-c">void vTask2( void * pvParameters )
+{
+        UBaseType_t uxPriority;
+
+        /*
+         * Task 1 以更高优先级创建，因此总会先于本任务运行。
+         * Task 1 和 Task 2 都不会阻塞，因此始终处于 Running 或 Ready 状态。
+         *
+         * 查询本任务当前运行的优先级——传入 NULL 表示
+         * “返回调用任务的优先级”。
+         */
+        uxPriority = uxTaskPriorityGet( NULL );
+
+        for( ;; )
+        {
+                /*
+                 * 本任务能到达此处，说明 Task 1 已经运行并将本任务的优先级
+                 * 设为高于其自身。
+                 */
+
+                 /* 打印该任务的名称。 */
+                vPrintLine( &quot;Task 2 is running&quot; );
+
+                /*
+                 * 将本任务优先级调回原值。
+                 * 传入 NULL 作为任务句柄表示“修改调用任务的优先级”。
+                 * 将优先级设为低于 Task 1 会使 Task 1 立即再次运行——抢占本任务。
+                 */
+                vPrintLine( &quot;About to lower the Task 2 priority&quot; );
+                vTaskPrioritySet( NULL, ( uxPriority - 2 ) );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.24</em></strong> <em>示例 4.8 中 Task 2 的实现</em></p>
+<p>每个任务都可以通过传入 NULL 来查询和设置自己的优先级。当任务需要引用自身之外
+的另一个任务时才需要句柄，例如 Task 1 修改 Task 2 的优先级。为此，在创建 Task 2
+时获取并保存其句柄，如清单 4.25 注释中所示。</p>
+<p><a name="list4.25" title="清单 4.25 示例 4.8 的 main() 实现"></a></p>
+<pre><code class="language-c">/* 声明一个用于保存 Task 2 句柄的变量。 */
+TaskHandle_t xTask2Handle = NULL;
+
+int main( void )
+{
+        /*
+         * 创建第一个任务，优先级为 2。任务参数不使用，设为 NULL。
+         * 任务句柄也不使用，因此同样设为 NULL。
+         */
+        xTaskCreate( vTask1, &quot;Task 1&quot;, 1000, NULL, 2, NULL );
+        /* 该任务以优先级 2 创建 ______^. */
+
+        /*
+         * 创建第二个任务，优先级为 1——低于 Task 1 的优先级。
+         * 同样不使用任务参数，因此设为 NULL；但这次需要任务句柄，
+         * 所以将 xTask2Handle 的地址作为最后一个参数传入。
+         */
+        xTaskCreate( vTask2, &quot;Task 2&quot;, 1000, NULL, 1, &amp;xTask2Handle );
+        /* 任务句柄是最后一个参数 _____^^^^^^^^^^^^^ */
+
+        /* 启动调度器，使任务开始执行。 */
+        vTaskStartScheduler();
+
+        /*
+         * 一切正常时 main() 不会到达这里，因为调度器已在运行已创建的任务。
+         * 如果 main() 到达这里，说明堆内存不足，无法创建空闲任务或定时器任务
+         *（本书后续章节描述）。第 3 章提供更多堆内存管理信息。
+         */
+        for( ;; )
+        {
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.25</em></strong> <em>示例 4.8 的 main() 实现</em></p>
+<p>图 4.14 展示示例 4.8 中任务的执行顺序，其输出见图 4.15。</p>
+<p><a name="fig4.14" title="图 4.14 运行示例 4.8 时的任务执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.14_example_4.8_execution_sequence.png" />
+<strong><em>图 4.14</em></strong> <em>运行示例 4.8 时的任务执行序列</em></p>
+<hr />
+<p><a name="fig4.15" title="图 4.15 执行示例 4.8 的输出"></a></p>
+<hr />
+<pre><code class="language-console">Task1 is running
+About to raise the Task2 priority
+Task2 is running
+About to lower the Task2 priority
+Task1 is running
+About to raise the Task2 priority
+Task2 is running
+About to lower the Task2 priority
+Task1 is running
+About to raise the Task2 priority
+Task2 is running
+About to lower the Task2 priority
+Task1 is running
+</code></pre>
+<p><strong><em>图 4.15</em></strong> <em>执行示例 4.8 的输出</em></p>
+<hr />
+<h2 id="410">4.10 删除任务</h2>
+<h3 id="4101-vtaskdelete-api">4.10.1 vTaskDelete() API 函数</h3>
+<p><code>vTaskDelete()</code> API 函数用于删除任务。该函数仅在 FreeRTOSConfig.h 中
+<code>INCLUDE_vTaskDelete</code> 设为 1 时可用。</p>
+<p>在运行时持续创建和删除任务不是良好实践，因此如有需要请考虑其他设计方案，例如
+复用任务。</p>
+<p>被删除的任务不再存在，也无法再次进入 <em>Running</em> 状态。</p>
+<p>如果任务在使用动态内存分配创建后自行删除，空闲任务负责释放该任务所用内存，
+包括任务数据结构与栈。因此此时必须确保应用不会完全饿死空闲任务。</p>
+<blockquote>
+<p><em>注意：只有内核为任务本身分配的内存会在任务删除时自动释放。
+任务实现中自行分配的任何内存或其他资源，若不再需要，必须显式释放。</em></p>
+</blockquote>
+<p><a name="list4.26" title="清单 4.26 vTaskDelete() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskDelete( TaskHandle_t xTaskToDelete );
+</code></pre>
+<p><strong><em>清单 4.26</em></strong> <em>vTaskDelete() API 函数原型</em></p>
+<p><strong>vTaskDelete() 参数</strong></p>
+<ul>
+<li>
+<p><code>pxTaskToDelete</code></p>
+<p>要删除的任务句柄（目标任务）。获取任务句柄的方法见 <code>xTaskCreate()</code> 的
+<code>pxCreatedTask</code> 参数或 <code>xTaskCreateStatic()</code> 的返回值。</p>
+<p>任务可通过传入 NULL 来删除自身。</p>
+</li>
+</ul>
+<h2 id="_9"><a name="example4.9" title="示例 4.9 删除任务"></a></h2>
+<p><strong><em>示例 4.9</em></strong> <em>删除任务</em></p>
+<hr />
+<p>这是一个非常简单的示例，行为如下：</p>
+<ol>
+<li>
+<p><code>main()</code> 以优先级 1 创建 Task 1。Task 1 运行后以优先级 2 创建 Task 2。
+     Task 2 此时为最高优先级任务，因此立即开始执行。<code>main()</code> 的源码见清单 4.27，
+     Task 1 的源码见清单 4.28。</p>
+</li>
+<li>
+<p>Task 2 仅执行删除自身的操作。它可通过向 <code>vTaskDelete()</code> 传入 NULL 删除自身，
+     但为了演示，使用了自己的任务句柄。Task 2 的源码见清单 4.29。</p>
+</li>
+<li>
+<p>Task 2 删除后，Task 1 再次成为最高优先级任务，继续执行——随后调用
+     <code>vTaskDelay()</code> 阻塞一小段时间。</p>
+</li>
+<li>
+<p>当 Task 1 处于阻塞状态时，空闲任务运行并释放先前分配给已删除 Task 2 的内存。</p>
+</li>
+<li>
+<p>Task 1 离开阻塞状态后再次成为最高优先级 <em>Ready</em> 状态任务，并抢占空闲任务。
+     当进入 <em>Running</em> 状态时又创建 Task 2，如此循环。</p>
+</li>
+</ol>
+<p><a name="list4.27" title="清单 4.27 示例 4.9 的 main() 实现"></a></p>
+<pre><code class="language-c">int main( void )
+{
+        /* 创建第一个任务，优先级为 1。 */
+        xTaskCreate( vTask1, &quot;Task 1&quot;, 1000, NULL, 1, NULL );
+
+        /* 启动调度器，使任务开始执行。 */
+        vTaskStartScheduler();
+
+        /* 调度器已启动，main() 不应到达这里。 */
+        for( ;; )
+        {
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.27</em></strong> <em>示例 4.9 的 main() 实现</em></p>
+<hr />
+<p><a name="list4.28" title="清单 4.28 示例 4.9 中 Task 1 的实现"></a></p>
+<pre><code class="language-c">TaskHandle_t xTask2Handle = NULL;
+
+void vTask1( void * pvParameters )
+{
+        const TickType_t xDelay100ms = pdMS_TO_TICKS( 100UL );
+
+        for( ;; )
+        {
+                /* 打印该任务的名称。 */
+                vPrintLine( &quot;Task 1 is running&quot; );
+
+                /*
+                 * 以更高优先级创建 Task 2。
+                 * 将 xTask2Handle 的地址作为 pxCreatedTask 参数传入，
+                 * 以便 xTaskCreate 将生成的任务句柄写入该变量。
+                 */
+                xTaskCreate( vTask2, &quot;Task 2&quot;, 1000, NULL, 2, &amp;xTask2Handle );
+
+                /*
+                 * Task 2 具有/曾具有更高优先级。Task 1 能执行到此处，
+                 * 说明 Task 2 已经运行并删除了自身。
+                 */
+                vTaskDelay( xDelay100ms );
+        }
+}
+</code></pre>
+<p><strong><em>清单 4.28</em></strong> <em>示例 4.9 中 Task 1 的实现</em></p>
+<p><a name="list4.29" title="清单 4.29 示例 4.9 中 Task 2 的实现"></a></p>
+<pre><code class="language-c">void vTask2( void * pvParameters )
+{
+        /*
+         * Task 2 启动后立即删除自身。
+         * 可通过向 vTaskDelete() 传入 NULL 来实现；
+         * 为演示起见，这里改为传入它自己的任务句柄。
+         */
+        vPrintLine( &quot;Task 2 is running and about to delete itself&quot; );
+        vTaskDelete( xTask2Handle );
+}
+</code></pre>
+<p><strong><em>清单 4.29</em></strong> <em>示例 4.9 中 Task 2 的实现</em></p>
+<p><a name="fig4.16" title="图 4.16 执行示例 4.9 的输出"></a></p>
+<hr />
+<pre><code class="language-console">C:\Temp&gt;rtosdemo
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+Task1 is running
+Task2 is running and about to delete itself
+</code></pre>
+<p><strong><em>图 4.16</em></strong> <em>执行示例 4.9 的输出</em></p>
+<hr />
+<p><a name="fig4.17" title="图 4.17 示例 4.9 的执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.17_example_4.9_execution_sequence.png" />
+<strong><em>图 4.17</em></strong> <em>示例 4.9 的执行序列</em></p>
+<hr />
+<h2 id="411_1">4.11 线程本地存储与可重入性</h2>
+<p>线程本地存储允许应用开发者将任意数据存储在每个任务的任务控制块中。
+该特性最常用于保存非可重入函数通常会存放在全局变量中的数据。</p>
+<p>可重入函数可以在多线程中安全运行且无副作用。若在多线程环境中使用不可重入函数
+而又没有线程本地存储，则必须在临界区内检查这些函数调用的“带外”结果。
+过度使用临界区会降低 RTOS 性能，因此通常更倾向于使用线程本地存储。</p>
+<p>线程本地存储最常见的用途是 ISO C 标准库和 POSIX 系统中的全局变量 <code>errno</code>。
+<code>errno</code> 用于为标准库函数（如 strtof、strtol）提供扩展结果或错误码。</p>
+<h3 id="4111-c">4.11.1 C 运行库线程本地存储实现</h3>
+<p>多数嵌入式 libc 实现提供 API，以确保不可重入函数在多线程环境中正确工作。
+FreeRTOS 支持两个常用开源库的可重入 API：
+<a href="https://sourceware.org/newlib/">newlib</a> 与
+<a href="https://github.com/picolibc/picolibc">picolibc</a>。
+这些预构建的 C 运行库线程本地存储实现可通过在项目的 FreeRTOSConfig.h 文件中
+定义以下宏启用：</p>
+<ul>
+<li><code>configUSE_NEWLIB_REENTRANT</code>（用于 <a href="https://sourceware.org/newlib/">newlib</a>）</li>
+<li><code>configUSE_PICOLIBC_TLS</code>（用于 <a href="https://github.com/picolibc/picolibc">picolibc</a>）</li>
+</ul>
+<h3 id="4112-c">4.11.2 自定义 C 运行库线程本地存储</h3>
+<p>应用开发者可通过在 FreeRTOSConfig.h 中定义以下宏实现线程本地存储：</p>
+<ul>
+<li>
+<p>将 <code>configUSE_C_RUNTIME_TLS_SUPPORT</code> 设为 1，以启用 C 运行库 TLS 支持。</p>
+</li>
+<li>
+<p>将 <code>configTLS_BLOCK_TYPE</code> 定义为用于保存 C 运行库 TLS 数据的 C 类型。</p>
+</li>
+<li>
+<p>将 <code>configINIT_TLS_BLOCK</code> 定义为初始化 C 运行库 TLS 块时运行的 C 代码。</p>
+</li>
+<li>
+<p>将 <code>configSET_TLS_BLOCK</code> 定义为切换到新任务时运行的 C 代码。</p>
+</li>
+<li>
+<p>将 <code>configDEINIT_TLS_BLOCK</code> 定义为反初始化 C 运行库 TLS 块时运行的 C 代码。</p>
+</li>
+</ul>
+<h3 id="4113">4.11.3 应用级线程本地存储</h3>
+<p>除了 C 运行库 TLS 外，应用开发者还可以在任务控制块中定义一组应用专用指针。
+该特性通过在项目 FreeRTOSConfig.h 中将 <code>configNUM_THREAD_LOCAL_STORAGE_POINTERS</code>
+设置为非零启用。清单 4.30 所示的
+<code>vTaskSetThreadLocalStoragePointer</code> 与 <code>pvTaskGetThreadLocalStoragePointer</code>
+函数可分别用于在运行时设置与获取每个线程本地存储指针的值。</p>
+<p><a name="list4.30" title="清单 4.30 线程本地存储指针 API 函数原型"></a></p>
+<pre><code class="language-c">void * pvTaskGetThreadLocalStoragePointer( TaskHandle_t xTaskToQuery,
+                                                                                     BaseType_t xIndex )
+
+void vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
+                                                                                BaseType_t xIndex,
+                                                                                void * pvValue );
+</code></pre>
+<p><strong><em>清单 4.30</em></strong> <em>线程本地存储指针 API 函数原型</em></p>
+<h2 id="412">4.12 调度算法</h2>
+<h3 id="4121">4.12.1 任务状态与事件回顾</h3>
+<p>实际正在运行（占用处理时间）的任务处于 <em>Running</em> 状态。单核处理器任一时刻只能有
+一个任务处于 <em>Running</em> 状态。也可以在多核上运行 FreeRTOS（非对称多处理 AMP），
+或让 FreeRTOS 在多个核心上调度任务（对称多处理 SMP）。这些场景此处不描述。</p>
+<p>不在运行、但也不处于 <em>Blocked</em> 或 <em>Suspended</em> 状态的任务处于 <em>Ready</em> 状态。处于
+<em>Ready</em> 状态的任务可被调度器选择为进入 <em>Running</em> 状态的任务。调度器总是选择
+最高优先级的 <em>Ready</em> 状态任务进入 <em>Running</em> 状态。</p>
+<p>任务可在 <em>Blocked</em> 状态等待事件，并在事件发生时自动移回 <em>Ready</em> 状态。时间事件
+发生于特定时间点，例如阻塞时间到期，常用于实现周期性或超时行为。同步事件在任务
+或中断服务例程通过任务通知、队列、事件组、消息缓冲区、流缓冲区或多种信号量之一
+发送信息时发生。它们通常用于指示异步活动，例如外设数据到达。</p>
+<h3 id="4122">4.12.2 选择调度算法</h3>
+<p>调度算法是决定哪个 <em>Ready</em> 状态任务转换为 <em>Running</em> 状态的软件例程。</p>
+<p>此前所有示例都使用同一调度算法，但可通过 <code>configUSE_PREEMPTION</code> 与
+<code>configUSE_TIME_SLICING</code> 配置常量改变算法。两个常量均在 FreeRTOSConfig.h 中定义。</p>
+<p>第三个配置常量 <code>configUSE_TICKLESS_IDLE</code> 也会影响调度算法，因为启用后 tick 中断
+可能在较长时间内被完全关闭。<code>configUSE_TICKLESS_IDLE</code> 是专为需要最小化功耗的应用
+提供的高级选项。本节描述假定 <code>configUSE_TICKLESS_IDLE</code> 为 0（若未定义则默认 0）。</p>
+<p>在所有可能的单核配置中，FreeRTOS 调度器会轮流选择共享同一优先级的任务。
+这种“轮流”策略通常称为 “Round Robin Scheduling”（轮转调度）。轮转调度并不保证
+相同优先级任务获得完全相等的时间，只保证同优先级 <em>Ready</em> 任务轮流进入 <em>Running</em>
+状态。</p>
+<p><a name="tbl5" title="表 5 配置内核调度算法的 FreeRTOSConfig.h 设置"></a></p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>调度算法</th>
+<th>是否优先级调度</th>
+<th><code>configUSE_PREEMPTION</code></th>
+<th><code>configUSE_TIME_SLICING</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>抢占式且启用时间片</td>
+<td>是</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>抢占式但不启用时间片</td>
+<td>是</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>协作式</td>
+<td>否</td>
+<td>0</td>
+<td>任意</td>
+</tr>
+</tbody>
+</table>
+<p><strong><em>表 5</em></strong> <em>配置内核调度算法的 FreeRTOSConfig.h 设置</em></p>
+<hr />
+<h3 id="4123">4.12.3 带时间片的优先级抢占式调度</h3>
+<p>表 5 的配置使 FreeRTOS 使用一种称为“固定优先级抢占式调度并带时间片”的算法。
+这是大多数小型 RTOS 应用采用的算法，也是本书目前所有示例使用的算法。
+下表给出该算法名称中术语的解释。</p>
+<p><strong>调度策略术语解释：</strong></p>
+<ul>
+<li>
+<p>固定优先级（Fixed Priority）</p>
+<p>“固定优先级”调度算法不会改变被调度任务的优先级，但不禁止任务自行改变自身
+或其他任务的优先级。</p>
+</li>
+<li>
+<p>抢占式（Preemptive）</p>
+<p>抢占式调度在更高优先级任务进入 <em>Ready</em> 状态时，会立即抢占 <em>Running</em> 状态任务。
+被抢占意味着任务在未主动让出或阻塞的情况下被移出 <em>Running</em> 状态并回到 <em>Ready</em>
+状态，以让另一个任务进入 <em>Running</em> 状态。任务抢占可在任何时刻发生，不仅仅在
+RTOS 的 tick 中断中。</p>
+</li>
+<li>
+<p>时间片（Time Slicing）</p>
+<p>时间片用于在同优先级任务之间共享处理器时间，即便任务未显式让出或进入
+<em>Blocked</em> 状态。使用时间片的调度算法会在每个时间片结束时（若存在其他同优先级
+<em>Ready</em> 任务）选择新任务进入 <em>Running</em> 状态。一个时间片等于两次 RTOS tick 中断
+之间的时间。</p>
+</li>
+</ul>
+<p>图 4.18 与图 4.19 展示了在使用固定优先级抢占式调度并带时间片时任务的调度方式。
+图 4.18 显示当应用中所有任务优先级各不相同时的进入 <em>Running</em> 状态顺序。图 4.19
+显示当应用中有两个任务共享同一优先级时的进入 <em>Running</em> 状态顺序。</p>
+<p><a name="fig4.18" title="图 4.18 强调任务优先级与抢占的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.18_preemption_execution_pattern.png" />
+<strong><em>图 4.18</em></strong> <em>在假设应用中每个任务都有唯一优先级的情况下，强调任务优先级与抢占
+的执行模式</em></p>
+<hr />
+<p>参见图 4.18：</p>
+<ul>
+<li>
+<p>空闲任务（Idle Task）</p>
+<p>空闲任务以最低优先级运行，因此每当更高优先级任务进入 <em>Ready</em> 状态时都会被
+抢占，例如 t3、t5 与 t9。</p>
+</li>
+<li>
+<p>Task 3</p>
+<p>Task 3 是事件驱动任务，优先级较低但高于空闲优先级。它大部分时间处于 <em>Blocked</em>
+状态等待事件发生。每次事件发生时，它从 <em>Blocked</em> 状态转入 <em>Ready</em> 状态。
+所有 FreeRTOS 任务间通信机制（任务通知、队列、信号量、事件组等）都可用于
+触发事件并解阻塞任务。</p>
+<p>事件发生在 t3 与 t5，另外在 t9 与 t12 之间某处也发生一次。t3 与 t5 时的事件
+能立即处理，因为此时 Task 3 是能运行的最高优先级任务。t9 与 t12 之间的事件
+直到 t12 才处理，因为在那之前 Task 1 与 Task 2 仍在执行。只有到 t12 时 Task 1
+与 Task 2 都处于 <em>Blocked</em> 状态，Task 3 才成为最高优先级的 <em>Ready</em> 状态任务。</p>
+</li>
+<li>
+<p>Task 2</p>
+<p>Task 2 是周期性任务，优先级高于 Task 3 但低于 Task 1。其周期意味着希望在
+t1、t6 与 t9 执行。</p>
+<p>在 t6 时，Task 3 处于 <em>Running</em> 状态，但 Task 2 具有更高优先级，因此抢占
+Task 3 并立即执行。Task 2 在 t7 完成处理并进入 <em>Blocked</em> 状态，此时 Task 3
+可重新进入 <em>Running</em> 状态完成处理。Task 3 在 t8 进入阻塞。</p>
+</li>
+<li>
+<p>Task 1</p>
+<p>Task 1 也是事件驱动任务，具有最高优先级，因此能抢占系统中任何其他任务。
+图中 Task 1 的事件发生在 t10，此时 Task 1 抢占 Task 2。Task 2 只能在 Task 1
+于 t11 重新进入 <em>Blocked</em> 状态后继续处理。</p>
+</li>
+</ul>
+<p><a name="fig4.19" title="图 4.19 强调任务优先级与时间片的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.19_time_slicing_execution_pattern.png" />
+<strong><em>图 4.19</em></strong> <em>在假设应用中两个任务同优先级的情况下，强调任务优先级与时间片的
+执行模式</em></p>
+<hr />
+<p>参见图 4.19：</p>
+<ul>
+<li>
+<p>空闲任务与 Task 2</p>
+<p>空闲任务与 Task 2 都是持续处理任务，且优先级为 0（最低优先级）。调度器只有在
+没有更高优先级任务可运行时才为优先级 0 的任务分配处理时间，并通过时间片在
+这些任务之间共享时间。每次 tick 中断开始一个新的时间片，在图 4.19 中发生于
+t1、t2、t3、t4、t5、t8、t9、t10 与 t11。</p>
+<p>空闲任务与 Task 2 轮流进入 <em>Running</em> 状态，因此在同一时间片内两者可能先后
+处于 <em>Running</em> 状态，如 t5 到 t8 之间所示。</p>
+</li>
+<li>
+<p>Task 1</p>
+<p>Task 1 优先级高于空闲优先级。Task 1 是事件驱动任务，大部分时间处于 <em>Blocked</em>
+状态等待事件发生，每次事件发生时从 <em>Blocked</em> 转入 <em>Ready</em>。</p>
+<p>事件发生在 t6。t6 时 Task 1 成为最高优先级可运行任务，因此在时间片中途抢占
+空闲任务。事件处理在 t7 完成，Task 1 重新进入 <em>Blocked</em> 状态。</p>
+</li>
+</ul>
+<p>图 4.19 显示空闲任务与应用创建的任务共享处理时间。如果应用创建的空闲优先级
+任务有实际工作，而空闲任务没有，这种时间分配可能不理想。可以通过
+<code>configIDLE_SHOULD_YIELD</code> 编译期配置常量改变空闲任务的调度方式：</p>
+<ul>
+<li>
+<p>若 <code>configIDLE_SHOULD_YIELD</code> 设为 0，空闲任务会在整个时间片内保持
+    <em>Running</em> 状态，除非被更高优先级任务抢占。</p>
+</li>
+<li>
+<p>若 <code>configIDLE_SHOULD_YIELD</code> 设为 1，空闲任务在其循环的每次迭代都会让出
+    （自愿放弃剩余时间片），只要存在其他处于 <em>Ready</em> 状态的空闲优先级任务。</p>
+</li>
+</ul>
+<p>图 4.19 的执行模式对应 <code>configIDLE_SHOULD_YIELD</code> 为 0 的情况。图 4.20 展示了
+在同一场景下将 <code>configIDLE_SHOULD_YIELD</code> 设为 1 的执行模式。</p>
+<p><a name="fig4.20" title="图 4.20 与图 4.19 相同场景但 configIDLE_SHOULD_YIELD 设为 1"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.20_time_slicing_with_yield_execution_pattern.png" />
+<strong><em>图 4.20</em></strong> <em>与图 4.19 相同场景但 <code>configIDLE_SHOULD_YIELD</code> 设为 1 时的执行模式</em></p>
+<hr />
+<p>图 4.20 还显示当 <code>configIDLE_SHOULD_YIELD</code> 设为 1 时，在空闲任务之后进入
+<em>Running</em> 状态的任务不会获得完整时间片，而是仅执行空闲任务让出后的剩余时间片。</p>
+<h3 id="4124">4.12.4 不带时间片的优先级抢占式调度</h3>
+<p>不带时间片的优先级抢占式调度与上一节描述的任务选择与抢占算法相同，但不使用
+时间片在同优先级任务之间共享处理时间。</p>
+<p>表 5 展示了将 FreeRTOS 配置为不带时间片的优先级抢占式调度所需的设置。</p>
+<p>正如图 4.19 所示，若使用时间片且最高优先级可运行任务不止一个，则调度器会在
+每次 RTOS tick 中断时选择新的任务进入 <em>Running</em> 状态（tick 中断标记一个时间片
+结束）。若不使用时间片，调度器仅在以下情况下选择新的任务进入 <em>Running</em> 状态：</p>
+<ul>
+<li>
+<p>更高优先级任务进入 <em>Ready</em> 状态。</p>
+</li>
+<li>
+<p>当前 <em>Running</em> 状态任务进入 <em>Blocked</em> 或 <em>Suspended</em> 状态。</p>
+</li>
+</ul>
+<p>不使用时间片时任务上下文切换次数少于使用时间片，因此可降低调度器处理开销。
+然而，关闭时间片也可能导致同优先级任务获得极不均衡的处理时间，如图 4.21 所示。
+因此，关闭时间片被视为高级技术，通常仅适用于经验丰富的用户。</p>
+<p><a name="fig4.21" title="图 4.21 展示关闭时间片时同优先级任务处理时间差异"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.21_equal_priority_without_time_slicing_execution_pattern.png" />
+<strong><em>图 4.21</em></strong> <em>展示关闭时间片时同优先级任务处理时间差异的执行模式</em></p>
+<hr />
+<p>参见图 4.21（假设 <code>configIDLE_SHOULD_YIELD</code> 设为 0）：</p>
+<ul>
+<li>
+<p>Tick 中断</p>
+<p>Tick 中断发生在 t1、t2、t3、t4、t5、t8、t11、t12 与 t13。</p>
+</li>
+<li>
+<p>Task 1</p>
+<p>Task 1 是高优先级事件驱动任务，大部分时间处于 <em>Blocked</em> 状态等待事件。
+每次事件发生时，Task 1 从 <em>Blocked</em> 转入 <em>Ready</em> 状态，并因其是最高优先级
+<em>Ready</em> 状态任务而进入 <em>Running</em> 状态。图 4.21 显示 Task 1 在 t6 至 t7
+处理事件，然后在 t9 至 t10 再次处理事件。</p>
+</li>
+<li>
+<p>空闲任务与 Task 2</p>
+<p>空闲任务与 Task 2 都是持续处理任务，优先级为 0（空闲优先级）。持续处理任务
+不会进入 <em>Blocked</em> 状态。</p>
+<p>未使用时间片，因此处于 <em>Running</em> 状态的空闲优先级任务会一直保持 <em>Running</em>
+直到被更高优先级的 Task 1 抢占。</p>
+<p>在图 4.21 中，空闲任务从 t1 开始运行，直到 t6 被 Task 1 抢占，期间超过四个
+完整 tick 周期。</p>
+<p>Task 2 在 t7 开始运行，即 Task 1 再次进入 <em>Blocked</em> 状态等待事件之时。Task 2
+一直处于 <em>Running</em> 状态直到 t9 被 Task 1 抢占，此时其运行时间不足一个 tick
+周期。</p>
+<p>在 t10，空闲任务重新进入 <em>Running</em> 状态，尽管它已获得比 Task 2 多四倍以上的
+处理时间。</p>
+</li>
+</ul>
+<h3 id="4125">4.12.5 协作式调度</h3>
+<p>本书重点讲解抢占式调度，但 FreeRTOS 也支持协作式调度。表 5 展示了配置为协作式
+调度所需的 FreeRTOSConfig.h 设置。</p>
+<p>使用协作式调度时（假设应用提供的中断服务例程不会显式请求上下文切换），只有当
+<em>Running</em> 状态任务进入 <em>Blocked</em> 状态，或该任务通过调用 <code>taskYIELD()</code> 显式让出
+（手动请求重新调度）时，才会发生上下文切换。任务不会被抢占，因此无法使用时间片。</p>
+<p>图 4.22 展示协作式调度器的行为。图中水平虚线表示任务处于 <em>Ready</em> 状态的时间。</p>
+<p><a name="fig4.22" title="图 4.22 展示协作式调度器行为的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/figure_4.22_cooperative_scheduler_execution_pattern.png" />
+<strong><em>图 4.22</em></strong> <em>展示协作式调度器行为的执行模式</em></p>
+<hr />
+<p>参见图 4.22：</p>
+<ul>
+<li>
+<p>Task 1</p>
+<p>Task 1 具有最高优先级。它起初处于 <em>Blocked</em> 状态，等待一个信号量。</p>
+<p>在 t3 时刻，一个中断释放信号量，使 Task 1 离开 <em>Blocked</em> 状态并进入 <em>Ready</em>
+状态（在中断中释放信号量将在第 6 章介绍）。</p>
+<p>在 t3 时刻，Task 1 是最高优先级的 <em>Ready</em> 状态任务。如果使用抢占式调度，
+Task 1 会成为 <em>Running</em> 状态任务。但在协作式调度下，Task 1 会一直保持
+<em>Ready</em> 状态直到 t4，即当前 <em>Running</em> 状态任务调用 <code>taskYIELD()</code> 时。</p>
+</li>
+<li>
+<p>Task 2</p>
+<p>Task 2 优先级介于 Task 1 与 Task 3 之间。它起初处于 <em>Blocked</em> 状态，等待
+Task 3 在 t2 时发送的消息。</p>
+<p>在 t2 时刻，Task 2 是最高优先级的 <em>Ready</em> 状态任务，如果使用抢占式调度，
+Task 2 会成为 <em>Running</em> 状态任务。但在协作式调度下，Task 2 会一直处于 <em>Ready</em>
+状态，直到 <em>Running</em> 状态任务进入 <em>Blocked</em> 状态或调用 <code>taskYIELD()</code>。</p>
+<p><em>Running</em> 状态任务在 t4 调用了 <code>taskYIELD()</code>，但此时 Task 1 已是最高优先级
+<em>Ready</em> 状态任务，因此 Task 2 直到 Task 1 在 t5 重新进入 <em>Blocked</em> 状态后
+才真正成为 <em>Running</em> 状态任务。</p>
+<p>在 t6，Task 2 重新进入 <em>Blocked</em> 状态等待下一条消息，此时 Task 3 再次成为
+最高优先级 <em>Ready</em> 状态任务。</p>
+</li>
+</ul>
+<p>在多任务应用中，应用编写者必须确保资源不会被多个任务同时访问，因为同时访问
+可能会破坏资源。例如以下 UART（串口）资源被访问的场景：两个任务向 UART 写字符串；
+Task 1 写 “abcdefghijklmnop”，Task 2 写 “123456789”。</p>
+<ol>
+<li>
+<p>Task 1 处于 <em>Running</em> 状态开始写字符串，写到 “abcdefg” 后离开 <em>Running</em> 状态，
+     尚未写完。</p>
+</li>
+<li>
+<p>Task 2 进入 <em>Running</em> 状态并写入 “123456789”，随后离开 <em>Running</em> 状态。</p>
+</li>
+<li>
+<p>Task 1 再次进入 <em>Running</em> 状态并写入剩余字符。</p>
+</li>
+</ol>
+<p>在该场景中，UART 上实际写入的是 “abcdefg123456789hijklmnop”。Task 1 的字符串
+并未按预期连续输出，而是被 Task 2 的字符串插入而发生破坏。</p>
+<p>使用协作式调度通常更容易避免资源的同时访问问题，而使用抢占式调度则更难<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">4</a></sup>：</p>
+<ul>
+<li>
+<p>使用抢占式调度时，<em>Running</em> 状态任务可能在任何时刻被抢占，包括资源处于不一致
+    状态时。正如 UART 示例所示，将资源置于不一致状态可能导致数据损坏。</p>
+</li>
+<li>
+<p>使用协作式调度时，你可以控制任务切换发生的时机，从而确保在资源处于不一致状态时
+    不会切换到其他任务。</p>
+</li>
+<li>
+<p>在上述 UART 示例中，你可以确保 Task 1 在写完整个字符串前不离开 <em>Running</em> 状态，
+    从而消除被其他任务破坏字符串的可能。</p>
+</li>
+</ul>
+<p>正如图 4.22 所示，使用协作式调度的系统响应性不如抢占式调度：</p>
+<ul>
+<li>
+<p>使用抢占式调度时，调度器在任务成为最高优先级 <em>Ready</em> 状态任务时立即运行该任务。
+    这对于必须在限定时间内响应高优先级事件的实时系统往往至关重要。</p>
+</li>
+<li>
+<p>使用协作式调度时，当某任务成为最高优先级 <em>Ready</em> 状态任务后，只有当当前
+    <em>Running</em> 状态任务进入 <em>Blocked</em> 状态或调用 <code>taskYIELD()</code> 时才会切换。</p>
+</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:4">
+<p>屏幕截图显示每个任务在下一个任务执行前只打印一次消息。这是由于使用
+Windows 模拟器造成的“人为”场景。Windows 模拟器并不是真实时系统。此外，
+向 Windows 控制台写入耗时较长，并会触发一连串 Windows 系统调用。在真实嵌入式
+目标上使用快速且非阻塞的打印函数时，可能会出现每个任务在被切换出去之前打印
+多次的情况。&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>需要注意，时间片结束并不是调度器选择新任务的唯一时刻。正如本书
+所示，当当前运行的任务进入 <em>Blocked</em> 状态，或当中断把更高优先级任务
+移入 <em>Ready</em> 状态时，调度器也会立即选择新的任务运行。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>即便启用了 FreeRTOS 的特殊低功耗特性，这一点也成立；在此情况下，若应用
+创建的任务都无法执行，运行 FreeRTOS 的微控制器会进入低功耗模式。&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>任务之间安全共享资源的方法将在本书后续章节介绍。FreeRTOS 自身提供的资源
+（如队列与信号量）在任务之间共享时始终是安全的。&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

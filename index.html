@@ -1,0 +1,1883 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/">
+      
+      
+      
+        <link rel="next" href="ch01-%E5%89%8D%E8%A8%80/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              目录
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 前言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 FreeRTOS 内核分发包
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 堆内存管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 任务管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 队列管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 软件定时器管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 中断管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 资源管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 事件组
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 任务通知
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11 低功耗支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12 开发者支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13 故障排查
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        示例:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        插图:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代码清单:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表格:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 前言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 FreeRTOS 内核分发包
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 堆内存管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 任务管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 队列管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 软件定时器管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7 中断管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8 资源管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9 事件组
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10 任务通知
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11 低功耗支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12 开发者支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13 故障排查
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        示例:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        插图:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代码清单:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表格:
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">目录</h1>
+<h2 id="1"><a href="ch01-%E5%89%8D%E8%A8%80/#1-前言">1 前言</a></h2>
+<ul>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#11-小型嵌入式系统中的多任务">1.1 小型嵌入式系统中的多任务</a><ul>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#111-关于-freertos-内核">1.1.1 关于 FreeRTOS 内核</a></li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#112-价值主张">1.1.2 价值主张</a></li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#113-关于术语的说明">1.1.3 关于术语的说明</a></li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#114-为什么要使用-rtos">1.1.4 为什么要使用 RTOS？</a></li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#115-freertos-内核特性">1.1.5 FreeRTOS 内核特性</a></li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#116-许可协议及-freertos-openrtos-和-safertos-家族">1.1.6 许可协议及 FreeRTOS、OpenRTOS 和 SafeRTOS 家族</a></li>
+</ul>
+</li>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#12-附带的源文件和工程">1.2 附带的源文件和工程</a><ul>
+<li><a href="ch01-%E5%89%8D%E8%A8%80/#121-获取本书配套示例">1.2.1 获取本书配套示例</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="2-freertos"><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#2-freertos-内核分发包">2 FreeRTOS 内核分发包</a></h2>
+<ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#21-简介">2.1 简介</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#22-理解-freertos-分发包">2.2 理解 FreeRTOS 分发包</a><ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#221-定义-freertos-移植">2.2.1 定义：FreeRTOS 移植</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#222-构建-freertos">2.2.2 构建 FreeRTOS</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#223-freertosconfigh">2.2.3 FreeRTOSConfig.h</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#224-官方分发包">2.2.4 官方分发包</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#225-所有移植通用的-freertos-源文件">2.2.5 所有移植通用的 FreeRTOS 源文件</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#226-针对特定移植的-freertos-源文件">2.2.6 针对特定移植的 FreeRTOS 源文件</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#227-头文件包含路径">2.2.7 头文件包含路径</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#228-头文件">2.2.8 头文件</a></li>
+</ul>
+</li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#23-演示应用">2.3 演示应用</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#24-创建-freertos-工程">2.4 创建 FreeRTOS 工程</a><ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#241-适配提供的演示工程">2.4.1 适配提供的演示工程</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#242-从零创建新工程">2.4.2 从零创建新工程</a></li>
+</ul>
+</li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#25-数据类型和编码风格指南">2.5 数据类型和编码风格指南</a><ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#251-数据类型">2.5.1 数据类型</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#252-变量命名">2.5.2 变量命名</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#253-函数命名">2.5.3 函数命名</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#254-格式化">2.5.4 格式化</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#255-宏命名">2.5.5 宏命名</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#256-关于类型强制转换的说明">2.5.6 关于类型强制转换的说明</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="3"><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#3-堆内存管理">3 堆内存管理</a></h2>
+<ul>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#31-简介">3.1 简介</a><ul>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#311-前提条件">3.1.1 前提条件</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#312-范围">3.1.2 范围</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#313-在静态和动态内存分配之间切换">3.1.3 在静态和动态内存分配之间切换</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#314-使用动态内存分配">3.1.4 使用动态内存分配</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#315-动态内存分配的选项">3.1.5 动态内存分配的选项</a></li>
+</ul>
+</li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#32-示例内存分配方案">3.2 示例内存分配方案</a><ul>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#321-heap_1">3.2.1 Heap_1</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#322-heap_2">3.2.2 Heap_2</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#323-heap_3">3.2.3 Heap_3</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#324-heap_4">3.2.4 Heap_4</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#325-heap_5">3.2.5 Heap_5</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#326-初始化-heap_5-vportdefineheapregions-api-函数">3.2.6 初始化 heap_5：vPortDefineHeapRegions() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#33-堆相关的实用程序函数和宏">3.3 堆相关的实用程序函数和宏</a><ul>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#331-定义堆起始地址">3.3.1 定义堆起始地址</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#332-xportgetfreeheapsize-api-函数">3.3.2 xPortGetFreeHeapSize() API 函数</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#333-xportgetminimumeverfreeheapsize-api-函数">3.3.3 xPortGetMinimumEverFreeHeapSize() API 函数</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#334-vportgetheapstats-api-函数">3.3.4 vPortGetHeapStats() API 函数</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#335-收集每个任务的堆使用统计信息">3.3.5 收集每个任务的堆使用统计信息</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#336-内存分配失败钩子函数">3.3.6 内存分配失败钩子函数</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#337-将任务堆栈放置在快速内存中">3.3.7 将任务堆栈放置在快速内存中</a></li>
+</ul>
+</li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#34-使用静态内存分配">3.4 使用静态内存分配</a><ul>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#341-启用静态内存分配">3.4.1 启用静态内存分配</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#342-静态内部内核内存">3.4.2 静态内部内核内存</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#3421-vapplicationgettimertaskmemory">3.4.2.1 vApplicationGetTimerTaskMemory</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#3422-vapplicationgetidletaskmemory">3.4.2.2 vApplicationGetIdleTaskMemory</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="4"><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4-任务管理">4 任务管理</a></h2>
+<ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#41-简介">4.1 简介</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#411-范围">4.1.1 范围</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#42-任务函数">4.2 任务函数</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#43-顶级任务状态">4.3 顶级任务状态</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#44-任务创建">4.4 任务创建</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#441-xtaskcreate-api-函数">4.4.1 xTaskCreate() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#45-任务优先级">4.5 任务优先级</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#通用调度器">通用调度器</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#架构优化调度器">架构优化调度器</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#46-时间测量和滴答中断">4.6 时间测量和滴答中断</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#47-扩展未运行状态">4.7 扩展“未运行”状态</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#471-阻塞状态">4.7.1 阻塞状态</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#472-挂起状态">4.7.2 挂起状态</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#473-就绪状态">4.7.3 就绪状态</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#474-完成状态转换图">4.7.4 完成状态转换图</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#475-vtaskdelayuntil-api-函数">4.7.5 vTaskDelayUntil() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#48-空闲任务和空闲任务钩子">4.8 空闲任务和空闲任务钩子</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#481-空闲任务钩子函数">4.8.1 空闲任务钩子函数</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#482-空闲任务钩子函数的实现限制">4.8.2 空闲任务钩子函数的实现限制</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#49-改变任务优先级">4.9 改变任务优先级</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#491-vtaskpriorityset-api-函数">4.9.1 vTaskPrioritySet() API 函数</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#492-uxtaskpriorityget-api-函数">4.9.2 uxTaskPriorityGet() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#410-删除任务">4.10 删除任务</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4101-vtaskdelete-api-函数">4.10.1 vTaskDelete() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#411-线程本地存储和可重入性">4.11 线程本地存储和可重入性</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4111-c-运行时线程本地存储实现">4.11.1 C 运行时线程本地存储实现</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4112-自定义-c-运行时线程本地存储">4.11.2 自定义 C 运行时线程本地存储</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4113-应用程序线程本地存储">4.11.3 应用程序线程本地存储</a></li>
+</ul>
+</li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#412-调度算法">4.12 调度算法</a><ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4121-任务状态和事件回顾">4.12.1 任务状态和事件回顾</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4122-选择调度算法">4.12.2 选择调度算法</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4123-带时间片的优先级抢占式调度">4.12.3 带时间片的优先级抢占式调度</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4124-不带时间片的优先级抢占式调度">4.12.4 不带时间片的优先级抢占式调度</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#4125-协作式调度">4.12.5 协作式调度</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="5"><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#5-队列管理">5 队列管理</a></h2>
+<ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#51-简介">5.1 简介</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#511-范围">5.1.1 范围</a></li>
+</ul>
+</li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#52-队列的特性">5.2 队列的特性</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#521-数据存储">5.2.1 数据存储</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#522-多任务访问">5.2.2 多任务访问</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#523-阻塞在队列读取上">5.2.3 阻塞在队列读取上</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#524-阻塞在队列写入上">5.2.4 阻塞在队列写入上</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#525-阻塞在多个队列上">5.2.5 阻塞在多个队列上</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#526-创建队列静态分配和动态分配队列">5.2.6 创建队列：静态分配和动态分配队列</a></li>
+</ul>
+</li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#53-使用队列">5.3 使用队列</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#531-xqueuecreate-api-函数">5.3.1 xQueueCreate() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#532-xqueuesendtoback-和-xqueuesendtofront-api-函数">5.3.2 xQueueSendToBack() 和 xQueueSendToFront() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#533-xqueuereceive-api-函数">5.3.3 xQueueReceive() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#534-uxqueuemessageswaiting-api-函数">5.3.4 uxQueueMessagesWaiting() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#54-从多个源接收数据">5.4 从多个源接收数据</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#55-处理大数据或可变大小数据">5.5 处理大数据或可变大小数据</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#551-排队指针">5.5.1 排队指针</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#552-使用队列发送不同类型和长度的数据9">5.5.2 使用队列发送不同类型和长度的数据</a></li>
+</ul>
+</li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#56-从多个队列接收">5.6 从多个队列接收</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#561-队列集">5.6.1 队列集</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#562-xqueuecreateset-api-函数">5.6.2 xQueueCreateSet() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#563-xqueueaddtoset-api-函数">5.6.3 xQueueAddToSet() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#564-xqueueselectfromset-api-函数">5.6.4 xQueueSelectFromSet() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#565-更现实的队列集用例">5.6.5 更现实的队列集用例</a></li>
+</ul>
+</li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#57-使用队列创建邮箱">5.7 使用队列创建邮箱</a><ul>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#571-xqueueoverwrite-api-函数">5.7.1 xQueueOverwrite() API 函数</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#572-xqueuepeek-api-函数">5.7.2 xQueuePeek() API 函数</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="6"><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#6-软件定时器管理">6 软件定时器管理</a></h2>
+<ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#61-章节简介和范围">6.1 章节简介和范围</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#611-范围">6.1.1 范围</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#62-软件定时器回调函数">6.2 软件定时器回调函数</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#63-软件定时器的属性和状态">6.3 软件定时器的属性和状态</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#631-软件定时器的周期">6.3.1 软件定时器的周期</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#632-单次和自动重载定时器">6.3.2 单次和自动重载定时器</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#633-软件定时器状态">6.3.3 软件定时器状态</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#64-软件定时器的上下文">6.4 软件定时器的上下文</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#641-rtos-守护定时器服务任务">6.4.1 RTOS 守护（定时器服务）任务</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#642-定时器命令队列">6.4.2 定时器命令队列</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#643-守护任务调度">6.4.3 守护任务调度</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#65-创建和启动软件定时器">6.5 创建和启动软件定时器</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#651-xtimercreate-api-函数">6.5.1 xTimerCreate() API 函数</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#652-xtimerstart-api-函数">6.5.2 xTimerStart() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#66-定时器-id">6.6 定时器 ID</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#661-vtimersetimerid-api-函数">6.6.1 vTimerSetTimerID() API 函数</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#662-pvtimergettimerid-api-函数">6.6.2 pvTimerGetTimerID() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#67-更改定时器的周期">6.7 更改定时器的周期</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#671-xtimerchangeperiod-api-函数">6.7.1 xTimerChangePeriod() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#68-重置软件定时器">6.8 重置软件定时器</a><ul>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#681-xtimerreset-api-函数">6.8.1 xTimerReset() API 函数</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="7"><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#7-中断管理">7 中断管理</a></h2>
+<ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#71-简介">7.1 简介</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#711-事件">7.1.1 事件</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#712-范围">7.1.2 范围</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#72-在-isr-中使用-freertos-api">7.2 在 ISR 中使用 FreeRTOS API</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#721-中断安全-api">7.2.1 中断安全 API</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#722-使用单独的中断安全-api-的好处">7.2.2 使用单独的中断安全 API 的好处</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#723-使用单独的中断安全-api-的缺点">7.2.3 使用单独的中断安全 API 的缺点</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#724-xhigherprioritytaskwoken-参数">7.2.4 xHigherPriorityTaskWoken 参数</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#725-portyield_from_isr-和-portend_switching_isr宏">7.2.5 portYIELD_FROM_ISR() 和 portEND_SWITCHING_ISR()宏</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#73-延迟中断处理">7.3 延迟中断处理</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#74-用于同步的二进制信号量">7.4 用于同步的二进制信号量</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#741-xsemaphorecreatebinary-api-函数">7.4.1 xSemaphoreCreateBinary() API 函数</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#742-xsemaphoretake-api-函数">7.4.2 xSemaphoreTake() API 函数</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#743-xsemaphoregivefromisr-api-函数">7.4.3 xSemaphoreGiveFromISR() API 函数</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#744-改进示例-71-中使用的任务的实现">7.4.4 改进示例 7.1 中使用的任务的实现</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#75-计数信号量">7.5 计数信号量</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#751-xsemaphorecreatecounting-api-函数">7.5.1 xSemaphoreCreateCounting() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#76-将工作推迟到-rtos-守护任务">7.6 将工作推迟到 RTOS 守护任务</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#761-xtimerpendfunctioncallfromisr-api-函数">7.6.1 xTimerPendFunctionCallFromISR() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#77-在中断服务例程中使用队列">7.7 在中断服务例程中使用队列</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#771-xqueuesendtofrontfromisr-和-xqueuesendtobackfromisr-api-函数">7.7.1 xQueueSendToFrontFromISR() 和 xQueueSendToBackFromISR() API 函数</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#772-从-isr-使用队列时的注意事项">7.7.2 从 ISR 使用队列时的注意事项</a></li>
+</ul>
+</li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#78-中断嵌套">7.8 中断嵌套</a><ul>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#781-针对-arm-cortex-m22-和-arm-gic-用户的说明">7.8.1 针对 ARM Cortex-M 和 ARM GIC 用户的说明</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="8"><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#8-资源管理">8 资源管理</a></h2>
+<ul>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#81-章节简介和范围">8.1 章节简介和范围</a><ul>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#811-互斥">8.1.1 互斥</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#812-范围">8.1.2 范围</a></li>
+</ul>
+</li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#82-关键段和挂起调度程序">8.2 关键段和挂起调度程序</a><ul>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#821-基本关键段">8.2.1 基本关键段</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#822-挂起或锁定调度程序">8.2.2 挂起（或锁定）调度程序</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#823-vtasksuspendall-api-函数">8.2.3 vTaskSuspendAll() API 函数</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#824-xtaskresumeall-api-函数">8.2.4 xTaskResumeAll() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#83-互斥量和二进制信号量">8.3 互斥量（和二进制信号量）</a><ul>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#831-xsemaphorecreatemutex-api-函数">8.3.1 xSemaphoreCreateMutex() API 函数</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#832-优先级反转">8.3.2 优先级反转</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#833-优先级继承">8.3.3 优先级继承</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#834-死锁或致命拥塞">8.3.4 死锁（或致命拥塞）</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#835-递归互斥量">8.3.5 递归互斥量</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#836-互斥量和任务调度">8.3.6 互斥量和任务调度</a></li>
+</ul>
+</li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#84-守门人任务">8.4 守门人任务</a><ul>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#841-重写-vprintstring-以使用守门人任务">8.4.1 重写 vPrintString() 以使用守门人任务</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="9"><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#9-事件组">9 事件组</a></h2>
+<ul>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#91-章节简介与范围">9.1 章节简介与范围</a><ul>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#911-范围">9.1.1 范围</a></li>
+</ul>
+</li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#92-事件组的特性">9.2 事件组的特性</a><ul>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#921-事件组事件标志和事件位">9.2.1 事件组、事件标志和事件位</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#922-有关-eventbits_t-数据类型的更多信息">9.2.2 有关 EventBits_t 数据类型的更多信息</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#923-多任务访问">9.2.3 多任务访问</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#924-使用事件组的实际示例">9.2.4 使用事件组的实际示例</a></li>
+</ul>
+</li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#93-使用事件组进行事件管理">9.3 使用事件组进行事件管理</a><ul>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#931-xeventgroupcreate-api-函数">9.3.1 xEventGroupCreate() API 函数</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#932-xeventgroupsetbits-api-函数">9.3.2 xEventGroupSetBits() API 函数</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#933-xeventgroupsetbitsfromisr-api-函数">9.3.3 xEventGroupSetBitsFromISR() API 函数</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#934-xeventgroupwaitbits-api-函数">9.3.4 xEventGroupWaitBits() API 函数</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#935-xeventgroupgetstaticbuffer-api-函数">9.3.5 xEventGroupGetStaticBuffer() API 函数</a></li>
+</ul>
+</li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#94-使用事件组进行任务同步">9.4 使用事件组进行任务同步</a><ul>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#941-xeventgroupsync-api-函数">9.4.1 xEventGroupSync() API 函数</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="10"><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#10-任务通知">10 任务通知</a></h2>
+<ul>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#101-简介">10.1 简介</a><ul>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1011-通过中介对象通信">10.1.1 通过中介对象通信</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1012-任务通知直接任务通信">10.1.2 任务通知——直接任务通信</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1013-范围">10.1.3 范围</a></li>
+</ul>
+</li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#102-任务通知的优缺点">10.2 任务通知的优缺点</a><ul>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1021-任务通知的性能优势">10.2.1 任务通知的性能优势</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1022-ram-占用优势">10.2.2 RAM 占用优势</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1023-任务通知的局限性">10.2.3 任务通知的局限性</a></li>
+</ul>
+</li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#103-使用任务通知">10.3 使用任务通知</a><ul>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1031-任务通知-api-选项">10.3.1 任务通知 API 选项</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#10311-完整的-api-函数列表-sup27sup">10.3.1.1 完整的 API 函数列表</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1032-xtasknotifygive-api-函数">10.3.2 xTaskNotifyGive() API 函数</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1033-vtasknotifygivefromisr-api-函数">10.3.3 vTaskNotifyGiveFromISR() API 函数</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1034-ultasknotifytake-api-函数">10.3.4 ulTaskNotifyTake() API 函数</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1035-xtasknotify-和-xtasknotifyfromisr-api-函数">10.3.5 xTaskNotify() 和 xTaskNotifyFromISR() API 函数</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1036-xtasknotifywait-api-函数">10.3.6 xTaskNotifyWait() API 函数</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1037-任务通知在外设驱动中的应用uart-示例">10.3.7 任务通知在外设驱动中的应用：UART 示例</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1038-任务通知在外设驱动中的应用adc-示例">10.3.8 任务通知在外设驱动中的应用：ADC 示例</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#1039-任务通知在应用程序中的直接使用">10.3.9 任务通知在应用程序中的直接使用</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="11"><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#11-低功耗支持">11 低功耗支持</a></h2>
+<ul>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#111-节能简介">11.1 节能简介</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#112-freertos-睡眠模式">11.2 FreeRTOS 睡眠模式</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#113-启用内置无滴答空闲功能的方法">11.3 启用内置无滴答空闲功能的方法</a><ul>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#1131-the-portsuppress_ticks_and_sleep-macro">11.3.1 portSUPPRESS_TICKS_AND_SLEEP() 宏</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#1132-the-vportsuppressticksandsleep-function">11.3.2 vPortSuppressTicksAndSleep 函数</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#1133-the-etaskconfirmsleepmodestatus-function">11.3.3 eTaskConfirmSleepModeStatus 函数</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#1134-the-configpre_sleep_processing-configuration">11.3.4 configPRE_SLEEP_PROCESSING 配置</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#1135-the-configpost_sleep_processing-configuration">11.3.5 configPOST_SLEEP_PROCESSING 配置</a></li>
+</ul>
+</li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#114-implementing-portsuppress_ticks_and_sleep-macro">11.4 Implementing portSUPPRESS_TICKS_AND_SLEEP() Macro</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#115-idle-task-hook-function">11.5 Idle Task Hook Function</a></li>
+</ul>
+<h2 id="12"><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#12-开发者支持">12 开发者支持</a></h2>
+<ul>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#121-简介">12.1 简介</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#122-configassert">12.2 configASSERT()</a><ul>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1221-示例-configassert-定义">12.2.1 示例 configASSERT() 定义</a></li>
+</ul>
+</li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#123-tracealyzer-for-freertos">12.3 Tracealyzer for FreeRTOS</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#124-调试相关的钩子回调函数">12.4 调试相关的钩子（回调）函数</a><ul>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1241-内存分配失败钩子">12.4.1 内存分配失败钩子</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1242-堆栈溢出钩子">12.4.2 堆栈溢出钩子</a></li>
+</ul>
+</li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#125-查看运行时和任务状态信息">12.5 查看运行时和任务状态信息</a><ul>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1251-任务运行时统计信息">12.5.1 任务运行时统计信息</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1252-运行时统计时钟">12.5.2 运行时统计时钟</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1253-配置应用程序以收集运行时统计信息">12.5.3 配置应用程序以收集运行时统计信息</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1254-uxtaskgetsystemstate-api-函数">12.5.4 uxTaskGetSystemState() API 函数</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1255-vtasklisttasks-帮助函数">12.5.5 vTaskListTasks() 帮助函数</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1256-vtaskgetruntimestatistics-帮助函数">12.5.6 vTaskGetRunTimeStatistics() 帮助函数</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1257-生成和显示运行时统计信息的示例">12.5.7 生成和显示运行时统计信息的示例</a></li>
+</ul>
+</li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#126-跟踪钩子宏">12.6 跟踪钩子宏</a><ul>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1261-可用的跟踪钩子宏">12.6.1 可用的跟踪钩子宏</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1262-定义跟踪钩子宏">12.6.2 定义跟踪钩子宏</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#1263-freertos-感知调试器插件">12.6.3 FreeRTOS 感知调试器插件</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="13"><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#13-故障排查">13 故障排查</a></h2>
+<ul>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#131-章节简介与范围">13.1 章节简介与范围</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#132-中断优先级">13.2 中断优先级</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#133-堆栈溢出">13.3 堆栈溢出</a><ul>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1331-the-uxtaskgetstackhighwatermark-api-function">13.3.1 The uxTaskGetStackHighWaterMark() API Function</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1332-运行时堆栈检查---概述">13.3.2 运行时堆栈检查 - 概述</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1333-运行时堆栈检查---方法-1">13.3.3 运行时堆栈检查 - 方法 1</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1334-运行时堆栈检查---方法-2">13.3.4 运行时堆栈检查 - 方法 2</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1334-运行时堆栈检查---方法-3">13.3.4 运行时堆栈检查 - 方法 3</a></li>
+</ul>
+</li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#134-对-printf-和-sprintf-的使用">13.4 对 printf() 和 sprintf() 的使用</a><ul>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1341-printf-stdargc">13.4.1 Printf-stdarg.c</a></li>
+</ul>
+</li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#135-其他常见错误来源">13.5 其他常见错误来源</a><ul>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1351-症状向演示添加简单任务导致演示崩溃">13.5.1 症状：向演示添加简单任务导致演示崩溃</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1352-症状在中断中使用-api-函数导致应用崩溃">13.5.2 症状：在中断中使用 API 函数导致应用崩溃</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1353-症状有时应用在中断服务例程中崩溃">13.5.3 症状：有时应用在中断服务例程中崩溃</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1354-症状调度器尝试启动第一个任务时崩溃">13.5.4 症状：调度器尝试启动第一个任务时崩溃</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1355-症状中断意外地保持禁用或临界区未正确嵌套">13.5.5 症状：中断意外地保持禁用，或临界区未正确嵌套</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1356-症状应用程序在调度程序启动之前崩溃">13.5.6 症状：应用程序在调度程序启动之前崩溃</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#1357-症状在调度程序挂起或临界区内调用-api-函数导致应用崩溃">13.5.7 症状：在调度程序挂起或临界区内调用 API 函数导致应用崩溃</a></li>
+</ul>
+</li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#136-其他调试步骤">13.6 其他调试步骤</a></li>
+</ul>
+<h2 id="_2">示例:</h2>
+<ul>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.1">Example 4.1 Creating tasks</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.2">Example 4.2 Using the task parameter</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.3">Example 4.3 Experimenting with priorities</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.4">Example 4.4 Using the <em>Blocked</em> state to create a delay</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.5">Example 4.5 Converting the example tasks to use vTaskDelayUntil()</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.6">Example 4.6 Combining blocking and non-blocking tasks</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.7">Example 4.7 Defining an idle task hook function</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#example4.8">Example 4.8 Deleting tasks</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#example5.1">Example 5.1 Blocking when receiving from a queue</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#example5.2">Example 5.2 Blocking when sending to a queue, and sending structures on a queue</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#example5.3">Example 5.3 Using a Queue Set</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#example6.1">Example 6.1 Creating one-shot and auto-reload timers</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#example6.2">Example 6.2 Using the callback function parameter and the software timer ID</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#example6.3">Example 6.3 Resetting a software timer</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#example7.1">Example 7.1 Using a binary semaphore to synchronize a task with an interrupt</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#example7.2">Example 7.2 Using a counting semaphore to synchronize a task with an interrupt</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#example7.3">Example 7.3 Centralized deferred interrupt processing</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#example7.4">Example 7.4 Sending and receiving on a queue from within an interrupt</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#example8.1">Example 8.1 Rewriting vPrintString() to use a semaphore</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#example8.2">Example 8.2 The alternative implementation for print task</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#example9.1">Example 9.1 Experimenting with event groups</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#example9.2">Example 9.2 Synchronizing tasks</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#example10.1">Example 10.1 Using a task notification in place of a semaphore, method 1</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#example10.2">Example 10.2 Using a task notification in place of a semaphore, method 2</a></li>
+</ul>
+<h2 id="_3">插图:</h2>
+<ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#fig2.1">Figure 2.1 Top level directories within the FreeRTOS distribution</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#fig2.2">Figure 2.2 Core FreeRTOS source files within the FreeRTOS directory tree</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#fig2.3">Figure 2.3 Port specific source files within the FreeRTOS directory tree</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#fig2.4">Figure 2.4 The demo directory hierarchy</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#fig3.1">Figure 3.1 RAM being allocated from the heap_1 array each time a task is created</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#fig3.2">Figure 3.2 RAM being allocated and freed from the heap_2 array as tasks are created and deleted</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#fig3.3">Figure 3.3 RAM being allocated and freed from the heap_4 array</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#fig3.4">Figure 3.4 Memory Map</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.1">Figure 4.1 Top level task states and transitions</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.2">Figure 4.2 The output produced when executing Example 4.1</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.3">Figure 4.3 The actual execution pattern of the two Example 4.1 tasks</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.4">Figure 4.4 The execution sequence expanded to show the tick interrupt executing</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.5">Figure 4.5 Running both tasks at different priorities</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.6">Figure 4.6 The execution pattern when one task has a higher priority than the...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.7">Figure 4.7 Full task state machine</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.8">Figure 4.8 The output produced when Example 4.4 is executed</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.9">Figure 4.9 The execution sequence when the tasks use vTaskDelay() in place of the null loop</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.10">Figure 4.10 Bold lines indicate the state transitions performed by the tasks...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.11">Figure 4.11 The output produced when Example 4.6 is executed</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.12">Figure 4.12 The execution pattern of Example 4.6</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.13">Figure 4.13 The output produced when Example 4.7 is executed</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.14">Figure 4.14 The sequence of task execution when running Example 4.8</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.15">Figure 4.15 The output produced when Example 4.8 is executed</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.16">Figure 4.16 The output produced when Example 4.9 is executed</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.17">Figure 4.17 The execution sequence for Example 4.9</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.18">Figure 4.18 Execution pattern highlighting task prioritization and preemption...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.19">Figure 4.19 Execution pattern highlighting task prioritization and time slicing...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.20">Figure 4.20 The execution pattern for the same scenario as shown in Figure 4.19...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.21">Figure 4.21 Execution pattern that demonstrates how tasks of equal priority can...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#fig4.22">Figure 4.22 Execution pattern demonstrating the behavior of the cooperative scheduler</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.1">Figure 5.1 An example sequence of writes to, and reads from a queue</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.2">Figure 5.2 The output produced when Example 5.1 is executed</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.3">Figure 5.3 The sequence of execution produced by Example 5.1</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.4">Figure 5.4 An example scenario where structures are sent on a queue</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.5">Figure 5.5 The output produced by Example 5.2</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.6">Figure 5.6 The sequence of execution produced by Example 5.2</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#fig5.7">Figure 5.7 The output produced when Example 5.3 is executed</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.1">Figure 6.1 The difference in behavior between one-shot and auto-reload software timers</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.2">Figure 6.2 Auto-reload software timer states and transitions</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.3">Figure 6.3 One-shot software timer states and transitions</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.4">Figure 6.4 The timer command queue being used by a software timer API function to communicate with the RTOS daemon task</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.5">Figure 6.5 The execution pattern when the priority of a task calling xTimerStart() is above the priority of the daemon task</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.6">Figure 6.6 The execution pattern when the priority of a task calling xTimerStart() is below the priority of the daemon task</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.7">Figure 6.7 The output produced when Example 6.1 is executed</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.8">Figure 6.8 The output produced when Example 6.2 is executed</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.9">Figure 6.9 Starting and resetting a software timer that has a period of 6 ticks</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#fig6.10">Figure 6.10 The output produced when Example 6.3 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.1">Figure 7.1 Completing interrupt processing in a high priority task</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.2">Figure 7.2 Using a binary semaphore to implement deferred interrupt processing</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.3">Figure 7.3 Using a binary semaphore to synchronize a task with an interrupt</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.4">Figure 7.4 The output produced when Example 7.1 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.5">Figure 7.5 The sequence of execution when Example 7.1 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.6">Figure 7.6 The scenario when one interrupt occurs before the task has finished processing the first event</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.7">Figure 7.7 The scenario when two interrupts occur before the task has finished processing the first event</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.8">Figure 7.8 Using a counting semaphore to </a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.9">Figure 7.9 The output produced when Example 7.2 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.10">Figure 7.10 The output produced when Example 7.3 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.11">Figure 7.11 The sequence of execution when Example 7.3 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.12">Figure 7.12 The output produced when Example 7.4 is executed</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.13">Figure 7.13 The sequence of execution produced by Example 7.4</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.14">Figure 7.14 Constants affecting interrupt nesting behavior</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#fig7.15">Figure 7.15 How a priority of binary 101 is stored by a Cortex-M microcontroller that implements four priority bits</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.1">Figure 8.1 Mutual exclusion implemented using a mutex</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.2">Figure 8.2 The output produced when Example 8.1 is executed</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.3">Figure 8.3 A possible sequence of execution for Example 8.1</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.4">Figure 8.4 A worst case priority inversion scenario</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.5">Figure 8.5 Priority inheritance minimizing the effect of priority inversion</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.6">Figure 8.6 A possible sequence of execution when tasks that have the same priority use the same mutex</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.7">Figure 8.7 A sequence of execution that could occur if two instances of the task shown by Listing 8.15 are created at the same priority</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#fig8.8">Figure 8.8 The output produced when Example 8.2 is executed</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#fig9.1">Figure 9.1 Event flag to bit number mapping in a variable of type EventBits_t</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#fig9.2">Figure 9.2 An event group in which only bits 1, 4 and 7 are set, and all the other event flags are clear, making the event group</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#fig9.3">Figure 9.3 The output produced when Example 9.1 is executed with xWaitForAllBits set to pdFALSE</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#fig9.4">Figure 9.4 The output produced when Example 9.1 is executed with xWaitForAllBits set to pdTRUE</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#fig9.5">Figure 9.5 The output produced when Example 9.2 is executed</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.1">Figure 10.1 A communication object being used to send an event from one task to another</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.2">Figure 10.2 A task notification used to send an event directly from one task to another</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.3">Figure 10.3 The output produced when Example 7.1 is executed</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.4">Figure 10.4 The sequence of execution when Example 10.1 is executed</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.5">Figure 10.5 The output produced when Example 10.2 is executed</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#fig10.6">Figure 10.6 The communication paths from the application tasks to the cloud server, and back again</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.1">Figure 12.1 FreeRTOS+Trace includes more than 20 interconnected views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.2">Figure 12.2 FreeRTOS+Trace main trace view - one of more than 20 interconnected trace views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.3">Figure 12.3 FreeRTOS+Trace CPU load view - one of more than 20 interconnected trace views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.4">Figure 12.4 FreeRTOS+Trace response time view - one of more than 20 interconnected trace views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.5">Figure 12.5 FreeRTOS+Trace user event plot view - one of more than 20 interconnected trace views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.6">Figure 12.6 FreeRTOS+Trace kernel object history view - one of more than 20 interconnected trace views</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.7">Figure 12.7 Example output generated by vTaskListTasks()</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#fig12.8">Figure 12.8 Example output generated by vTaskGetRunTimeStatistics()</a></li>
+</ul>
+<h2 id="_4">代码清单:</h2>
+<ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#list2.1">Listing 2.1 The template for a new main() function</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.1">Listing 3.1 The vPortDefineHeapRegions() API function prototype</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.2">Listing 3.2 The HeapRegion_t structure</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.3">Listing 3.3 An array of HeapRegion_t structures that together describe the 3 regions of RAM in their entirety</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.4">Listing 3.4 An array of HeapRegion_t structures that describe all of RAM2, all of RAM3, but only part of RAM1</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.5">Listing 3.5 Using GCC syntax to declare the array that will be used by heap_4, and place the array in a memory section named .my_heap</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.6">Listing 3.6 Using IAR syntax to declare the array that will be used by heap_4, and place the array at the absolute address 0x20000000</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.7">Listing 3.7 The xPortGetFreeHeapSize() API function prototype</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.8">Listing 3.8 The xPortGetMinimumEverFreeHeapSize() API function prototype</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.9">Listing 3.9 The vPortGetHeapStatus() API function prototype</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.10">Listing 3.10 The HeapStatus_t() structure</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.11">Listing 3.11 Collecting Per-task Heap Usage Statistics</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.12">Listing 3.12 The malloc failed hook function name and prototype</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.13">Listing 3.13 Mapping the pvPortMallocStack() and vPortFreeStack() macros to an application defined memory allcator</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.14">Listing 3.14 Typical implementation of vApplicationGetTimerTaskMemory</a></li>
+<li><a href="ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/#list3.15">Listing 3.15 Typical implementation of vApplicationGetIdleTaskMemory</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.1">Listing 4.1 The task function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.2">Listing 4.2 The structure of a typical task function</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.3">Listing 4.3 The xTaskCreate() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.4">Listing 4.4 Implementation of the first task used in Example 4.1</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.5">Listing 4.5 Implementation of the second task used in Example 4.1</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.6">Listing 4.6 Starting the Example 4.1 tasks</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.7">Listing 4.7 Creating a task from within another task after the scheduler has started</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.8">Listing 4.8 The single task function used to create two tasks in Example 4.2</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.9">Listing 4.9 The main() function for Example 2</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.10">Listing 4.10 Using the pdMS_TO_TICKS() macro to convert 200 milliseconds...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.11">Listing 4.11. Creating two tasks at different priorities</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.12">Listing 4.12 The vTaskDelay() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.13">Listing 4.13 The source code for the example task after replacing the null loop delay with a call...</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.14">Listing 4.14 vTaskDelayUntil() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.15">Listing 4.15 The implementation of the example task using vTaskDelayUntil()</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.16">Listing 4.16 The continuous processing task used in Example 4.6</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.17">Listing 4.17 The periodic task used in Example 4.6</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.18">Listing 4.18 The idle task hook function name and prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.19">Listing 4.19 A very simple Idle hook function</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.20">Listing 4.20 The source code for the example task now prints out the ulIdleCycleCount value</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.21">Listing 4.21 The vTaskPrioritySet() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.22">Listing 4.22 The uxTaskPriorityGet() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.23">Listing 4.23 The implementation of Task 1 in Example 4.8</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.24">Listing 4.24 The implementation of Task 2 in Example 4.8</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.25">Listing 4.25 The implementation of main() for Example 4.8</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.26">Listing 4.26 The vTaskDelete() API function prototype</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.27">Listing 4.27 The implementation of main() for Example 4.9</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.28">Listing 4.28 The implementation of Task 1 for Example 4.9</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.29">Listing 4.29 The implementation of Task 2 for Example 4.9</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#list4.30">Listing 4.30 Function prototypes of the Thread Local Storage Pointer API functions</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.1">Listing 5.1 The xQueueCreate() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.2">Listing 5.2 The xQueueSendToFront() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.3">Listing 5.3 The xQueueSendToBack() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.4">Listing 5.4 The xQueueReceive() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.5">Listing 5.5 The uxQueueMessagesWaiting() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.6">Listing 5.6 Implementation of the sending task used in Example 5.1</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.7">Listing 5.7  Implementation of the receiver task for Example 5.1</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.8">Listing 5.8 The implementation of main() in Example 5.1</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.9">Listing 5.9 The definition of the structure that is to be passed on a queue, plus the declaration of two variables for use by the example</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.10">Listing 5.10 The implementation of the sending task for Example 5.2</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.11">Listing 5.11 The definition of the receiving task for Example 5.2</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.12">Listing 5.12 The implementation of main() for Example 5.2</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.13">Listing 5.13 Creating a queue that holds pointers</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.14">Listing 5.14 Using a queue to send a pointer to a buffer</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.15">Listing 5.15 Using a queue to receive a pointer to a buffer</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.16">Listing 5.16 The structure used to send events to the TCP/IP stack task in FreeRTOS+TCP</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.17">Listing 5.17 Pseudo code showing how an IPStackEvent_t structure is used to send data received from the network to the TCP/IP task</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.18">Listing 5.18 Pseudo code showing how an IPStackEvent_t structure is used to send the handle of a socket that is accepting a connection to the TCP/IP task</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.19">Listing 5.19 Pseudo code showing how an IPStackEvent_t structure is used to send a network down event to the TCP/IP task</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.20">Listing 5.20 Pseudo code showing how an IPStackEvent_t structure is received and processed</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.21">Listing 5.21 The xQueueCreateSet() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.22">Listing 5.22 The xQueueAddToSet() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.23">Listing 5.23 The xQueueSelectFromSet() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.24">Listing 5.24  Implementation of main() for Example 5.3</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.25">Listing 5.25 The sending tasks used in Example 5.3</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.26">Listing 5.26 The receive task used in Example 5.3</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.27">Listing 5.27 Using a queue set that contains queues and semaphores</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.28">Listing 5.28 A queue being created for use as a mailbox</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.29">Listing 5.29 The xQueueOverwrite() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.30">Listing 5.30 Using the xQueueOverwrite() API function</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.31">Listing 5.31 The xQueuePeek() API function prototype</a></li>
+<li><a href="ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/#list5.32">Listing 5.32 Using the xQueuePeek() API function</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list">Listing 6.1 The software timer callback function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.2">Listing 6.2 The xTimerDelete() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.3">Listing 6.3 The xTimerCreate() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.4">Listing 6.4 The xTimerStart() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.5">Listing 6.5 Creating and starting the timers used in Example 6.1</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.5">Listing 6.6 The callback function used by the one-shot timer in Example 6.1</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.7">Listing 6.7 The callback function used by the auto-reload timer in Example 6.1</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.8">Listing 6.8 The vTimerSetTimerID() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.9">Listing 6.9 The pvTimerGetTimerID() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.10">Listing 6.10 Creating the timers used in Example 6.2</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.11">Listing 6.11 The timer callback function used in Example 6.2</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.12">Listing 6.12 The xTimerChangePeriod() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.13">Listing 6.13 Using xTimerChangePeriod()</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.14">Listing 6.14 The xTimerReset() API function prototype</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.15">Listing 6.15 The callback function for the one-shot timer used in Example 6.3</a></li>
+<li><a href="ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/#list6.16">Listing 6.16 The task used to reset the software timer in Example 6.3</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.1">Listing 7.1 The portEND_SWITCHING_ISR() macros</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.2">Listing 7.2 The portYIELD_FROM_ISR() macros</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.3">Listing 7.3 The xSemaphoreCreateBinary() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.4">Listing 7.4 The xSemaphoreTake() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list">Listing 7.5 The xSemaphoreGiveFromISR() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.6">Listing 7.6 Implementation of the task that periodically generates a software interrupt in Example 7.1</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.7.">Listing 7.7 The implementation of the task to which the interrupt processing is deferred (the task that...</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.8">Listing 7.8 The ISR for the software interrupt used in Example 7.1</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.9">Listing 7.9 The implementation of main() for Example 7.1</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.10">Listing 7.10 The recommended structure of a deferred interrupt processing task, using a UART receive...</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.11">Listing 7.11 The xSemaphoreCreateCounting() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.12">Listing 7.12 The call to xSemaphoreCreateCounting() used to create the counting semaphore in Example 7.2</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.13">Listing 7.13 The implementation of the interrupt service routine used by Example 7.2</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.14">Listing 7.14 The xTimerPendFunctionCallFromISR() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.15">Listing 7.15 The prototype to which a function passed in the xFunctionToPend parameter of xTimerPendFunctionCallFromISR()...</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.16">Listing 7.16 The software interrupt handler used in Example 7.3</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.17">Listing 7.17 The function that performs the processing necessitated by the interrupt in Example 7.3</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.18">Listing 7.18 The implementation of main() for Example 7.3</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.19">Listing 7.19 The xQueueSendToFrontFromISR() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.20">Listing 7.20 The xQueueSendToBackFromISR() API function prototype</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.21">Listing 7.21 The implementation of the task that writes to the queue in Example 7.4</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.22">Listing 7.22 The implementation of the interrupt service routine used by Example 7.4</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.23">Listing 7.23 The task that prints out the strings received from the interrupt service routine in Example 7.4</a></li>
+<li><a href="ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/#list7.24">Listing 7.24 The main() function for Example 7.4</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.1">Listing 8.1 An example read, modify, write sequence</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.2">Listing 8.2 An example of a reentrant function</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.3">Listing 8.3 An example of a function that is not reentrant</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.4">Listing 8.4 Using a critical section to guard access to a register</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.5">Listing 8.5 A possible implementation of vPrintString()</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.6">Listing 8.6 Using a critical section in an interrupt service routine</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.7">Listing 8.7 The vTaskSuspendAll() API function prototype</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.8">Listing 8.8 The xTaskResumeAll() API function prototype</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.9">Listing 8.9 The implementation of vPrintString()</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.10">Listing 8.10 The xSemaphoreCreateMutex() API function prototype</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.11">Listing 8.11 The implementation of prvNewPrintString()</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.12">Listing 8.12 The implementation of prvPrintTask() for Example 8.1</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.13">Listing 8.13 The implementation of main() for Example 8.1</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.14">Listing 8.14 Creating and using a recursive mutex</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.15">Listing 8.15 A task that uses a mutex in a tight loop</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.16">Listing 8.16 Ensuring tasks that use a mutex in a loop receive a more equal amount of processing time...</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.17">Listing 8.17 The name and prototype for a tick hook function</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.18">Listing 8.18 The gatekeeper task</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.19">Listing 8.19 The print task implementation for Example 8.2</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.20">Listing 8.20 The tick hook implementation</a></li>
+<li><a href="ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/#list8.21">Listing 8.21 The implementation of main() for Example 8.2</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.1">Listing 9.1 The xEventGroupCreate() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.2">Listing 9.2. The xEventGroupSetBits() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.3">Listing 9.3 The xEventGroupSetBitsFromISR() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.4">Listing 9.4 The xEventGroupWaitBits() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.5">Listing 9.5 The xEventGroupGetStaticBuffer() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.6">Listing 9.6 Event bit definitions used in Example 9.1</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.7">Listing 9.7 The task that sets two bits in the event group in Example 9.1</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.8">Listing 9.8 The ISR that sets bit 2 in the event group in Example 9.1</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.9">Listing 9.9 The task that blocks to wait for event bits to become set in Example 9.1</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.10">Listing 9.10 Creating the event group and tasks in Example 9.1</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.11">Listing 9.11 Pseudo code for two tasks that synchronize with each other to ensure a shared TCP socket...</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.12">Listing 9.12 The xEventGroupSync() API function prototype</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.13">Listing 9.13 The implementation of the task used in Example 9.2</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#list9.14">Listing 9.14 The main() function used in Example 9.2</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.1">Listing 10.1 The xTaskNotifyGive() API function prototype</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.2">Listing 10.2 The vTaskNotifyGiveFromISR() API function prototype</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.3">Listing 10.3 The ulTaskNotifyTake() API function prototype</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.4">Listing 10.4 The implementation of the task to which the interrupt processing is deferred (the task that...</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.5">Listing 10.5 The implementation of the interrupt service routine used in Example 10.1</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.6">Listing 10.6 The implementation of the task to which the interrupt processing is deferred (the task...</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.7">Listing 10.7 The implementation of the interrupt service routine used in Example 10.2</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.8">Listing 10.8 Prototypes for the xTaskNotify() and xTaskNotifyFromISR() API functions</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.9">Listing 10.9 The xTaskNotifyWait() API function prototype</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.10">Listing 10.10 Pseudo code demonstrating how a binary semaphore can be used in a driver library transmit...</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.11">Listing 10.11 Pseudo code demonstrating how a task notification can be used in a driver library transmit...</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.12">Listing 10.12 Pseudo code demonstrating how a task notification can be used in a driver library receive...</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.13">Listing 10.13 Pseudo code demonstrating how a task notification can be used to pass a value to a task</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.14">Listing 10.14 The structure and data type sent on a queue to the server task</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.15">Listing 10.15 The Implementation of the Cloud Read API Function</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.16">Listing 10.16 The Server Task Processing a Read Request</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.17">Listing 10.17 The Implementation of the Cloud Write API Function</a></li>
+<li><a href="ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/#list10.18">Listing 10.18 The Server Task Processing a Send Request</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.1">Listing 11.1 The prototype for the portSUPPRESS_TICKS_AND_SLEEP macro</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.2">Listing 11.2 The vPortSuppressTicksAndSleep API function prototype</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.3">Listing 11.3 The eTaskConfirmSleepModeStatus API function prototype</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.4">Listing 11.4 The prototype for the configPRE_SLEEP_PROCESSING macro</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.5">Listing 11.5 The prototype for the configPOST_SLEEP_PROCESSING macro</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.6">Listing 11.6 An example of a user defined implementation of portSUPPRESS_TICKS_AND_SLEEP()</a></li>
+<li><a href="ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/#list11.7">Listing 11.7 The vApplicationIdleHook API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.1">Listing 12.1 Using the standard C assert() macro to check pxMyPointer is not NULL</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.2">Listing 12.2 A simple configASSERT() definition useful when executing under the control of a debugger</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.3">Listing 12.3 A configASSERT() definition that records the source code line that failed an assertion</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.4">Listing 12.4 The uxTaskGetSystemState() API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.5">Listing 12.5 The TaskStatus_t structure</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.6">Listing 12.6 The vTaskListTasks() API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.7">Listing 12.7 The vTaskList() API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.8">Listing 12.8 The vTaskGetRunTimeStatistics() API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.9">Listing 12.9 The vTaskGetRunTimeStats() API function prototype</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.10">Listing 12.10 16-bit timer overflow interrupt handler used to count timer overflows</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.11">Listing 12.11 Macros added to FreeRTOSConfig.h to enable the collection of run-time statistics</a></li>
+<li><a href="ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/#list12.12">Listing 12.12 The task that prints out the collected run-time statistics</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#list13.1">Listing 13.1 The uxTaskGetStackHighWaterMark() API function prototype</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#list13.2">Listing 13.2 The uxTaskGetStackHighWaterMark2() API function prototype</a></li>
+<li><a href="ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/#list13.3">Listing 13.3 The stack overflow hook function prototype</a></li>
+</ul>
+<h2 id="_5">表格:</h2>
+<ul>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#tbl1">Table 1 FreeRTOS source files to include in the project</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#tbl2">Table 2 TickType_t data type and the configTICK_TYPE_WIDTH_IN_BITS configuration</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#tbl3">Table 3 Macro prefixes</a></li>
+<li><a href="ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#tbl4">Table 4 Common macro definitions</a></li>
+<li><a href="ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/#tbl5">Table 5 The FreeRTOSConfig.h settings to configure the kernel scheduling algorithms</a></li>
+<li><a href="ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/#tbl6">Table 6 The Effect of the uxBitsToWaitFor and xWaitForAllBits Parameters</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

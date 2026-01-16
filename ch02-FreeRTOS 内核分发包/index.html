@@ -1,0 +1,1757 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/">
+      
+      
+        <link rel="prev" href="../ch01-%E5%89%8D%E8%A8%80/">
+      
+      
+        <link rel="next" href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>2 FreeRTOS 内核分发包 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2-freertos" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2 FreeRTOS 内核分发包
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 简介
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 理解 FreeRTOS 分发包
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 理解 FreeRTOS 分发包">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-freertos-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.1 定义：FreeRTOS Port（移植）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.2 构建 FreeRTOS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-freertosconfigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.3 FreeRTOSConfig.h
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#224" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.4 官方分发包
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#225-port-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.5 所有 Port 通用的 FreeRTOS 源文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#226-port-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.6 与 Port 相关的 FreeRTOS 源文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#227" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.7 头文件包含路径
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#228" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.8 头文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 示例应用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 创建 FreeRTOS 工程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 创建 FreeRTOS 工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.1 改造提供的示例工程
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.2 从零创建新工程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 数据类型与编码风格指南
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 数据类型与编码风格指南">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.1 数据类型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.2 变量命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#253" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.3 函数命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#254" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.4 格式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#255" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.5 宏命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.6 过多类型转换的原因
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 简介
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 理解 FreeRTOS 分发包
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 理解 FreeRTOS 分发包">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-freertos-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.1 定义：FreeRTOS Port（移植）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.2 构建 FreeRTOS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-freertosconfigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.3 FreeRTOSConfig.h
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#224" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.4 官方分发包
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#225-port-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.5 所有 Port 通用的 FreeRTOS 源文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#226-port-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.6 与 Port 相关的 FreeRTOS 源文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#227" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.7 头文件包含路径
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#228" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.8 头文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 示例应用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 创建 FreeRTOS 工程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 创建 FreeRTOS 工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.1 改造提供的示例工程
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.2 从零创建新工程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 数据类型与编码风格指南
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 数据类型与编码风格指南">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.1 数据类型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.2 变量命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#253" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.3 函数命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#254" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.4 格式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#255" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.5 宏命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.6 过多类型转换的原因
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="2-freertos">2 FreeRTOS 内核分发包</h1>
+<h2 id="21">2.1 简介</h2>
+<p>为帮助用户熟悉 FreeRTOS 内核的文件与目录结构，本章：</p>
+<ul>
+<li>提供 FreeRTOS 目录结构的顶层视图。</li>
+<li>描述任一 FreeRTOS 工程所需的源文件。</li>
+<li>介绍示例应用。</li>
+<li>提供如何创建新的 FreeRTOS 工程的信息。</li>
+</ul>
+<p>此处描述仅针对官方 FreeRTOS 分发包。本书配套示例使用了略有不同的组织方式。</p>
+<h2 id="22-freertos">2.2 理解 FreeRTOS 分发包</h2>
+<h3 id="221-freertos-port">2.2.1 定义：FreeRTOS Port（移植）</h3>
+<p>FreeRTOS 可使用大约二十种不同的编译器构建，并能运行在四十多种不同的处理器
+架构上。每一种编译器与处理器的组合称为一个 FreeRTOS port。</p>
+<h3 id="222-freertos">2.2.2 构建 FreeRTOS</h3>
+<p>FreeRTOS 是一个库，为原本单线程、裸机的应用提供多任务能力。</p>
+<p>FreeRTOS 以一组 C 源文件的形式提供。其中部分源文件对所有 port 通用，
+另一些则为特定 port 所专有。将这些源文件作为工程的一部分进行构建，即可在
+应用中使用 FreeRTOS API。每个官方 FreeRTOS port 都提供一个可作为参考的示例
+应用。示例应用已预配置好需要构建的源文件并包含正确的头文件。</p>
+<p>在其创建之时，每个示例应用都可“开箱即用”地构建，且无编译错误或警告。
+如果后续构建工具的变更导致该情况不再成立，请通过 FreeRTOS 支持论坛
+(<a href="https://forums.FreeRTOS.org">https://forums.FreeRTOS.org</a>) 告知我们。第 2.3 节介绍了示例应用。</p>
+<h3 id="223-freertosconfigh">2.2.3 FreeRTOSConfig.h</h3>
+<p>名为 FreeRTOSConfig.h 的头文件中定义的常量用于配置内核。不要在源文件中
+直接包含 FreeRTOSConfig.h！应包含 FreeRTOS.h，它会在合适的时机包含
+FreeRTOSConfig.h。</p>
+<p>FreeRTOSConfig.h 用于将 FreeRTOS 内核裁剪以适配特定应用。例如，
+FreeRTOSConfig.h 包含 <code>configUSE_PREEMPTION</code> 等常量，用于定义 FreeRTOS
+采用协作式还是抢占式调度<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>FreeRTOSConfig.h 为特定应用而定制，因此应放置在应用的一部分目录中，
+而不是放在包含 FreeRTOS 源代码的目录中。</p>
+<p>主 FreeRTOS 分发包为每个 FreeRTOS port 都包含一个示例应用，且每个示例应用
+都有自己的 FreeRTOSConfig.h 文件。建议从所用 port 的示例应用所提供的
+FreeRTOSConfig.h 开始并进行修改，而不是从头创建该文件。</p>
+<p>FreeRTOS 参考手册以及 <a href="https://www.freertos.org/a00110.html">https://www.freertos.org/a00110.html</a> 描述了
+FreeRTOSConfig.h 中出现的常量。并非必须包含所有常量——很多在缺省时会使用
+默认值。</p>
+<h3 id="224">2.2.4 官方分发包</h3>
+<p>各个 FreeRTOS 库（包括内核）可以从各自的 GitHub 仓库以及 zip 文件中获取。
+在产品代码中使用 FreeRTOS 时，按库获取会更方便。然而入门时更建议下载主
+FreeRTOS 分发包，因为它同时包含库与示例工程。</p>
+<p>主分发包包含所有 FreeRTOS 库的源代码、所有 FreeRTOS 内核 port 以及所有
+FreeRTOS 示例应用的工程文件。不要被文件数量吓到！应用只需要其中的一小部分。</p>
+<p>可通过 <a href="https://github.com/FreeRTOS/FreeRTOS/releases/latest">https://github.com/FreeRTOS/FreeRTOS/releases/latest</a> 下载包含
+最新分发包的 zip 文件。或者使用以下 Git 命令从 GitHub 克隆主分发包，
+并包含从各自 Git 仓库以子模块方式引入的独立库：</p>
+<hr />
+<pre><code>git clone https://github.com/FreeRTOS/FreeRTOS.git --recurse-submodules
+
+git clone git@github.com:FreeRTOS/FreeRTOS.git --recurse-submodules
+</code></pre>
+<hr />
+<p>图 2.1 显示了 FreeRTOS 分发包的一级与二级目录：</p>
+<p><a name="fig2.1" title="图 2.1 FreeRTOS 分发包中的顶层目录"></a></p>
+<hr />
+<pre><code>FreeRTOS
+│ │
+│ ├─Source  包含 FreeRTOS 内核源文件
+│ │
+│ └─Demo    包含预配置且与 port 相关的 FreeRTOS 内核示例工程
+│
+FreeRTOS-Plus
+│
+├─Source    包含其他 FreeRTOS 与生态系统库的源代码
+│
+└─Demo      包含其他 FreeRTOS 与生态系统库的示例工程
+</code></pre>
+<p><strong><em>图 2.1</em></strong> <em>FreeRTOS 分发包中的顶层目录</em></p>
+<hr />
+<p>分发包只包含一份 FreeRTOS 内核源文件；所有示例工程都假定内核源文件位于
+FreeRTOS/Source 目录中，若更改目录结构，示例工程可能无法构建。</p>
+<h3 id="225-port-freertos">2.2.5 所有 Port 通用的 FreeRTOS 源文件</h3>
+<p>tasks.c 和 list.c 实现了 FreeRTOS 内核的核心功能，且总是必需的。它们位于
+FreeRTOS/Source 目录，如图 2.2 所示。该目录还包含以下可选源文件：</p>
+<ul>
+<li>
+<p><strong>queue.c</strong></p>
+<p>queue.c 提供队列与信号量服务，详见本书后续内容。queue.c 几乎总是必需的。</p>
+</li>
+<li>
+<p><strong>timers.c</strong></p>
+<p>timers.c 提供软件定时器功能，详见本书后续内容。仅当应用使用软件定时器时
+才需要构建。</p>
+</li>
+<li>
+<p><strong>event_groups.c</strong></p>
+<p>event_groups.c 提供事件组功能，详见本书后续内容。仅当应用使用事件组时
+才需要构建。</p>
+</li>
+<li>
+<p><strong>stream_buffer.c</strong></p>
+<p>stream_buffer.c 提供流缓冲区与消息缓冲区功能，详见本书后续内容。仅当
+应用使用流缓冲区或消息缓冲区时才需要构建。</p>
+</li>
+<li>
+<p><strong>croutine.c</strong></p>
+<p>croutine.c 实现 FreeRTOS 协程功能。仅当应用使用协程时才需要构建。
+协程面向资源极其有限的微控制器，如今已很少使用。因此它们不再维护，
+新设计不建议使用。本书不再描述协程。</p>
+</li>
+</ul>
+<p><a name="fig2.2" title="图 2.2 FreeRTOS 目录树中的核心源文件"></a></p>
+<hr />
+<pre><code>FreeRTOS
+│
+└─Source
+     │
+     ├─tasks.c         FreeRTOS 源文件 - 必需
+     ├─list.c          FreeRTOS 源文件 - 必需
+     ├─queue.c         FreeRTOS 源文件 - 几乎总是必需
+     ├─timers.c        FreeRTOS 源文件 - 可选
+     ├─event_groups.c  FreeRTOS 源文件 - 可选
+     ├─stream_buffer.c FreeRTOS 源文件 - 可选
+     └─croutine.c      FreeRTOS 源文件 - 可选且不再维护
+</code></pre>
+<p><strong><em>图 2.2</em></strong> <em>FreeRTOS 目录树中的核心源文件</em></p>
+<hr />
+<p>我们认识到，zip 文件分发中使用的文件名可能引发命名空间冲突，因为很多工程
+已经使用相同名称的文件。如有必要，用户可以更改文件名，但分发包中的文件名
+不能更改，因为这会破坏与现有用户工程以及 FreeRTOS 相关开发工具的兼容性。</p>
+<h3 id="226-port-freertos">2.2.6 与 Port 相关的 FreeRTOS 源文件</h3>
+<p>FreeRTOS/Source/portable 目录包含特定 FreeRTOS port 的源文件。portable 目录
+按层级组织，先按编译器，再按处理器架构。图 2.3 显示了其层级结构。</p>
+<p>要在架构为 “<em>architecture</em>” 的处理器上使用 “<em>compiler</em>” 编译器运行
+FreeRTOS，除核心 FreeRTOS 源文件外，还必须构建
+FreeRTOS/Source/portable/[<em>compiler</em>]/[<em>architecture</em>] 目录中的文件。</p>
+<p>如第 3 章《堆内存管理》所述，FreeRTOS 将堆内存分配视为可移植层的一部分。
+如果 <code>configSUPPORT_DYNAMIC_ALLOCATION</code> 设为 0，则不要在工程中包含堆内存
+分配方案。</p>
+<p>FreeRTOS 在 FreeRTOS/Source/portable/MemMang 目录中提供了示例堆分配方案。
+如果 FreeRTOS 配置为使用动态内存分配，则需要将该目录中的一个堆实现源文件
+加入工程，或提供你自己的实现。</p>
+<blockquote>
+<p><strong>! 不要在工程中包含多个示例堆分配实现。</strong></p>
+</blockquote>
+<p><a name="fig2.3" title="图 2.3 FreeRTOS 目录树中的 port 专用源文件"></a></p>
+<hr />
+<pre><code>FreeRTOS
+│
+└─Source
+     │
+     └─portable 目录包含所有与 port 相关的源文件
+          │
+          ├─MemMang 目录包含替代的堆分配源文件
+          │
+          ├─[compiler 1] 目录包含编译器 1 的 port 文件
+          │   │
+          │   ├─[architecture 1] 包含编译器 1、架构 1 的 port 文件
+          │   ├─[architecture 2] 包含编译器 1、架构 2 的 port 文件
+          │   └─[architecture 3] 包含编译器 1、架构 3 的 port 文件
+          │
+          └─[compiler 2] 目录包含编译器 2 的 port 文件
+                │
+                ├─[architecture 1] 包含编译器 2、架构 1 的 port 文件
+                ├─[architecture 2] 包含编译器 2、架构 2 的 port 文件
+                └─[etc.]
+</code></pre>
+<p><strong><em>图 2.3</em></strong> <em>FreeRTOS 目录树中的 port 专用源文件</em></p>
+<hr />
+<h3 id="227">2.2.7 头文件包含路径</h3>
+<p>FreeRTOS 要求在编译器的 include 路径中加入三个目录：</p>
+<ol>
+<li>
+<p>FreeRTOS 内核头文件所在路径：FreeRTOS/Source/include。</p>
+</li>
+<li>
+<p>所用 FreeRTOS port 的专用源文件路径：
+    FreeRTOS/Source/portable/[<em>compiler</em>]/[<em>architecture</em>]。</p>
+</li>
+<li>
+<p>正确的 FreeRTOSConfig.h 头文件路径。</p>
+</li>
+</ol>
+<h3 id="228">2.2.8 头文件</h3>
+<p>使用 FreeRTOS API 的源文件必须包含 FreeRTOS.h，然后再包含对应 API 函数原型
+所在的头文件——task.h、queue.h、semphr.h、timers.h、event_groups.h、
+stream_buffer.h、message_buffer.h 或 croutine.h。不要显式包含任何其他 FreeRTOS
+头文件——FreeRTOS.h 会自动包含 FreeRTOSConfig.h。</p>
+<h2 id="23">2.3 示例应用</h2>
+<p>每个 FreeRTOS port 至少包含一个示例应用，在其创建之时可以“开箱即用”地构建，
+且无编译错误或警告。如果后续构建工具的变更导致该情况不再成立，请通过
+FreeRTOS 支持论坛 (<a href="https://forums.FreeRTOS.org">https://forums.FreeRTOS.org</a>) 告知我们。</p>
+<blockquote>
+<p><strong>跨平台支持</strong>：FreeRTOS 在 Windows、Linux 和 MacOS 系统上开发和测试，
+同时覆盖多种工具链，包括嵌入式与传统工具链。然而，由于版本差异或测试遗漏，
+有时仍会出现构建错误。请通过 FreeRTOS 支持论坛
+(<a href="https://forums.FreeRTOS.org">https://forums.FreeRTOS.org</a>) 反馈这些错误。</p>
+</blockquote>
+<p>示例应用有以下几个目的：</p>
+<ul>
+<li>提供一个可工作的、已预配置的工程示例，包含正确的文件，并设置了正确的编译器选项。</li>
+<li>便于以最少的设置或先验知识进行“开箱即用”的实验。</li>
+<li>演示如何使用 FreeRTOS API。</li>
+<li>作为创建真实应用的基础。</li>
+<li>对内核实现进行压力测试。</li>
+</ul>
+<p>每个示例工程位于 FreeRTOS/Demo 目录下的一个独立子目录中。子目录名称表明该
+示例工程对应的 port。</p>
+<p>FreeRTOS.org 网站为每个示例应用提供一个网页。该网页包含以下信息：</p>
+<ul>
+<li>如何在 FreeRTOS 目录结构中定位示例工程文件。</li>
+<li>工程配置所使用的硬件或仿真器。</li>
+<li>如何设置硬件以运行示例。</li>
+<li>如何构建示例。</li>
+<li>示例的预期行为。</li>
+</ul>
+<p>所有示例工程都会创建一部分“通用示例任务”，其实现位于
+FreeRTOS/Demo/Common/Minimal 目录。这些通用示例任务用于演示 FreeRTOS API 并
+测试 FreeRTOS 内核的移植，它们并不实现任何特定的有用功能。</p>
+<p>许多示例工程也可配置为创建一个简单的“blinky”风格入门工程，通常会创建两个
+RTOS 任务和一个队列。</p>
+<p>每个示例工程都包含一个名为 main.c 的文件，其中包含 <code>main()</code> 函数，
+在启动 FreeRTOS 内核之前创建示例应用任务。有关特定示例的信息请参见各自
+main.c 文件中的注释。</p>
+<p><a name="fig2.4" title="图 2.4 示例目录层级"></a></p>
+<hr />
+<pre><code>FreeRTOS
+     │
+     └─Demo          目录包含所有示例工程
+          │
+          ├─[Demo x]  包含构建示例 “x” 的工程文件
+          ├─[Demo y]  包含构建示例 “y” 的工程文件
+          ├─[Demo z]  包含构建示例 “z” 的工程文件
+          └─Common    包含所有示例应用都会构建的文件
+</code></pre>
+<p><strong><em>图 2.4</em></strong> <em>示例目录层级</em></p>
+<hr />
+<h2 id="24-freertos">2.4 创建 FreeRTOS 工程</h2>
+<h3 id="241">2.4.1 改造提供的示例工程</h3>
+<p>每个 FreeRTOS port 至少带有一个预配置的示例应用。建议通过改造这些现有工程
+来创建新工程，以确保新工程包含正确的文件、安装正确的中断处理程序，并设置
+正确的编译器选项。</p>
+<p>要基于现有示例工程创建新应用：</p>
+<ol>
+<li>
+<p>打开提供的示例工程并确认其可按预期构建和运行。</p>
+</li>
+<li>
+<p>移除实现示例任务的源文件，这些文件位于 Demo/Common 目录。</p>
+</li>
+<li>
+<p>删除 <code>main()</code> 中除 <code>prvSetupHardware()</code> 和 <code>vTaskStartScheduler()</code> 之外的
+    所有函数调用，如清单 2.1 所示。</p>
+</li>
+<li>
+<p>验证工程仍可构建。</p>
+</li>
+</ol>
+<p>完成上述步骤后，你将得到一个包含正确 FreeRTOS 源文件、但尚未定义具体功能的工程。</p>
+<p><a name="list2.1" title="清单 2.1 新 main() 函数模板"></a></p>
+<pre><code class="language-c">int main( void )
+{
+     /* 执行必要的硬件初始化。 */
+     prvSetupHardware();
+
+     /* --- 在此创建应用任务 --- */
+
+     /* 启动已创建的任务。 */
+     vTaskStartScheduler();
+
+     /* 只有在堆内存不足以启动调度器时才会执行到这里。 */
+     for( ;; );
+     return 0;
+}
+</code></pre>
+<p><strong><em>清单 2.1</em></strong> <em>新 main() 函数模板</em></p>
+<h3 id="242">2.4.2 从零创建新工程</h3>
+<p>如前所述，建议从现有示例工程创建新工程。如果这不可取，则按以下流程创建新工程：</p>
+<ol>
+<li>
+<p>使用选定的工具链创建一个新工程，但暂不包含任何 FreeRTOS 源文件。</p>
+</li>
+<li>
+<p>确保新工程能够构建、下载到目标硬件并运行。</p>
+</li>
+<li>
+<p>只有在确认已有可用工程之后，才将表 1 中列出的 FreeRTOS 源文件加入工程。</p>
+</li>
+<li>
+<p>将所用 port 的示例工程中的 <code>FreeRTOSConfig.h</code> 头文件复制到你的新工程目录。</p>
+</li>
+<li>
+<p>将以下目录加入工程的头文件搜索路径：</p>
+<ul>
+<li>FreeRTOS/Source/include</li>
+<li>FreeRTOS/Source/portable/[<em>compiler</em>]/[<em>architecture</em>]
+  （其中 [<em>compiler</em>] 与 [<em>architecture</em>] 应与所选 port 相匹配）</li>
+<li><code>FreeRTOSConfig.h</code> 头文件所在目录</li>
+</ul>
+</li>
+<li>
+<p>复制相关示例工程的编译器设置。</p>
+</li>
+<li>
+<p>安装可能需要的 FreeRTOS 中断处理程序。可参考所用 port 的说明网页以及其
+    示例工程的说明网页。</p>
+</li>
+</ol>
+<p><a name="tbl1" title="表 1 工程需包含的 FreeRTOS 源文件"></a></p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tasks.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>queue.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>list.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>timers.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>event_groups.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>stream_buffer.c</td>
+<td>FreeRTOS/Source</td>
+</tr>
+<tr>
+<td>所有 C 与汇编文件</td>
+<td>FreeRTOS/Source/portable/[compiler]/[architecture]</td>
+</tr>
+<tr>
+<td>heap_n.c</td>
+<td>FreeRTOS/Source/portable/MemMang，其中 n 为 1、2、3、4 或 5</td>
+</tr>
+</tbody>
+</table>
+<p><strong><em>表 1</em></strong> <em>工程需包含的 FreeRTOS 源文件</em></p>
+<hr />
+<p><strong>关于堆内存的说明：</strong>
+如果 <code>configSUPPORT_DYNAMIC_ALLOCATION</code> 为 0，则不要在工程中包含堆内存分配方案。
+否则需要在工程中包含堆内存分配方案，即选择一个 heap_<em>n</em>.c 文件，或使用你
+自己提供的实现。更多信息请参见第 3 章《堆内存管理》。</p>
+<h2 id="25">2.5 数据类型与编码风格指南</h2>
+<h3 id="251">2.5.1 数据类型</h3>
+<p>每个 FreeRTOS port 都有一个独立的 portmacro.h 头文件，其中（除其他内容外）
+定义了两个与 port 相关的数据类型：<code>TickType_t</code> 和 <code>BaseType_t</code>。下面列出其
+所用宏/typedef 以及实际类型：</p>
+<ul>
+<li><code>TickType_t</code></li>
+</ul>
+<p>FreeRTOS 配置一个周期性中断，称为 tick 中断。</p>
+<p>FreeRTOS 应用启动以来发生的 tick 中断次数称为 <em>tick 计数</em>。tick 计数用于
+  计时。</p>
+<p>两次 tick 中断之间的时间称为 <em>tick 周期</em>。时间以 tick 周期的倍数来表示。</p>
+<p><code>TickType_t</code> 用于保存 tick 计数值并用于指定时间。</p>
+<p><code>TickType_t</code> 可为无符号 16 位、32 位或 64 位类型，取决于 FreeRTOSConfig.h 中
+  <code>configTICK_TYPE_WIDTH_IN_BITS</code> 的设置。该设置与架构相关。FreeRTOS 的 port
+  也会检查该设置是否有效。</p>
+<p>在 8 位与 16 位架构上使用 16 位类型可显著提升效率，但会严重限制
+  FreeRTOS API 调用中可指定的最大阻塞时间。在 32 位或 64 位架构上没有理由
+  使用 16 位 <code>TickType_t</code>。</p>
+<p>早先使用的 <code>configUSE_16_BIT_TICKS</code> 已被 <code>configTICK_TYPE_WIDTH_IN_BITS</code>
+  取代，以支持大于 32 位的 tick 计数。新设计应使用
+  <code>configTICK_TYPE_WIDTH_IN_BITS</code> 而不是 <code>configUSE_16_BIT_TICKS</code>。</p>
+<pre><code>&lt;a name="tbl2" title="表 2 TickType_t 数据类型与 configTICK_TYPE_WIDTH_IN_BITS 配置"&gt;&lt;/a&gt;
+
+* * *
+| configTICK\_TYPE\_WIDTH\_IN\_BITS | 8 位架构 | 16 位架构 | 32 位架构 | 64 位架构 |
+| --- | --- | --- | --- | --- |
+| TICK\_TYPE\_WIDTH\_16_BITS | uint16\_t | uint16\_t | uint16\_t | N/A |
+| TICK\_TYPE\_WIDTH\_32_BITS | uint32\_t | uint32\_t | uint32\_t | N/A |
+| TICK\_TYPE\_WIDTH\_64_BITS | N/A | N/A | uint64\_t | uint64\_t |
+
+***表 2*** *TickType_t 数据类型与 configTICK_TYPE_WIDTH_IN_BITS 配置*
+* * *
+</code></pre>
+<ul>
+<li><code>BaseType_t</code></li>
+</ul>
+<p>该类型始终被定义为该架构上最高效的数据类型。通常，64 位架构使用 64 位类型，
+  32 位架构使用 32 位类型，16 位架构使用 16 位类型，8 位架构使用 8 位类型。</p>
+<p><code>BaseType_t</code> 通常用于返回值范围很有限的函数返回类型，也用于
+  <code>pdTRUE</code>/<code>pdFALSE</code> 这类布尔值。</p>
+<p><em>FreeRTOS 使用的 port 特定数据类型列表</em></p>
+<h3 id="252">2.5.2 变量命名</h3>
+<p>变量以其类型作为前缀：<code>char</code> 用 <code>c</code>，<code>int16_t</code>（short）用 <code>s</code>，<code>int32_t</code>（long）
+用 <code>l</code>，<code>BaseType_t</code> 及其它非标准类型（结构体、任务句柄、队列句柄等）用 <code>x</code>。</p>
+<p>若变量为无符号，还会加前缀 <code>u</code>；若变量为指针，还会加前缀 <code>p</code>。例如，
+<code>uint8_t</code> 类型变量前缀为 <code>uc</code>，指向 <code>char</code> 的指针（<code>char *</code>）前缀为 <code>pc</code>。</p>
+<h3 id="253">2.5.3 函数命名</h3>
+<p>函数前缀由返回类型以及所在文件共同构成。例如：</p>
+<ul>
+<li>v<strong>Task</strong>PrioritySet() 返回 <em>v</em>oid，定义在 <strong>tasks</strong>.c 中。</li>
+<li>x<strong>Queue</strong>Receive() 返回 <em>BaseType_t</em>，定义在 <strong>queue</strong>.c 中。</li>
+<li>pv<strong>Timer</strong>GetTimerID() 返回指向 <em>v</em>oid 的 <em>p</em>ointer，定义在 <strong>timers</strong>.c 中。</li>
+</ul>
+<p>文件作用域（私有）函数以 <code>prv</code> 作为前缀。</p>
+<h3 id="254">2.5.4 格式</h3>
+<p>部分示例应用使用制表符，其中一个制表符总是等于四个空格。内核已不再使用制表符。</p>
+<h3 id="255">2.5.5 宏命名</h3>
+<p>大多数宏使用大写，并以小写前缀指示宏的定义位置。表 3 给出了前缀列表。</p>
+<p><a name="tbl3" title="表 3 宏前缀"></a></p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>前缀</th>
+<th>宏定义位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>port（例如 <code>portMAX_DELAY</code>）</td>
+<td><code>portable.h</code> 或 <code>portmacro.h</code></td>
+</tr>
+<tr>
+<td>task（例如 <code>taskENTER_CRITICAL()</code>）</td>
+<td><code>task.h</code></td>
+</tr>
+<tr>
+<td>pd（例如 <code>pdTRUE</code>）</td>
+<td><code>projdefs.h</code></td>
+</tr>
+<tr>
+<td>config（例如 <code>configUSE_PREEMPTION</code>）</td>
+<td><code>FreeRTOSConfig.h</code></td>
+</tr>
+<tr>
+<td>err（例如 <code>errQUEUE_FULL</code>）</td>
+<td><code>projdefs.h</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong><em>表 3</em></strong> <em>宏前缀</em></p>
+<hr />
+<p>请注意，信号量 API 几乎完全由一组宏构成，但其命名遵循函数命名约定，而非宏命名约定。</p>
+<p>表 4 中定义的宏在 FreeRTOS 源代码中普遍使用。</p>
+<p><a name="tbl4" title="表 4 常用宏定义"></a></p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>宏</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pdTRUE</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>pdFALSE</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>pdPASS</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>pdFAIL</code></td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong><em>表 4</em></strong> <em>常用宏定义</em></p>
+<hr />
+<h3 id="256">2.5.6 过多类型转换的原因</h3>
+<p>FreeRTOS 源代码需要用许多不同编译器进行编译，而这些编译器在生成警告的方式和时机上
+存在差异。尤其是，不同编译器希望以不同方式使用类型转换。因此，FreeRTOS 源代码
+包含的类型转换比通常需要的更多。</p>
+<p>```</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>第 4.13 节描述了调度算法。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

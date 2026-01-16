@@ -1,0 +1,2751 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>7 中断管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#7" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              7 中断管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#711" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1.1 事件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#712" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#72-isr-freertos-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 在 ISR 中使用 FreeRTOS API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.2 在 ISR 中使用 FreeRTOS API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#721-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.1 中断安全 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#722-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.2 使用独立中断安全 API 的好处
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#723-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.3 使用独立中断安全 API 的缺点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#724-xhigherprioritytaskwoken" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.4 xHigherPriorityTaskWoken 参数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#725-portyield_from_isr-portend_switching_isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.5 portYIELD_FROM_ISR() 与 portEND_SWITCHING_ISR() 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 延迟中断处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#74" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 用于同步的二值信号量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.4 用于同步的二值信号量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#741-xsemaphorecreatebinary-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.1 xSemaphoreCreateBinary() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#742-xsemaphoretake-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.2 xSemaphoreTake() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#743-xsemaphoregivefromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.3 xSemaphoreGiveFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#744-71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.4 改进示例 7.1 的任务实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#75" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 计数信号量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.5 计数信号量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#751-xsemaphorecreatecounting-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5.1 xSemaphoreCreateCounting() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#76-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 将工作延迟到 RTOS 守护任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.6 将工作延迟到 RTOS 守护任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#761-xtimerpendfunctioncallfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6.1 xTimerPendFunctionCallFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#77-isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 在 ISR 中使用队列
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.7 在 ISR 中使用队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#771-xqueuesendtofrontfromisr-xqueuesendtobackfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7.1 xQueueSendToFrontFromISR() 与 xQueueSendToBackFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#772-isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7.2 在 ISR 中使用队列的注意事项
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#78" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8 中断嵌套
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.8 中断嵌套">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#781-arm-cortex-m-arm-gic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8.1 给 ARM Cortex-M 与 ARM GIC 用户的提示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#711" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1.1 事件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#712" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#72-isr-freertos-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 在 ISR 中使用 FreeRTOS API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.2 在 ISR 中使用 FreeRTOS API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#721-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.1 中断安全 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#722-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.2 使用独立中断安全 API 的好处
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#723-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.3 使用独立中断安全 API 的缺点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#724-xhigherprioritytaskwoken" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.4 xHigherPriorityTaskWoken 参数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#725-portyield_from_isr-portend_switching_isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2.5 portYIELD_FROM_ISR() 与 portEND_SWITCHING_ISR() 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 延迟中断处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#74" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 用于同步的二值信号量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.4 用于同步的二值信号量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#741-xsemaphorecreatebinary-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.1 xSemaphoreCreateBinary() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#742-xsemaphoretake-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.2 xSemaphoreTake() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#743-xsemaphoregivefromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.3 xSemaphoreGiveFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#744-71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4.4 改进示例 7.1 的任务实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#75" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 计数信号量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.5 计数信号量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#751-xsemaphorecreatecounting-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5.1 xSemaphoreCreateCounting() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#76-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 将工作延迟到 RTOS 守护任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.6 将工作延迟到 RTOS 守护任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#761-xtimerpendfunctioncallfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6.1 xTimerPendFunctionCallFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#77-isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 在 ISR 中使用队列
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.7 在 ISR 中使用队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#771-xqueuesendtofrontfromisr-xqueuesendtobackfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7.1 xQueueSendToFrontFromISR() 与 xQueueSendToBackFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#772-isr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7.2 在 ISR 中使用队列的注意事项
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#78" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8 中断嵌套
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.8 中断嵌套">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#781-arm-cortex-m-arm-gic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8.1 给 ARM Cortex-M 与 ARM GIC 用户的提示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="7">7 中断管理</h1>
+<h2 id="71">7.1 简介</h2>
+<h3 id="711">7.1.1 事件</h3>
+<p>嵌入式实时系统必须对来自外部环境的事件作出响应。例如，以太网外设上收到一个数据包
+（事件）可能需要将其传递给 TCP/IP 协议栈处理（动作）。非简单系统通常要同时处理
+来自多个来源的事件，而这些事件的处理开销与响应时间要求各不相同。此时需要判断
+并选择最佳的事件处理实现策略：</p>
+<ul>
+<li>
+<p>如何检测事件？通常使用中断，但也可以轮询输入。</p>
+</li>
+<li>
+<p>若使用中断，应在中断服务例程（ISR）中处理多少工作，多少工作放到中断之外？
+    通常希望 ISR 尽可能短。</p>
+</li>
+<li>
+<p>如何把事件传递到主（非 ISR）代码？主代码该如何组织，才能更好地处理
+    可能异步出现的事件？</p>
+</li>
+</ul>
+<p>FreeRTOS 不强制应用设计者采用某种特定的事件处理策略，但提供了可使选定策略
+以简单、可维护方式实现的功能。</p>
+<p>务必区分任务优先级与中断优先级：</p>
+<ul>
+<li>
+<p>任务是与硬件无关的软件实体。任务优先级由应用编写者在软件中分配，调度器
+    按软件算法决定哪个任务进入 <em>Running</em> 状态。</p>
+</li>
+<li>
+<p>中断服务例程虽由软件编写，但它是硬件特性，因为硬件控制哪个 ISR 运行以及
+    何时运行。只有当没有 ISR 在运行时任务才会运行，因此最低优先级中断仍可
+    打断最高优先级任务，任务无法抢占 ISR。</p>
+</li>
+</ul>
+<p>所有能运行 FreeRTOS 的架构都支持中断，但中断进入方式和中断优先级分配细节
+在不同架构间各不相同。</p>
+<h3 id="712">7.1.2 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>哪些 FreeRTOS API 函数可在 ISR 中使用。</li>
+<li>将中断处理延迟到任务中的方法。</li>
+<li>如何创建并使用二值信号量与计数信号量。</li>
+<li>二值信号量与计数信号量的差异。</li>
+<li>如何使用队列在 ISR 中传入与传出数据。</li>
+<li>部分 FreeRTOS 移植提供的中断嵌套模型。</li>
+</ul>
+<h2 id="72-isr-freertos-api">7.2 在 ISR 中使用 FreeRTOS API</h2>
+<h3 id="721-api">7.2.1 中断安全 API</h3>
+<p>通常需要在中断服务例程（ISR）中使用 FreeRTOS API 的功能，但许多 FreeRTOS API
+函数执行的动作在 ISR 内无效。其中最显著的是将调用该 API 的任务置为 <em>Blocked</em>
+状态——若从 ISR 调用某 API，就不是由任务调用，因此不存在可置为 <em>Blocked</em> 状态
+的调用任务。FreeRTOS 通过为部分 API 函数提供两个版本来解决该问题：
+一个供任务使用，一个供 ISR 使用。可在 ISR 中使用的函数名末尾带有 “FromISR”。</p>
+<blockquote>
+<p><em>注意：绝不能在 ISR 中调用名称中不带 “FromISR” 的 FreeRTOS API 函数。</em></p>
+</blockquote>
+<h3 id="722-api">7.2.2 使用独立中断安全 API 的好处</h3>
+<p>为中断提供独立 API 可以让任务代码更高效、ISR 代码更高效，同时中断入口也更简化。
+对比之下，若为任务和 ISR 提供同一版本的 API，则：</p>
+<ul>
+<li>
+<p>API 函数必须增加额外逻辑以判断调用上下文（任务或 ISR）。额外逻辑会引入
+    新路径，使函数更长、更复杂、更难测试。</p>
+</li>
+<li>
+<p>一些参数在任务调用时无意义，而另一些参数在 ISR 调用时无意义。</p>
+</li>
+<li>
+<p>每个 FreeRTOS 移植都必须提供区分执行上下文的机制。</p>
+</li>
+<li>
+<p>在不易判断上下文的架构上，需要额外、低效、更加复杂且非标准的中断入口代码，
+    让软件提供执行上下文。</p>
+</li>
+</ul>
+<h3 id="723-api">7.2.3 使用独立中断安全 API 的缺点</h3>
+<p>为部分 API 提供两个版本能提高任务与 ISR 的效率，但也带来新问题：有时需要
+调用某个不属于 FreeRTOS API、但内部使用了 FreeRTOS API 的函数，而且该函数
+可能既从任务调用，也从 ISR 调用。</p>
+<p>这种情况通常发生在集成第三方代码时，因为那时软件设计不受应用编写者控制。
+如果出现此问题，可通过以下方式解决：</p>
+<ul>
+<li>
+<p>将中断处理延迟到任务<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">1</a></sup>，使该 API 仅在任务上下文中调用。</p>
+</li>
+<li>
+<p>若使用支持中断嵌套的 FreeRTOS 移植，可直接使用带 “FromISR” 的版本，
+    因为该版本既可用于任务也可用于 ISR。（反之不成立：不带 “FromISR” 的 API
+    绝不能在 ISR 中调用。）</p>
+</li>
+<li>
+<p>第三方代码通常包含 RTOS 抽象层，可实现上下文检测（任务或中断），并据此
+    调用适当的 API 版本。</p>
+</li>
+</ul>
+<h3 id="724-xhigherprioritytaskwoken">7.2.4 xHigherPriorityTaskWoken 参数</h3>
+<p>本节引入 <code>xHigherPriorityTaskWoken</code> 参数概念。若暂未完全理解也不必担心，
+后续章节会给出实际示例。</p>
+<p>若由中断触发上下文切换，则中断退出后运行的任务可能与中断进入前运行的任务不同——
+中断打断了一个任务，但返回到了另一个任务。</p>
+<p>某些 FreeRTOS API 函数可将任务从 <em>Blocked</em> 状态移到 <em>Ready</em> 状态。例如
+<code>xQueueSendToBack()</code>，若队列上有任务等待数据，该函数会解除其阻塞。</p>
+<p>如果被解除阻塞的任务优先级高于当前 <em>Running</em> 状态任务，根据 FreeRTOS 调度策略，
+应切换到更高优先级任务。具体何时切换取决于调用 API 的上下文：</p>
+<ul>
+<li>
+<p>若 API 从任务中调用：</p>
+<p>如果 <code>configUSE_PREEMPTION</code> 在 FreeRTOSConfig.h 中设为 1，则切换到更高优先级
+任务会在 API 函数内部自动完成，也就是在 API 函数返回前完成。图 6.6 已展示
+过类似情况：写定时器命令队列会在返回前切换到 RTOS 守护任务。</p>
+</li>
+<li>
+<p>若 API 从中断中调用：</p>
+<p>在中断内不会自动切换到更高优先级任务。相反，会设置一个变量，提示应用编写者
+在中断退出前执行上下文切换。中断安全 API（名称以 “FromISR” 结尾）带有指针参数
+<code>pxHigherPriorityTaskWoken</code> 用于此目的。</p>
+<p>若需要上下文切换，中断安全 API 会将 <code>*pxHigherPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。
+为检测这一变化，<code>pxHigherPriorityTaskWoken</code> 指向的变量必须在首次使用前初始化为
+<code>pdFALSE</code>。</p>
+<p>若应用编写者不请求 ISR 内的上下文切换，则更高优先级任务将保持 <em>Ready</em> 状态，
+直到下次调度器运行（最坏情况为下一个 tick 中断）。</p>
+<p>FreeRTOS API 只能将 <code>*pxHighPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。如果 ISR 调用多个
+FreeRTOS API 函数，可在每次调用中传入同一个变量作为 <code>pxHigherPriorityTaskWoken</code>
+参数，该变量只需在首次使用前初始化为 <code>pdFALSE</code>。</p>
+</li>
+</ul>
+<p>上下文切换不会在中断安全 API 内自动发生，原因有：</p>
+<ul>
+<li>
+<p>避免不必要的上下文切换</p>
+<p>中断可能在任务需要处理前执行多次。例如，任务处理 UART 中断接收的字符串，
+若每收一个字符就从 ISR 切换到任务，会造成浪费，因为任务只需在完整字符串
+接收后处理。</p>
+</li>
+<li>
+<p>控制执行顺序</p>
+<p>中断可能在不可预测的时间发生。资深用户可能希望在特定位置临时避免
+不可预测的任务切换（也可通过调度器锁实现）。</p>
+</li>
+<li>
+<p>可移植性</p>
+<p>这是最简单且跨所有 FreeRTOS 移植可用的机制。</p>
+</li>
+<li>
+<p>效率</p>
+<p>面向小型处理器架构的移植通常仅允许在 ISR 末尾请求上下文切换。
+若打破限制，需要额外复杂代码。该机制也允许在同一 ISR 中多次调用 FreeRTOS API，
+却不产生多次上下文切换请求。</p>
+</li>
+<li>
+<p>在 RTOS tick 中断中执行</p>
+<p>如本书后文所述，可在 RTOS tick 中断中加入应用代码。在 tick 中断内尝试切换
+的结果依赖所用移植；最好的情况也只是一次不必要的调度调用。</p>
+</li>
+</ul>
+<p><code>pxHigherPriorityTaskWoken</code> 的使用是可选的。如不需要，可将其设为 NULL。</p>
+<h3 id="725-portyield_from_isr-portend_switching_isr">7.2.5 portYIELD_FROM_ISR() 与 portEND_SWITCHING_ISR() 宏</h3>
+<p>本节介绍用于从 ISR 请求上下文切换的宏。若暂未完全理解也无妨，后续章节会提供示例。</p>
+<p><code>taskYIELD()</code> 是可在任务中调用以请求上下文切换的宏。<code>portYIELD_FROM_ISR()</code>
+和 <code>portEND_SWITCHING_ISR()</code> 是 <code>taskYIELD()</code> 的中断安全版本，二者用途相同<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">2</a></sup>。
+某些 FreeRTOS 移植只提供其中一个；较新的移植提供两个宏。本书示例使用
+<code>portYIELD_FROM_ISR()</code>。</p>
+<p><a name="list7.1" title="Listing 7.1 The portEND_SWITCHING_ISR() macros"></a></p>
+<pre><code class="language-c">portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.1</em></strong> <em>portEND_SWITCHING_ISR() 宏</em></p>
+<p><a name="list7.2" title="Listing 7.2 The portYIELD_FROM_ISR() macros"></a></p>
+<pre><code class="language-c">portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.2</em></strong> <em>portYIELD_FROM_ISR() 宏</em></p>
+<p>从中断安全 API 返回的 <code>xHigherPriorityTaskWoken</code> 参数可直接用作
+<code>portYIELD_FROM_ISR()</code> 的参数。</p>
+<p>若 <code>portYIELD_FROM_ISR()</code> 的 <code>xHigherPriorityTaskWoken</code> 参数为 <code>pdFALSE</code>（0），
+则不请求上下文切换，宏无效果。若参数非 <code>pdFALSE</code>，则请求上下文切换，
+<em>Running</em> 状态任务可能改变。中断总会返回到 <em>Running</em> 状态任务，即便中断执行期间
+<em>Running</em> 状态任务发生变化。</p>
+<p>多数 FreeRTOS 移植允许在 ISR 内任意位置调用 <code>portYIELD_FROM_ISR()</code>。
+少数移植（多为小型架构）只允许在 ISR 末尾调用该宏。</p>
+<h2 id="73">7.3 延迟中断处理</h2>
+<p>通常认为 ISR 应尽可能短，原因包括：</p>
+<ul>
+<li>
+<p>即使任务设置了很高优先级，也只有在硬件不处理任何中断时才会运行。</p>
+</li>
+<li>
+<p>ISR 会干扰（增加“抖动”）任务的开始时间与执行时间。</p>
+</li>
+<li>
+<p>取决于 FreeRTOS 运行的架构，ISR 执行期间可能无法接受新中断，或至少无法接受
+    某些中断。</p>
+</li>
+<li>
+<p>应用编写者需考虑并防止任务与 ISR 同时访问变量、外设、内存缓冲区等资源。</p>
+</li>
+<li>
+<p>某些 FreeRTOS 移植允许中断嵌套，但嵌套会增加复杂性并降低可预测性。
+    ISR 越短，嵌套越不易发生。</p>
+</li>
+</ul>
+<p>ISR 必须记录中断原因并清除中断。其他由中断触发的处理可在任务中执行，
+使 ISR 尽快退出。这称为“延迟中断处理”，即将 ISR 触发的处理“延迟”到任务中。</p>
+<p>将中断处理延迟到任务还可让应用编写者相对其他任务进行优先级配置，并使用全部
+FreeRTOS API 函数。</p>
+<p>若承接延迟处理中断的任务优先级高于系统内其他任务，则该处理会立即执行，
+效果与在 ISR 内执行等同。图 7.1 中，Task 1 为普通应用任务，Task 2 为延迟处理中断
+的任务。</p>
+<p><a name="fig7.1" title="Figure 7.1 Completing interrupt processing in a high priority task"></a></p>
+<hr />
+<p><img alt="" src="../media/image48.png" />
+<strong><em>图 7.1</em></strong> <em>在高优先级任务中完成中断处理</em></p>
+<hr />
+<p>在图 7.1 中，中断处理在 t2 开始，到 t4 才真正结束，但 t2 到 t3 之间才在 ISR 内。
+若不使用延迟处理，t2 到 t4 全部时间都在 ISR 内。</p>
+<p>何时应在 ISR 内完成全部处理、何时应延迟部分处理，并无硬性规则。
+延迟处理在以下情况下最有用：</p>
+<ul>
+<li>
+<p>中断所需处理不简单。例如仅存储 ADC 转换结果，几乎总应在 ISR 内完成；
+    若还需软件滤波，则可能更适合在任务中执行。</p>
+</li>
+<li>
+<p>中断处理中需要执行 ISR 内无法执行的操作，如写控制台或分配内存。</p>
+</li>
+<li>
+<p>中断处理非确定性——即处理耗时不可预知。</p>
+</li>
+</ul>
+<p>以下各节介绍并演示本章到目前为止的概念，包括可用于实现延迟中断处理的
+FreeRTOS 功能。</p>
+<h2 id="74">7.4 用于同步的二值信号量</h2>
+<p>二值信号量的中断安全 API 版本可在每次发生特定中断时解除一个任务的阻塞，
+实现任务与中断同步。这使大部分中断事件处理可在同步任务中完成，ISR 中仅保留
+快速、简短的部分。正如上一节所述，二值信号量可用于“延迟”中断处理<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">3</a></sup>。</p>
+<p>如图 7.1 所示，若中断处理时间要求严格，可提高延迟处理任务的优先级，确保其
+总能抢占系统内其他任务。ISR 可调用 <code>portYIELD_FROM_ISR()</code>，确保 ISR 直接返回到
+该任务。这样可确保事件处理在时间上连续执行（无间断），就像全部在 ISR 内执行
+一样。图 7.2 与图 7.1 场景相同，但更新了文本以描述如何用信号量控制延迟处理任务。</p>
+<p><a name="fig7.2" title="Figure 7.2 Using a binary semaphore to implement deferred interrupt processing"></a></p>
+<hr />
+<p><img alt="" src="../media/image49.png" />
+<strong><em>图 7.2</em></strong> <em>使用二值信号量实现延迟中断处理</em></p>
+<hr />
+<p>延迟处理任务通过对信号量的阻塞式“获取”进入 <em>Blocked</em> 状态等待事件发生。
+事件发生时，ISR 对同一信号量执行“释放”，解除任务阻塞并继续事件处理。</p>
+<p>“获取信号量”和“释放信号量”的含义随使用场景不同而不同。在该中断同步场景中，
+可将二值信号量视作长度为 1 的队列。队列一次最多存放一个元素，因此总是“空”或“满”
+（二值）。任务调用 <code>xSemaphoreTake()</code> 时，等效于带阻塞时间地从队列读取，若队列为空
+则进入 <em>Blocked</em> 状态。事件发生时，ISR 调用 <code>xSemaphoreGiveFromISR()</code> 将一个令牌
+（信号量）放入队列，使队列变满。任务退出 <em>Blocked</em> 状态并取走令牌，队列再次变空。
+任务完成处理后再次尝试读取队列，发现为空后重新进入 <em>Blocked</em> 状态等待下一事件。
+该流程见图 7.3。</p>
+<p>图 7.3 中，中断“释放”信号量但未先“获取”，任务“获取”信号量但从不“归还”。
+因此该场景被描述为与向队列写入/读取概念类似。这常引发混淆，因为它不遵循其他
+信号量使用场景中“获取者必须归还”的规则——例如第 8 章“资源管理”中的情形。</p>
+<p><a name="fig7.3" title="Figure 7.3 Using a binary semaphore to synchronize a task with an interrupt"></a></p>
+<hr />
+<p><img alt="" src="../media/image50.png" />
+<strong><em>图 7.3</em></strong> <em>使用二值信号量将任务与中断同步</em></p>
+<hr />
+<h3 id="741-xsemaphorecreatebinary-api">7.4.1 xSemaphoreCreateBinary() API 函数</h3>
+<p>FreeRTOS 还提供 <code>xSemaphoreCreateBinaryStatic()</code>，用于在编译期静态分配创建二值
+信号量所需的内存：各种 FreeRTOS 信号量的句柄均存放在 <code>SemaphoreHandle_t</code> 类型变量中。</p>
+<p>信号量使用前必须先创建。创建二值信号量可使用 <code>xSemaphoreCreateBinary()</code> API 函数<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">4</a></sup>。</p>
+<p><a name="list7.3" title="Listing 7.3 The xSemaphoreCreateBinary() API function prototype"></a></p>
+<pre><code class="language-c">SemaphoreHandle_t xSemaphoreCreateBinary( void );
+</code></pre>
+<p><strong><em>清单 7.3</em></strong> <em>xSemaphoreCreateBinary() API 函数原型</em></p>
+<p><strong>xSemaphoreCreateBinary() 返回值</strong></p>
+<ul>
+<li>
+<p>返回值</p>
+<p>若返回 NULL，则表示堆内存不足，无法为信号量数据结构分配内存。</p>
+<p>若返回非 NULL，则表示信号量创建成功，返回值应保存为该信号量的句柄。</p>
+</li>
+</ul>
+<h3 id="742-xsemaphoretake-api">7.4.2 xSemaphoreTake() API 函数</h3>
+<p>“获取”信号量意味着“得到”或“接收”信号量。只有当信号量可用时才能获取。</p>
+<p>除递归互斥量外，所有 FreeRTOS 信号量都可使用 <code>xSemaphoreTake()</code> 获取。</p>
+<p><code>xSemaphoreTake()</code> 不得在中断服务例程中使用。</p>
+<p><a name="list7.4" title="Listing 7.4 The xSemaphoreTake() API function prototype"></a></p>
+<pre><code class="language-c">BaseType_t xSemaphoreTake( SemaphoreHandle_t xSemaphore, TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 7.4</em></strong> <em>xSemaphoreTake() API 函数原型</em></p>
+<p><strong>xSemaphoreTake() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xSemaphore</code></p>
+<p>被“获取”的信号量。</p>
+<p>信号量由 <code>SemaphoreHandle_t</code> 类型变量引用，必须先显式创建。</p>
+</li>
+<li>
+<p><code>xTicksToWait</code></p>
+<p>若信号量不可用，任务在 <em>Blocked</em> 状态等待的最大时间。</p>
+<p>若 <code>xTicksToWait</code> 为 0，则 <code>xSemaphoreTake()</code> 在信号量不可用时立即返回。</p>
+<p>阻塞时间以 tick 为单位，因此绝对时间取决于 tick 频率。
+可用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。</p>
+<p>若 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1，则将 <code>xTicksToWait</code>
+设为 <code>portMAX_DELAY</code> 会使任务无限期等待（无超时）。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当 <code>xSemaphoreTake()</code> 成功获取信号量时返回 <code>pdPASS</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务可能进入 <em>Blocked</em> 状态
+等待信号量，但在超时前信号量变为可用。</p>
+</li>
+<li>
+<p><code>pdFALSE</code></p>
+<p>信号量不可用。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务会进入 <em>Blocked</em> 状态等待
+信号量，但在超时前仍未可用。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="743-xsemaphoregivefromisr-api">7.4.3 xSemaphoreGiveFromISR() API 函数</h3>
+<p>二值与计数信号量<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">5</a></sup>可通过 <code>xSemaphoreGiveFromISR()</code> “释放”。</p>
+<p><code>xSemaphoreGiveFromISR()</code> 是 <code>xSemaphoreGive()</code> 的中断安全版本，因此带有本章开头
+介绍的 <code>pxHigherPriorityTaskWoken</code> 参数。</p>
+<p><a name="list" title="Listing 7.5 The xSemaphoreGiveFromISR() API function prototype"></a></p>
+<pre><code class="language-c">BaseType_t xSemaphoreGiveFromISR( SemaphoreHandle_t xSemaphore,
+                                                                    BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.5</em></strong> <em>xSemaphoreGiveFromISR() API 函数原型</em></p>
+<p><strong>xSemaphoreGiveFromISR() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xSemaphore</code></p>
+<p>被“释放”的信号量。</p>
+<p>信号量由 <code>SemaphoreHandle_t</code> 类型变量引用，且必须先显式创建。</p>
+</li>
+<li>
+<p><code>pxHigherPriorityTaskWoken</code></p>
+<p>一个信号量可能有一个或多个任务阻塞在其上等待可用。
+调用 <code>xSemaphoreGiveFromISR()</code> 会使信号量可用，从而使等待任务离开 <em>Blocked</em> 状态。
+若 <code>xSemaphoreGiveFromISR()</code> 使某任务离开 <em>Blocked</em> 状态，且该任务优先级高于
+当前执行任务（被中断的任务），则 <code>xSemaphoreGiveFromISR()</code> 会将
+<code>*pxHigherPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。</p>
+<p>若 <code>xSemaphoreGiveFromISR()</code> 将该值置为 <code>pdTRUE</code>，则通常应在退出中断前执行
+上下文切换，以确保中断直接返回到最高优先级 <em>Ready</em> 任务。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当 <code>xSemaphoreGiveFromISR()</code> 成功时返回 <code>pdPASS</code>。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>若信号量已可用，则无法再次释放，<code>xSemaphoreGiveFromISR()</code> 返回 <code>pdFAIL</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="_1"><a name="example7.1" title="Example 7.1 Using a binary semaphore to synchronize a task with an interrupt"></a></h2>
+<p><strong><em>示例 7.1</em></strong> <em>使用二值信号量将任务与中断同步</em></p>
+<hr />
+<p>该示例使用二值信号量在中断服务例程中解除任务阻塞，实现任务与中断同步。</p>
+<p>一个简单的周期任务每 500ms 产生一次软件中断。为方便起见使用软件中断，因为在某些
+目标环境中接入真实中断较复杂。清单 7.6 给出了周期任务的实现。注意该任务在生成
+中断前后都会打印字符串，这使得执行顺序可通过示例输出观察。</p>
+<p><a name="list7.6" title="Listing 7.6 Implementation of the task that periodically generates a software interrupt in Example 7.1"></a></p>
+<pre><code class="language-c">/* 本示例使用的软件中断号。所示代码来自 Windows 工程，0 到 2 由
+     FreeRTOS Windows 移植自身使用，因此 3 是应用可用的第一个编号。 */
+#define mainINTERRUPT_NUMBER 3
+
+static void vPeriodicTask( void *pvParameters )
+{
+        const TickType_t xDelay500ms = pdMS_TO_TICKS( 500UL );
+
+        /* 与多数任务一样，该任务在无限循环中实现。 */
+        for( ;; )
+        {
+                /* 阻塞直到再次生成软件中断的时间到达。 */
+                vTaskDelay( xDelay500ms );
+
+                /* 生成中断，在中断生成前后都打印消息，以便从输出中
+                     观察执行顺序。
+
+                     生成软件中断的语法取决于所用 FreeRTOS 移植。下面的
+                     语法仅适用于 FreeRTOS Windows 移植，在该移植中这类
+                     中断只是模拟的。 */
+                vPrintString( &quot;Periodic task - About to generate an interrupt.\r\n&quot; );
+                vPortGenerateSimulatedInterrupt( mainINTERRUPT_NUMBER );
+                vPrintString( &quot;Periodic task - Interrupt generated.\r\n\r\n\r\n&quot; );
+        }
+}
+</code></pre>
+<p><strong><em>清单 7.6</em></strong> <em>示例 7.1 中周期性产生软件中断的任务实现</em></p>
+<p>清单 7.7 展示延迟处理中断的任务实现——该任务通过二值信号量与软件中断同步。
+同样，每次任务循环都会打印字符串，以便从输出中观察任务与中断的执行顺序。</p>
+<p>需要注意，清单 7.7 的代码仅适用于示例 7.1 的软件中断场景；在由硬件外设
+生成中断的场景下，该结构并不合适。后续小节会说明如何调整结构以适用于
+硬件中断。</p>
+<p><a name="list7.7." title="Listing 7.7 The implementation of the task to which the interrupt processing is deferred (the task that..."></a></p>
+<pre><code class="language-c">static void vHandlerTask( void *pvParameters )
+{
+        /* 与多数任务一样，该任务在无限循环中实现。 */
+        for( ;; )
+        {
+                /* 使用信号量等待事件。信号量在调度器启动前创建，
+                     因此在该任务首次运行之前就已存在。任务无限期阻塞，
+                     意味着只有在成功获取信号量后该函数才会返回——
+                     因此无需检查 xSemaphoreTake() 的返回值。 */
+                xSemaphoreTake( xBinarySemaphore, portMAX_DELAY );
+
+                /* 到达此处表示事件已经发生。处理事件（此处仅打印消息）。 */
+                vPrintString( &quot;Handler task - Processing event.\r\n&quot; );
+        }
+}
+</code></pre>
+<p><strong><em>清单 7.7</em></strong> <em>示例 7.1 中延迟处理中断的任务实现（与中断同步的任务）</em></p>
+<p>清单 7.8 展示 ISR 的实现。它几乎只做一件事：释放信号量以解除延迟处理任务的阻塞。</p>
+<p>注意 <code>xHigherPriorityTaskWoken</code> 变量的用法：在调用 <code>xSemaphoreGiveFromISR()</code> 之前
+设为 <code>pdFALSE</code>，然后作为参数传给 <code>portYIELD_FROM_ISR()</code>。若
+<code>xHigherPriorityTaskWoken</code> 为 <code>pdTRUE</code>，<code>portYIELD_FROM_ISR()</code> 会请求上下文切换。</p>
+<p>ISR 原型和用于强制上下文切换的宏均是 FreeRTOS Windows 移植所需的写法；其他移植
+可能不同。请参考 FreeRTOS.org 网站上的移植文档，以及 FreeRTOS 下载包中示例，
+以获得所用移植的正确语法。</p>
+<p>与多数架构不同，FreeRTOS Windows 移植要求 ISR 返回值。Windows 移植中的
+<code>portYIELD_FROM_ISR()</code> 宏内部包含返回语句，因此清单 7.8 未显式返回值。</p>
+<p><a name="list7.8" title="Listing 7.8 The ISR for the software interrupt used in Example 7.1"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+        BaseType_t xHigherPriorityTaskWoken;
+
+        /* xHigherPriorityTaskWoken 参数必须初始化为 pdFALSE，
+             如果需要上下文切换，中断安全 API 会在内部将其置为 pdTRUE。 */
+        xHigherPriorityTaskWoken = pdFALSE;
+
+        /* “释放”信号量以解除任务阻塞，并将 xHigherPriorityTaskWoken 的
+             地址作为中断安全 API 的 pxHigherPriorityTaskWoken 参数传入。 */
+        xSemaphoreGiveFromISR( xBinarySemaphore, &amp;xHigherPriorityTaskWoken );
+
+        /* 将 xHigherPriorityTaskWoken 传给 portYIELD_FROM_ISR()。
+             若 xSemaphoreGiveFromISR() 在内部将 xHigherPriorityTaskWoken 设为
+             pdTRUE，则调用 portYIELD_FROM_ISR() 会请求上下文切换。
+             若 xHigherPriorityTaskWoken 仍为 pdFALSE，则调用
+             portYIELD_FROM_ISR() 不会产生效果。与多数 FreeRTOS 移植不同，
+             Windows 移植要求 ISR 返回值——返回语句位于 Windows 版本的
+             portYIELD_FROM_ISR() 内部。 */
+        portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 7.8</em></strong> <em>示例 7.1 中的软件中断 ISR</em></p>
+<p><code>main()</code> 函数创建二值信号量、创建任务、安装中断处理程序并启动调度器。
+其实现见清单 7.9。</p>
+<p>安装中断处理程序的函数语法依赖 FreeRTOS Windows 移植；其他移植可能不同。
+请参考 FreeRTOS.org 的移植文档与示例以获得正确语法。</p>
+<p><a name="list7.9" title="Listing 7.9 The implementation of main() for Example 7.1"></a></p>
+<pre><code class="language-c">int main( void )
+{
+        /* 使用信号量前必须显式创建。本例创建二值信号量。 */
+        xBinarySemaphore = xSemaphoreCreateBinary();
+
+        /* 检查信号量是否创建成功。 */
+        if( xBinarySemaphore != NULL )
+        {
+                /* 创建“handler”任务，即延迟处理中断的任务。
+                     该任务与中断同步。为确保中断退出后立即运行，
+                     handler 任务以较高优先级创建，本例选择优先级 3。 */
+                xTaskCreate( vHandlerTask, &quot;Handler&quot;, 1000, NULL, 3, NULL );
+
+                /* 创建周期性产生软件中断的任务。该任务优先级低于 handler 任务，
+                     以确保每次 handler 任务离开 Blocked 状态时都能抢占该任务。 */
+                xTaskCreate( vPeriodicTask, &quot;Periodic&quot;, 1000, NULL, 1, NULL );
+
+                /* 安装软件中断处理程序。所需语法取决于所用 FreeRTOS 移植。
+                     此处语法仅适用于 FreeRTOS Windows 移植，在该移植中这类
+                     中断只是模拟的。 */
+                vPortSetInterruptHandler( mainINTERRUPT_NUMBER,
+                                                                    ulExampleInterruptHandler );
+
+                /* 启动调度器，使已创建的任务开始执行。 */
+                vTaskStartScheduler();
+        }
+
+        /* 按惯例，下面这一行不应被执行。 */
+        for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 7.9</em></strong> <em>示例 7.1 的 main() 实现</em></p>
+<p>示例 7.1 的输出如图 7.4 所示。可见，一旦中断生成，<code>vHandlerTask()</code> 立即进入
+<em>Running</em> 状态，因此任务输出将周期任务输出分割开。图 7.5 给出进一步说明。</p>
+<p><a name="fig7.4" title="Figure 7.4 The output produced when Example 7.1 is executed"></a>
+<a name="fig7.5" title="Figure 7.5 The sequence of execution when Example 7.1 is executed"></a></p>
+<hr />
+<p><img alt="" src="../media/image51.jpg" />
+<strong><em>图 7.4</em></strong> <em>示例 7.1 的输出</em></p>
+<p><img alt="" src="../media/image52.png" />
+<strong><em>图 7.5</em></strong> <em>示例 7.1 的执行顺序</em></p>
+<hr />
+<h3 id="744-71">7.4.4 改进示例 7.1 的任务实现</h3>
+<p>示例 7.1 使用二值信号量将任务与中断同步，其执行顺序如下：</p>
+<ol>
+<li>
+<p>发生中断。</p>
+</li>
+<li>
+<p>ISR 执行并“释放”信号量以解除任务阻塞。</p>
+</li>
+<li>
+<p>任务在 ISR 之后立即执行并“获取”信号量。</p>
+</li>
+<li>
+<p>任务处理事件，然后再次尝试“获取”信号量——因信号量尚不可用（下次中断
+     未发生）而进入 <em>Blocked</em> 状态。</p>
+</li>
+</ol>
+<p>示例 7.1 的延迟处理中断任务结构仅在中断发生频率较低时才适用。要理解原因，考虑
+如果第二个、第三个中断在任务完成第一个中断处理之前发生：</p>
+<ul>
+<li>
+<p>当第二次 ISR 执行时，信号量为空，因此 ISR 释放信号量，任务在处理完第一个事件后
+    立即处理第二个事件。该场景见图 7.6。</p>
+</li>
+<li>
+<p>当第三次 ISR 执行时，信号量已可用，使 ISR 无法再次释放信号量，因此任务不会知道
+    第三个事件已发生。该场景见图 7.7。</p>
+</li>
+</ul>
+<p><a name="fig7.6" title="Figure 7.6 The scenario when one interrupt occurs before the task has finished processing the first event"></a>
+<a name="fig7.7" title="Figure 7.7 The scenario when two interrupts occur before the task has finished processing the first event"></a></p>
+<hr />
+<p><img alt="" src="../media/image53.png" />
+<strong><em>图 7.6</em></strong> <em>当任务尚未完成首次事件处理就发生一次中断的场景</em></p>
+<p><img alt="" src="../media/image54.png" />
+<strong><em>图 7.7</em></strong> <em>当任务尚未完成首次事件处理就发生两次中断的场景</em></p>
+<hr />
+<p>示例 7.1 的延迟处理中断任务（清单 7.7）结构使其在每次 <code>xSemaphoreTake()</code> 之间
+只处理一个事件。这对示例 7.1 足够，因为中断由软件触发且发生时间可预测。在实际应用中，
+中断由硬件产生且不可预测。因此，为降低漏中断的可能性，延迟处理中断任务应在每次
+<code>xSemaphoreTake()</code> 之间处理所有已就绪的事件<sup id="fnref:17"><a class="footnote-ref" href="#fn:17">6</a></sup>。清单 7.10 展示了 UART 延迟中断
+处理任务的推荐结构，假设 UART 每接收一个字符就产生一次接收中断，并将字符放入硬件 FIFO。</p>
+<p>示例 7.1 的延迟处理中断任务还存在另一个弱点：调用 <code>xSemaphoreTake()</code> 时未设置
+超时，而是使用 <code>portMAX_DELAY</code>，导致任务无限期等待信号量。示例代码常使用无限等待
+以简化结构、便于理解，但真实应用中通常不佳，因为会让错误恢复变得困难。例如，
+任务等待中断释放信号量，但硬件错误导致中断无法产生：</p>
+<ul>
+<li>
+<p>若任务无超时等待，将无法得知错误，永久等待。</p>
+</li>
+<li>
+<p>若任务带超时等待，则 <code>xSemaphoreTake()</code> 在超时后返回 <code>pdFAIL</code>，任务即可在
+    下一次执行时检测并清除错误。该场景亦在清单 7.10 中演示。</p>
+</li>
+</ul>
+<p><a name="list7.10" title="Listing 7.10 The recommended structure of a deferred interrupt processing task, using a UART receive..."></a></p>
+<pre><code class="language-c">static void vUARTReceiveHandlerTask( void *pvParameters )
+{
+        /* xMaxExpectedBlockTime 保存两次中断之间的最大期望时间。 */
+        const TickType_t xMaxExpectedBlockTime = pdMS_TO_TICKS( 500 );
+
+        /* 与多数任务一样，该任务在无限循环中实现。 */
+        for( ;; )
+        {
+                /* 信号量由 UART 接收（Rx）中断“释放”。
+                     最多等待 xMaxExpectedBlockTime 个 tick 以接收下一次中断。 */
+                if( xSemaphoreTake( xBinarySemaphore, xMaxExpectedBlockTime ) == pdPASS)
+                {
+                        /* 已获取信号量。在再次调用 xSemaphoreTake() 之前处理所有
+                             待处理的 Rx 事件。每个 Rx 事件都会在 UART 接收 FIFO 中
+                             放入一个字符，假设 UART_RxCount() 返回 FIFO 中字符数量。 */
+                        while( UART_RxCount() &gt; 0 )
+                        {
+                                /* 假设 UART_ProcessNextRxEvent() 处理一个 Rx 字符，
+                                     使 FIFO 中字符数量减少 1。 */
+                                UART_ProcessNextRxEvent();
+                        }
+
+                        /* 没有更多待处理的 Rx 事件（FIFO 中无更多字符），
+                             因此回到循环并调用 xSemaphoreTake() 等待下一次中断。
+                             在此处到 xSemaphoreTake() 调用之间发生的任何中断都会
+                             被锁存在信号量中，因此不会丢失。 */
+                }
+                else
+                {
+                        /* 在期望时间内未收到事件。检查 UART 是否存在错误，
+                             必要时清除错误，以防止 UART 无法再产生中断。 */
+                        UART_ClearErrors();
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 7.10</em></strong> <em>延迟中断处理任务的推荐结构（以 UART 接收处理为例）</em></p>
+<h2 id="75">7.5 计数信号量</h2>
+<p>二值信号量可视作长度为 1 的队列，计数信号量可视作长度大于 1 的队列。
+任务不关心队列中存放的数据，只关心队列中的项目数量。
+要使用计数信号量，必须在 FreeRTOSConfig.h 中将 <code>configUSE_COUNTING_SEMAPHORES</code>
+设为 1。</p>
+<p>每次“释放”计数信号量都会占用队列中的一个空间。队列中的项目数量就是信号量的“计数值”。</p>
+<p>计数信号量通常用于两类场景：</p>
+<ol>
+<li>
+<p>计数事件<sup id="fnref:18"><a class="footnote-ref" href="#fn:18">7</a></sup></p>
+<p>在该场景中，每次事件发生，事件处理程序都会“释放”一次信号量，使其计数值递增；
+ 每次任务处理一个事件就“获取”一次信号量，使计数值递减。计数值等于已发生事件数与
+ 已处理事件数之间的差。该机制见图 7.8。</p>
+<p>用于计数事件的计数信号量初始计数值为 0。</p>
+</li>
+<li>
+<p>资源管理。</p>
+<p>在该场景中，计数值表示可用资源数量。任务要获得资源必须先获取信号量，
+ 从而使计数值递减。当计数值为 0 时，无可用资源。任务完成资源使用后“释放”信号量，
+ 计数值递增。</p>
+<p>用于资源管理的计数信号量初始计数值等于可用资源数量。第 7 章涵盖使用信号量管理资源。</p>
+</li>
+</ol>
+<p><a name="fig7.8" title="Figure 7.8 Using a counting semaphore to 'count' events"></a></p>
+<hr />
+<p><img alt="" src="../media/image55.png" />
+<strong><em>图 7.8</em></strong> <em>使用计数信号量“计数”事件</em></p>
+<hr />
+<h3 id="751-xsemaphorecreatecounting-api">7.5.1 xSemaphoreCreateCounting() API 函数</h3>
+<p>FreeRTOS 还提供 <code>xSemaphoreCreateCountingStatic()</code>，用于在编译期静态分配创建
+计数信号量所需内存：各种 FreeRTOS 信号量的句柄均存放在 <code>SemaphoreHandle_t</code> 类型变量中。</p>
+<p>信号量使用前必须先创建。创建计数信号量可使用 <code>xSemaphoreCreateCounting()</code> API 函数。</p>
+<p><a name="list7.11" title="Listing 7.11 The xSemaphoreCreateCounting() API function prototype"></a></p>
+<pre><code class="language-c">SemaphoreHandle_t xSemaphoreCreateCounting( UBaseType_t uxMaxCount,
+                                                                                        UBaseType_t uxInitialCount );
+</code></pre>
+<p><strong><em>清单 7.11</em></strong> <em>xSemaphoreCreateCounting() API 函数原型</em></p>
+<p><strong>xSemaphoreCreateCounting() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>uxMaxCount</code></p>
+<p>信号量的最大计数值。继续类比队列，<code>uxMaxCount</code> 相当于队列长度。</p>
+<p>用于计数或锁存事件时，<code>uxMaxCount</code> 是可锁存的最大事件数。</p>
+<p>用于管理资源时，<code>uxMaxCount</code> 应设置为可用资源总数。</p>
+</li>
+<li>
+<p><code>uxInitialCount</code></p>
+<p>创建后信号量的初始计数值。</p>
+<p>用于计数或锁存事件时，<code>uxInitialCount</code> 应设为 0（创建时假定尚未发生事件）。</p>
+<p>用于管理资源时，<code>uxInitialCount</code> 应等于 <code>uxMaxCount</code>（创建时假定所有资源可用）。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>若返回 NULL，则表示堆内存不足，无法为信号量分配数据结构。第 3 章提供更多
+堆内存管理信息。</p>
+<p>若返回非 NULL，则表示信号量创建成功，返回值应保存为该信号量句柄。</p>
+</li>
+</ul>
+<h2 id="_2"><a name="example7.2" title="Example 7.2 Using a counting semaphore to synchronize a task with an interrupt"></a></h2>
+<p><strong><em>示例 7.2</em></strong> <em>使用计数信号量将任务与中断同步</em></p>
+<hr />
+<p>示例 7.2 通过使用计数信号量替代二值信号量，改进了示例 7.1 的实现。
+<code>main()</code> 中将 <code>xSemaphoreCreateBinary()</code> 替换为 <code>xSemaphoreCreateCounting()</code>。
+新的 API 调用见清单 7.12。</p>
+<p><a name="list7.12" title="Listing 7.12 The call to xSemaphoreCreateCounting() used to create the counting semaphore in Example 7.2"></a></p>
+<pre><code class="language-c">/* 使用信号量前必须显式创建。本例创建计数信号量，其最大计数值为 10，
+     初始计数值为 0。 */
+xCountingSemaphore = xSemaphoreCreateCounting( 10, 0 );
+</code></pre>
+<p><strong><em>清单 7.12</em></strong> <em>示例 7.2 中用于创建计数信号量的 xSemaphoreCreateCounting() 调用</em></p>
+<p>为模拟高频多事件发生，中断服务例程改为在每次中断中多次“释放”信号量。
+每次事件都会被锁存到计数值中。修改后的 ISR 见清单 7.13。</p>
+<p><a name="list7.13" title="Listing 7.13 The implementation of the interrupt service routine used by Example 7.2"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+        BaseType_t xHigherPriorityTaskWoken;
+
+        /* xHigherPriorityTaskWoken 参数必须初始化为 pdFALSE，
+             如果需要上下文切换，中断安全 API 会在内部将其置为 pdTRUE。 */
+        xHigherPriorityTaskWoken = pdFALSE;
+
+        /* 多次“释放”信号量。第一次释放将解除延迟处理中断任务的阻塞，
+             后续释放用于演示信号量会锁存事件，使延迟处理中断的任务
+             能依次处理而不丢失事件。这模拟了处理器接收到多次中断，
+             尽管本例中的事件是在一次中断中模拟的。 */
+        xSemaphoreGiveFromISR( xCountingSemaphore, &amp;xHigherPriorityTaskWoken );
+        xSemaphoreGiveFromISR( xCountingSemaphore, &amp;xHigherPriorityTaskWoken );
+        xSemaphoreGiveFromISR( xCountingSemaphore, &amp;xHigherPriorityTaskWoken );
+
+        /* 将 xHigherPriorityTaskWoken 传给 portYIELD_FROM_ISR()。
+             若 xSemaphoreGiveFromISR() 在内部将 xHigherPriorityTaskWoken 设为
+             pdTRUE，则调用 portYIELD_FROM_ISR() 会请求上下文切换。
+             若 xHigherPriorityTaskWoken 仍为 pdFALSE，则调用
+             portYIELD_FROM_ISR() 不会产生效果。与多数 FreeRTOS 移植不同，
+             Windows 移植要求 ISR 返回值——返回语句位于 Windows 版本的
+             portYIELD_FROM_ISR() 内部。 */
+        portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 7.13</em></strong> <em>示例 7.2 中的 ISR 实现</em></p>
+<p>其余函数与示例 7.1 保持一致。</p>
+<p>示例 7.2 的输出如图 7.9 所示。可见延迟处理中断的任务在每次中断发生时都会处理
+全部三个（模拟）事件。事件被锁存到信号量计数值中，使任务可以依次处理而不丢失。</p>
+<p><a name="fig7.9" title="Figure 7.9 The output produced when Example 7.2 is executed"></a></p>
+<hr />
+<p><img alt="" src="../media/image56.jpg" />
+<strong><em>图 7.9</em></strong> <em>示例 7.2 的输出</em></p>
+<hr />
+<h2 id="76-rtos">7.6 将工作延迟到 RTOS 守护任务</h2>
+<p>前面的延迟中断处理示例需要为每个中断创建一个任务。也可使用
+<code>xTimerPendFunctionCallFromISR()</code><sup id="fnref:19"><a class="footnote-ref" href="#fn:19">8</a></sup> 将中断处理延迟到 RTOS 守护任务，从而无需
+为每个中断创建单独任务。这称为“集中式延迟中断处理”。</p>
+<p>第 6 章说明了软件定时器相关 API 通过定时器命令队列向守护任务发送命令。
+<code>xTimerPendFunctionCall()</code> 与 <code>xTimerPendFunctionCallFromISR()</code> 也使用该定时器
+命令队列向守护任务发送“执行函数”的命令。守护任务随后在自身上下文中执行该函数。</p>
+<p>集中式延迟中断处理的优点：</p>
+<ul>
+<li>
+<p>资源占用更低</p>
+<p>无需为每个延迟处理中断创建独立任务。</p>
+</li>
+<li>
+<p>用户模型更简洁</p>
+<p>延迟处理中断函数就是普通 C 函数。</p>
+</li>
+</ul>
+<p>集中式延迟中断处理的缺点：</p>
+<ul>
+<li>
+<p>灵活性较低</p>
+<p>无法为每个延迟处理中断函数单独设置优先级。所有延迟处理中断函数都以守护任务
+的优先级执行。第 6 章提到守护任务优先级由 FreeRTOSConfig.h 中的
+<code>configTIMER_TASK_PRIORITY</code> 设置。</p>
+</li>
+<li>
+<p>确定性较低</p>
+<p><code>xTimerPendFunctionCallFromISR()</code> 将命令发送到定时器命令队列尾部。队列中
+已有的命令会先由守护任务处理，再处理该“执行函数”命令。</p>
+</li>
+</ul>
+<p>不同中断具有不同时间约束，因此在同一应用中同时使用两种延迟处理方式是常见的。</p>
+<h3 id="761-xtimerpendfunctioncallfromisr-api">7.6.1 xTimerPendFunctionCallFromISR() API 函数</h3>
+<p><code>xTimerPendFunctionCallFromISR()</code> 是 <code>xTimerPendFunctionCall()</code> 的中断安全版本。
+二者均允许应用编写者提供的函数由 RTOS 守护任务执行，从而在守护任务上下文中运行。
+待执行的函数以及其参数值通过定时器命令队列发送给守护任务。因此函数的实际执行时机
+取决于守护任务相对其他任务的优先级。</p>
+<p><a name="list7.14" title="Listing 7.14 The xTimerPendFunctionCallFromISR() API function prototype"></a></p>
+<pre><code class="language-c">BaseType_t xTimerPendFunctionCallFromISR( PendedFunction_t
+                                                                                    xFunctionToPend,
+                                                                                    void *pvParameter1,
+                                                                                    uint32_t ulParameter2,
+                                                                                    BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.14</em></strong> <em>xTimerPendFunctionCallFromISR() API 函数原型</em></p>
+<p><a name="list7.15" title="Listing 7.15 The prototype to which a function passed in the xFunctionToPend parameter of xTimerPendFunctionCallFromISR()..."></a></p>
+<pre><code class="language-c">void vPendableFunction( void *pvParameter1, uint32_t ulParameter2 );
+</code></pre>
+<p><strong><em>清单 7.15</em></strong> <em>xTimerPendFunctionCallFromISR() 的 xFunctionToPend 参数所指函数的原型</em></p>
+<p><strong>xTimerPendFunctionCallFromISR() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xFunctionToPend</code></p>
+<p>指向将由守护任务执行的函数（即函数名）。函数原型必须与清单 7.15 相同。</p>
+</li>
+<li>
+<p><code>pvParameter1</code></p>
+<p>传给守护任务执行函数的 <code>pvParameter1</code> 参数值。该参数为 <code>void *</code> 类型，以便
+传递任意数据类型。例如可直接将整数类型强制转换为 <code>void *</code>，或让 <code>void *</code>
+指向结构体。</p>
+</li>
+<li>
+<p><code>ulParameter2</code></p>
+<p>传给守护任务执行函数的 <code>ulParameter2</code> 参数值。</p>
+</li>
+<li>
+<p><code>pxHigherPriorityTaskWoken</code></p>
+<p><code>xTimerPendFunctionCallFromISR()</code> 会写定时器命令队列。若守护任务正阻塞在
+队列上等待数据，则写队列会使守护任务离开 <em>Blocked</em> 状态。若守护任务优先级
+高于当前执行任务（被中断的任务），则 <code>xTimerPendFunctionCallFromISR()</code> 会将
+<code>*pxHigherPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。</p>
+<p>若该值被置为 <code>pdTRUE</code>，则必须在退出中断前执行上下文切换，以确保中断直接返回
+到守护任务（最高优先级 <em>Ready</em> 任务）。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>“执行函数”命令成功写入定时器命令队列时返回 <code>pdPASS</code>。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>若定时器命令队列已满，无法写入“执行函数”命令，则返回 <code>pdFAIL</code>。
+第 6 章描述了如何设置定时器命令队列长度。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="_3"><a name="example7.3" title="Example 7.3 Centralized deferred interrupt processing"></a></h2>
+<p><strong><em>示例 7.3</em></strong> <em>集中式延迟中断处理</em></p>
+<hr />
+<p>示例 7.3 与示例 7.1 提供类似功能，但不使用信号量，也不创建专门处理中断的任务，
+而是由 RTOS 守护任务执行处理。</p>
+<p>示例 7.3 的 ISR 见清单 7.16。它调用 <code>xTimerPendFunctionCallFromISR()</code> 向守护任务
+传递 <code>vDeferredHandlingFunction()</code> 的函数指针。实际延迟处理中断的工作由
+<code>vDeferredHandlingFunction()</code> 完成。</p>
+<p>ISR 每次执行都会递增变量 <code>ulParameterValue</code>。该值作为 <code>xTimerPendFunctionCallFromISR()</code>
+的 <code>ulParameter2</code> 参数，因此 <code>vDeferredHandlingFunction()</code> 被守护任务执行时也会将其
+作为 <code>ulParameter2</code> 参数。该示例中 <code>pvParameter1</code> 未使用。</p>
+<p><a name="list7.16" title="Listing 7.16 The software interrupt handler used in Example 7.3"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+        static uint32_t ulParameterValue = 0;
+        BaseType_t xHigherPriorityTaskWoken;
+
+        /* xHigherPriorityTaskWoken 参数必须初始化为 pdFALSE，
+             如果需要上下文切换，中断安全 API 会在内部将其置为 pdTRUE。 */
+        xHigherPriorityTaskWoken = pdFALSE;
+
+        /* 将中断的延迟处理函数指针发送给守护任务。延迟处理函数的
+             pvParameter1 参数未使用，因此设为 NULL。延迟处理函数的
+             ulParameter2 参数用于传递一个数值，该数值在每次中断处理
+             程序执行时递增。 */
+        xTimerPendFunctionCallFromISR( vDeferredHandlingFunction, /* 要执行的函数 */
+                                                     NULL, /* 未使用 */
+                                                     ulParameterValue, /* 递增值。 */
+                                                                     &amp;xHigherPriorityTaskWoken );
+        ulParameterValue++;
+
+        /* 将 xHigherPriorityTaskWoken 传给 portYIELD_FROM_ISR()。
+             若 xTimerPendFunctionCallFromISR() 在内部将 xHigherPriorityTaskWoken
+             设为 pdTRUE，则调用 portYIELD_FROM_ISR() 会请求上下文切换。
+             若 xHigherPriorityTaskWoken 仍为 pdFALSE，则调用
+             portYIELD_FROM_ISR() 不会产生效果。与多数 FreeRTOS 移植不同，
+             Windows 移植要求 ISR 返回值——返回语句位于 Windows 版本的
+             portYIELD_FROM_ISR() 内部。 */
+        portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 7.16</em></strong> <em>示例 7.3 使用的软件中断处理程序</em></p>
+<p><code>vDeferredHandlingFunction()</code> 的实现见清单 7.17。它输出固定字符串与其 <code>ulParameter2</code>
+参数值。</p>
+<p>即使在本例中仅使用一个参数，<code>vDeferredHandlingFunction()</code> 仍必须符合清单 7.15 的原型。</p>
+<p><a name="list7.17" title="Listing 7.17 The function that performs the processing necessitated by the interrupt in Example 7.3"></a></p>
+<pre><code class="language-c">static void vDeferredHandlingFunction( void *pvParameter1, uint32_t ulParameter2 )
+{
+        /* 处理事件——此处仅打印一条消息和 ulParameter2 的值。
+             本示例未使用 pvParameter1。 */
+        vPrintStringAndNumber( &quot;Handler function - Processing event &quot;, ulParameter2 );
+}
+</code></pre>
+<p><strong><em>清单 7.17</em></strong> <em>示例 7.3 中执行中断处理的函数</em></p>
+<p>示例 7.3 的 <code>main()</code> 实现见清单 7.18。它比示例 7.1 简化，因为无需创建信号量或
+专门的延迟处理中断任务。</p>
+<p><code>vPeriodicTask()</code> 是周期性产生软件中断的任务。它以低于守护任务的优先级创建，
+确保守护任务从 <em>Blocked</em> 状态离开后可抢占该任务。</p>
+<p><a name="list7.18" title="Listing 7.18 The implementation of main() for Example 7.3"></a></p>
+<pre><code class="language-c">int main( void )
+{
+        /* 生成软件中断的任务以低于守护任务的优先级创建。
+             守护任务优先级由 FreeRTOSConfig.h 中的编译期配置常量
+             configTIMER_TASK_PRIORITY 设置。 */
+        const UBaseType_t ulPeriodicTaskPriority = configTIMER_TASK_PRIORITY - 1;
+
+        /* 创建周期性产生软件中断的任务。 */
+        xTaskCreate( vPeriodicTask, &quot;Periodic&quot;, 1000, NULL, ulPeriodicTaskPriority,
+                                 NULL );
+
+        /* 安装软件中断处理程序。所需语法取决于所用 FreeRTOS 移植。
+             此处语法仅适用于 FreeRTOS Windows 移植，在该移植中这类
+             中断只是模拟的。 */
+        vPortSetInterruptHandler( mainINTERRUPT_NUMBER, ulExampleInterruptHandler );
+
+        /* 启动调度器，使已创建的任务开始执行。 */
+        vTaskStartScheduler();
+
+        /* 按惯例，下面这一行不应被执行。 */
+        for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 7.18</em></strong> <em>示例 7.3 的 main() 实现</em></p>
+<p>示例 7.3 的输出如图 7.10 所示。守护任务优先级高于产生软件中断的任务，因此
+<code>vDeferredHandlingFunction()</code> 会在中断产生后立即由守护任务执行。
+这使 <code>vDeferredHandlingFunction()</code> 的输出出现在周期任务的两条输出之间，
+与使用信号量解阻专用延迟处理中断任务时一致。图 7.11 给出进一步说明。</p>
+<p><a name="fig7.10" title="Figure 7.10 The output produced when Example 7.3 is executed"></a>
+<a name="fig7.11" title="Figure 7.11 The sequence of execution when Example 7.3 is executed"></a></p>
+<hr />
+<p><img alt="" src="../media/image57.jpg" />
+<strong><em>图 7.10</em></strong> <em>示例 7.3 的输出</em></p>
+<p><img alt="" src="../media/image58.png" />
+<strong><em>图 7.11</em></strong> <em>示例 7.3 的执行顺序</em></p>
+<hr />
+<h2 id="77-isr">7.7 在 ISR 中使用队列</h2>
+<p>二值与计数信号量用于传递事件；队列则用于传递事件与数据。</p>
+<p><code>xQueueSendToFrontFromISR()</code> 是 <code>xQueueSendToFront()</code> 的中断安全版本，
+<code>xQueueSendToBackFromISR()</code> 是 <code>xQueueSendToBack()</code> 的中断安全版本，
+<code>xQueueReceiveFromISR()</code> 是 <code>xQueueReceive()</code> 的中断安全版本。</p>
+<h3 id="771-xqueuesendtofrontfromisr-xqueuesendtobackfromisr-api">7.7.1 xQueueSendToFrontFromISR() 与 xQueueSendToBackFromISR() API 函数</h3>
+<p><a name="list7.19" title="Listing 7.19 The xQueueSendToFrontFromISR() API function prototype"></a></p>
+<pre><code class="language-c">BaseType_t xQueueSendToFrontFromISR( QueueHandle_t xQueue,
+                                                                         const void *pvItemToQueue
+                                                                         BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.19</em></strong> <em>xQueueSendToFrontFromISR() API 函数原型</em></p>
+<p><a name="list7.20" title="Listing 7.20 The xQueueSendToBackFromISR() API function prototype"></a></p>
+<pre><code class="language-c">BaseType_t xQueueSendToBackFromISR( QueueHandle_t xQueue,
+                                                                        const void *pvItemToQueue
+                                                                        BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 7.20</em></strong> <em>xQueueSendToBackFromISR() API 函数原型</em></p>
+<p><code>xQueueSendFromISR()</code> 与 <code>xQueueSendToBackFromISR()</code> 功能等价。</p>
+<p><strong>xQueueSendToFrontFromISR() 与 xQueueSendToBackFromISR() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xQueue</code></p>
+<p>要发送（写入）数据的队列句柄。该句柄由 <code>xQueueCreate()</code> 返回。</p>
+</li>
+<li>
+<p><code>pvItemToQueue</code></p>
+<p>指向要写入队列的数据项。</p>
+<p>队列创建时已指定每个队列项的大小，因此会从 <code>pvItemToQueue</code> 拷贝该字节数到
+队列存储区。</p>
+</li>
+<li>
+<p><code>pxHigherPriorityTaskWoken</code></p>
+<p>一个队列可能有一个或多个任务阻塞在其上等待数据。调用
+<code>xQueueSendToFrontFromISR()</code> 或 <code>xQueueSendToBackFromISR()</code> 可使数据可用，从而
+使等待任务离开 <em>Blocked</em> 状态。若调用 API 使任务离开 <em>Blocked</em> 状态，且该任务
+优先级高于当前执行任务（被中断的任务），则 API 内部会将
+<code>*pxHigherPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。</p>
+<p>若 <code>xQueueSendToFrontFromISR()</code> 或 <code>xQueueSendToBackFromISR()</code> 将该值置为
+<code>pdTRUE</code>，则应在退出中断前执行上下文切换，确保中断直接返回到最高优先级
+<em>Ready</em> 任务。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当数据成功发送到队列时返回 <code>pdPASS</code>。</p>
+</li>
+<li>
+<p>`errQUEUE_FULL</p>
+<p>若队列已满，无法发送数据，则返回 <code>errQUEUE_FULL</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="772-isr">7.7.2 在 ISR 中使用队列的注意事项</h3>
+<p>队列提供了将数据从中断传递到任务的简便方式，但当数据高频到达时，使用队列并不高效。</p>
+<p>FreeRTOS 下载包的许多演示应用包含使用队列从 UART 接收 ISR 中传出字符的简单 UART 驱动。
+这些示例之所以使用队列，一是演示 ISR 中使用队列，二是刻意增加负载以测试移植。
+这些 ISR 设计并非高效设计，除非数据到达很慢，否则不建议生产代码采用该技术。
+更高效且适合生产的技术包括：</p>
+<ul>
+<li>
+<p>使用 DMA 接收并缓冲字符。该方法几乎无软件开销。然后可用直接任务通知<sup id="fnref:20"><a class="footnote-ref" href="#fn:20">9</a></sup>
+    在检测到传输中断后解除处理缓冲区任务的阻塞。</p>
+</li>
+<li>
+<p>将每个接收字符拷贝到线程安全的 RAM 缓冲区<sup id="fnref:21"><a class="footnote-ref" href="#fn:21">10</a></sup>。同样，可在收到完整消息或检测到
+    传输中断后，用直接任务通知解除处理缓冲区任务的阻塞。</p>
+</li>
+<li>
+<p>在 ISR 内直接处理接收字符，然后使用队列将处理结果（而非原始数据）发送到任务。
+    图 5.4 已演示此方法。</p>
+</li>
+</ul>
+<h2 id="_4"><a name="example7.4" title="Example 7.4 Sending and receiving on a queue from within an interrupt"></a></h2>
+<p><strong><em>示例 7.4</em></strong> <em>在中断中使用队列发送与接收</em></p>
+<hr />
+<p>该示例演示在同一中断中使用 <code>xQueueSendToBackFromISR()</code> 与 <code>xQueueReceiveFromISR()</code>。
+同样，为方便起见，使用软件中断。</p>
+<p>创建一个周期任务，每 200ms 向队列发送 5 个数字，且仅在全部 5 个值发送完后
+才产生软件中断。任务实现见清单 7.21。</p>
+<p><a name="list7.21" title="Listing 7.21 The implementation of the task that writes to the queue in Example 7.4"></a></p>
+<pre><code class="language-c">static void vIntegerGenerator( void *pvParameters )
+{
+        TickType_t xLastExecutionTime;
+        uint32_t ulValueToSend = 0;
+        int i;
+
+        /* 初始化用于 vTaskDelayUntil() 调用的变量。 */
+        xLastExecutionTime = xTaskGetTickCount();
+
+        for( ;; )
+        {
+                /* 这是周期性任务。阻塞直到再次运行的时间到达。
+                     该任务每 200ms 执行一次。 */
+                vTaskDelayUntil( &amp;xLastExecutionTime, pdMS_TO_TICKS( 200 ) );
+
+                /* 向队列发送 5 个数字，每个值比前一个大 1。
+                     这些数字由中断服务例程从队列中读取。中断服务例程
+                     会总是清空队列，因此该任务无需设置阻塞时间也能
+                     保证写入全部 5 个值。 */
+                for( i = 0; i &lt; 5; i++ )
+                {
+                        xQueueSendToBack( xIntegerQueue, &amp;ulValueToSend, 0 );
+                        ulValueToSend++;
+                }
+
+                /* 生成中断，使中断服务例程能从队列读取数据。
+                     生成软件中断的语法取决于所用 FreeRTOS 移植。下面的
+                     语法仅适用于 FreeRTOS Windows 移植，在该移植中这类
+                     中断只是模拟的。 */
+                vPrintString( &quot;Generator task - About to generate an interrupt.\r\n&quot; );
+                vPortGenerateSimulatedInterrupt( mainINTERRUPT_NUMBER );
+                vPrintString( &quot;Generator task - Interrupt generated.\r\n\r\n\r\n&quot; );
+        }
+}
+</code></pre>
+<p><strong><em>清单 7.21</em></strong> <em>示例 7.4 中写队列任务的实现</em></p>
+<p>ISR 会反复调用 <code>xQueueReceiveFromISR()</code>，直到将周期任务写入队列的所有值读出，
+并使队列清空。每个接收值的最后两位用作字符串数组索引，然后使用
+<code>xQueueSendFromISR()</code> 将对应字符串指针发送到另一队列。ISR 实现见清单 7.22。</p>
+<p><a name="list7.22" title="Listing 7.22 The implementation of the interrupt service routine used by Example 7.4"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+        BaseType_t xHigherPriorityTaskWoken;
+        uint32_t ulReceivedNumber;
+
+        /* 字符串声明为 static const，以确保它们不会分配在
+             中断服务例程的栈上，从而在 ISR 不执行时也仍然存在。 */
+
+        static const char *pcStrings[] =
+        {
+                &quot;String 0\r\n&quot;,
+                &quot;String 1\r\n&quot;,
+                &quot;String 2\r\n&quot;,
+                &quot;String 3\r\n&quot;
+        };
+
+        /* 按惯例，xHigherPriorityTaskWoken 初始化为 pdFALSE，以便检测
+             中断安全 API 是否将其置为 pdTRUE。注意中断安全 API 只能将
+             xHigherPriorityTaskWoken 设为 pdTRUE，因此在调用
+             xQueueReceiveFromISR() 和 xQueueSendToBackFromISR() 时复用同一个
+             xHigherPriorityTaskWoken 变量是安全的。 */
+        xHigherPriorityTaskWoken = pdFALSE;
+
+        /* 从队列读取直到队列为空。 */
+        while( xQueueReceiveFromISR( xIntegerQueue,
+                                                                 &amp;ulReceivedNumber,
+                                                                 &amp;xHigherPriorityTaskWoken ) != errQUEUE_EMPTY )
+        {
+                /* 将接收值截断为最低两位（取值 0 到 3），再将截断后的值
+                     作为 pcStrings[] 的索引，选择要发送到另一队列的
+                     字符串（char *）。 */
+                ulReceivedNumber &amp;= 0x03;
+                xQueueSendToBackFromISR( xStringQueue,
+                                                                 &amp;pcStrings[ ulReceivedNumber ],
+                                                                 &amp;xHigherPriorityTaskWoken );
+        }
+
+        /* 如果从 xIntegerQueue 接收导致某任务离开 Blocked 状态，且该任务
+             的优先级高于当前 Running 状态任务，则 xQueueReceiveFromISR()
+             会在内部将 xHigherPriorityTaskWoken 设为 pdTRUE。
+
+             如果向 xStringQueue 发送导致某任务离开 Blocked 状态，且该任务
+             的优先级高于当前 Running 状态任务，则 xQueueSendToBackFromISR()
+             会在内部将 xHigherPriorityTaskWoken 设为 pdTRUE。
+
+             xHigherPriorityTaskWoken 用作 portYIELD_FROM_ISR() 的参数。
+             若 xHigherPriorityTaskWoken 等于 pdTRUE，则调用
+             portYIELD_FROM_ISR() 会请求上下文切换；若仍为 pdFALSE，
+             调用 portYIELD_FROM_ISR() 则不会产生效果。
+
+             Windows 移植中 portYIELD_FROM_ISR() 的实现包含返回语句，
+             因此该函数未显式返回值。 */
+        portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 7.22</em></strong> <em>示例 7.4 使用的 ISR 实现</em></p>
+<p>接收字符串指针的任务在队列上阻塞等待消息到达，并在收到时打印字符串。
+其实现见清单 7.23。</p>
+<p><a name="list7.23" title="Listing 7.23 The task that prints out the strings received from the interrupt service routine in Example 7.4"></a></p>
+<pre><code class="language-c">static void vStringPrinter( void *pvParameters )
+{
+        char *pcString;
+
+        for( ;; )
+        {
+                /* 阻塞在队列上等待数据到达。 */
+                xQueueReceive( xStringQueue, &amp;pcString, portMAX_DELAY );
+
+                /* 打印接收到的字符串。 */
+                vPrintString( pcString );
+        }
+}
+</code></pre>
+<p><strong><em>清单 7.23</em></strong> <em>示例 7.4 中打印 ISR 接收字符串的任务</em></p>
+<p>与往常一样，<code>main()</code> 在启动调度器前创建所需队列与任务。其实现见清单 7.24。</p>
+<p><a name="list7.24" title="Listing 7.24 The main() function for Example 7.4"></a></p>
+<pre><code class="language-c">int main( void )
+{
+        /* 使用队列前必须先创建。本例创建两个队列：一个保存 uint32_t，
+             另一个保存 char*。两个队列最多可容纳 10 个条目。真实应用
+             应检查返回值以确保队列创建成功。 */
+        xIntegerQueue = xQueueCreate( 10, sizeof( uint32_t ) );
+        xStringQueue = xQueueCreate( 10, sizeof( char * ) );
+
+        /* 创建通过队列向中断服务例程传递整数的任务，优先级为 1。 */
+        xTaskCreate( vIntegerGenerator, &quot;IntGen&quot;, 1000, NULL, 1, NULL );
+
+        /* 创建用于打印中断服务例程发送的字符串的任务，优先级为 2。 */
+        xTaskCreate( vStringPrinter, &quot;String&quot;, 1000, NULL, 2, NULL );
+
+        /* 安装软件中断处理程序。所需语法取决于所用 FreeRTOS 移植。
+             此处语法仅适用于 FreeRTOS Windows 移植，在该移植中这类
+             中断只是模拟的。 */
+        vPortSetInterruptHandler( mainINTERRUPT_NUMBER, ulExampleInterruptHandler );
+
+        /* 启动调度器，使已创建的任务开始执行。 */
+        vTaskStartScheduler();
+
+        /* 如果一切正常，调度器将运行任务，main() 不会到达这里。
+             若 main() 到达此处，很可能是堆内存不足以创建空闲任务。
+             第 2 章提供了更多堆内存管理信息。 */
+        for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 7.24</em></strong> <em>示例 7.4 的 main() 函数</em></p>
+<p>示例 7.4 的输出如图 7.12 所示。可见中断接收了全部 5 个整数，并产生 5 条字符串响应。
+图 7.13 给出更详细说明。</p>
+<p><a name="fig7.12" title="Figure 7.12 The output produced when Example 7.4 is executed"></a>
+<a name="fig7.13" title="Figure 7.13 The sequence of execution produced by Example 7.4"></a></p>
+<hr />
+<p><img alt="" src="../media/image59.jpg" />
+<strong><em>图 7.12</em></strong> <em>示例 7.4 的输出</em></p>
+<p><img alt="" src="../media/image60.png" />
+<strong><em>图 7.13</em></strong> <em>示例 7.4 的执行顺序</em></p>
+<hr />
+<h2 id="78">7.8 中断嵌套</h2>
+<p>任务优先级与中断优先级常被混淆。本节讨论中断优先级，即 ISR 之间的相对执行优先级。
+任务优先级与中断优先级无关：硬件决定 ISR 何时执行，软件决定任务何时执行。
+硬件中断触发的 ISR 会打断任务，但任务无法抢占 ISR。</p>
+<p>支持中断嵌套的移植要求在 FreeRTOSConfig.h 中定义以下常量之一或两者：
+<code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 与 <code>configMAX_API_CALL_INTERRUPT_PRIORITY</code>
+表达相同属性。较老的移植使用前者，较新的移植使用后者。</p>
+<p><strong>控制中断嵌套的常量</strong></p>
+<ul>
+<li>
+<p><code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 或 <code>configMAX_API_CALL_INTERRUPT_PRIORITY</code></p>
+<p>设置可调用中断安全 FreeRTOS API 的最高中断优先级。</p>
+</li>
+<li>
+<p><code>configKERNEL_INTERRUPT_PRIORITY</code></p>
+<p>设置 tick 中断的优先级，必须始终设置为最低可能的中断优先级。</p>
+<p>若所用移植不使用 <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code>，则凡调用中断安全
+FreeRTOS API 的中断均必须以 <code>configKERNEL_INTERRUPT_PRIORITY</code> 指定的优先级执行。</p>
+</li>
+</ul>
+<p>每个中断源都有数值优先级与逻辑优先级：</p>
+<ul>
+<li>
+<p>数值优先级</p>
+<p>数值优先级就是分配给中断的数字。例如优先级为 7，则数值优先级为 7；
+优先级为 200，则数值优先级为 200。</p>
+</li>
+<li>
+<p>逻辑优先级</p>
+<p>逻辑优先级描述该中断相对于其他中断的优先级。</p>
+<p>若两个不同优先级的中断同时发生，处理器将先执行逻辑优先级更高的 ISR。</p>
+<p>一个中断可以打断（嵌套）任何逻辑优先级更低的中断，但不能打断逻辑优先级
+相同或更高的中断。</p>
+</li>
+</ul>
+<p>数值优先级与逻辑优先级之间的关系取决于处理器架构：有的架构数值越高逻辑优先级越高，
+有的架构数值越高逻辑优先级越低。</p>
+<p>通过将 <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 设置为高于
+<code>configKERNEL_INTERRUPT_PRIORITY</code> 的逻辑优先级，可建立完整的中断嵌套模型。图 7.14
+展示了以下场景：</p>
+<ul>
+<li>处理器有 7 个唯一中断优先级。</li>
+<li>数值优先级 7 的逻辑优先级高于数值优先级 1。</li>
+<li><code>configKERNEL_INTERRUPT_PRIORITY</code> 设为 1。</li>
+<li><code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 设为 3。</li>
+</ul>
+<p><a name="fig7.14" title="Figure 7.14 Constants affecting interrupt nesting behavior"></a></p>
+<hr />
+<p><img alt="" src="../media/image61.png" />
+<strong><em>图 7.14</em></strong> <em>影响中断嵌套行为的常量</em></p>
+<hr />
+<p>参见图 7.14：</p>
+<ul>
+<li>
+<p>使用优先级 1~3（含） 的中断在内核或应用进入临界区时会被屏蔽。
+    这些优先级的 ISR 可调用中断安全 FreeRTOS API 函数。临界区见第 8 章。</p>
+</li>
+<li>
+<p>使用优先级 4 或更高的中断不受临界区影响，因此调度器无法阻止其立即执行
+    （受硬件本身限制）。这些优先级的 ISR 不能调用任何 FreeRTOS API 函数。</p>
+</li>
+<li>
+<p>通常需要极严格定时精度的功能（如电机控制）会使用高于
+    <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 的优先级，以确保调度器不会引入
+    中断响应抖动。</p>
+</li>
+</ul>
+<h3 id="781-arm-cortex-m-arm-gic">7.8.1 给 ARM Cortex-M<sup id="fnref:22"><a class="footnote-ref" href="#fn:22">11</a></sup> 与 ARM GIC 用户的提示</h3>
+<p>Cortex-M 处理器的中断配置较为复杂且易出错。为帮助开发，FreeRTOS Cortex-M 移植
+会自动检查中断配置，但仅在定义了 <code>configASSERT()</code> 时才会启用。<code>configASSERT()</code>
+在 11.2 节介绍。</p>
+<p>ARM Cortex 内核与 ARM 通用中断控制器（GIC）使用数值<em>低</em>的优先级表示逻辑<em>高</em>
+的中断。这看起来反直觉且易忘。若要分配逻辑低优先级，则必须使用数值高；
+若要分配逻辑高优先级，则必须使用数值低。</p>
+<p>Cortex-M 中断控制器最多使用 8 位设置中断优先级，最低优先级为 255，最高为 0。
+但 Cortex-M 微控制器通常只实现其中一部分位，具体取决于芯片系列。</p>
+<p>当只实现部分位时，只能使用该字节的高位（最显著位），低位未实现。未实现位可取
+任意值，但通常设为 1。图 7.15 展示了在实现 4 位优先级的 Cortex-M 微控制器中，
+二进制 101 的优先级如何存储。</p>
+<p><a name="fig7.15" title="Figure 7.15 How a priority of binary 101 is stored by a Cortex-M microcontroller that implements four priority bits"></a></p>
+<hr />
+<p><img alt="" src="../media/image62.png" />
+<strong><em>图 7.15</em></strong> <em>实现 4 位优先级的 Cortex-M 微控制器如何存储二进制 101 的优先级</em></p>
+<hr />
+<p>在图 7.15 中，二进制 101 被左移到最显著 4 位，因为最低 4 位未实现。未实现位设为 1。</p>
+<p>某些库函数期望在将优先级值左移到已实现（最显著）位之后再传入。例如图 7.15
+所示优先级可指定为十进制 95。十进制 95 是二进制 101 左移 4 位得到的 101nnnn
+（n 为未实现位），并将未实现位设为 1 得到 1011111。</p>
+<p>另一些库函数期望在左移前传入优先级值。例如图 7.15 所示优先级应指定为十进制 5，
+即二进制 101 未移位的值。</p>
+<p><code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 与 <code>configKERNEL_INTERRUPT_PRIORITY</code>
+必须以可直接写入 Cortex-M 寄存器的方式指定，也就是左移到已实现位之后的值。</p>
+<p><code>configKERNEL_INTERRUPT_PRIORITY</code> 必须始终设为最低可能的中断优先级。未实现的
+优先级位可设为 1，因此该常量可始终设为 255，不受实际实现位数影响。</p>
+<p>Cortex-M 中断默认优先级为 0，即最高优先级。Cortex-M 硬件不允许将
+<code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 设为 0，因此调用 FreeRTOS API 的中断
+不得保持默认优先级。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:12">
+<p>延迟中断处理将在本书下一节介绍。&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:13">
+<p>历史上，要求中断处理程序使用汇编包装器的移植采用
+<code>portEND_SWITCHING_ISR()</code>，允许整个中断处理程序用 C 编写的移植采用
+<code>portYIELD_FROM_ISR()</code>。&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:14">
+<p>通过“直接任务通知”从中断解除任务阻塞，比使用二值信号量更高效。
+直接任务通知直到第 10 章“任务通知”才介绍。&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:15">
+<p>一些信号量 API 实际是宏而非函数。为简洁起见，本书统称为函数。&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:16">
+<p>计数信号量将在本章稍后介绍。&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:17">
+<p>另一种方式是使用计数信号量或直接任务通知来计数事件。计数信号量在下一节
+介绍。直接任务通知在第 10 章介绍，并且在运行时间与 RAM 占用方面最为高效。&#160;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:18">
+<p>使用直接任务通知计数事件比使用计数信号量更高效。直接任务通知将在第 10 章
+ 介绍。&#160;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:19">
+<p>守护任务最初被称为定时器服务任务，因为最初仅用于执行软件定时器回调。
+因此 <code>xTimerPendFunctionCall()</code> 实现于 timers.c 中，并按“函数名前缀为其实现文件名”
+的约定，以 “Timer” 为前缀。&#160;<a class="footnote-backref" href="#fnref:19" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:20">
+<p>直接任务通知是 ISR 中解除任务阻塞的最高效方法，详见第 10 章“任务通知”。&#160;<a class="footnote-backref" href="#fnref:20" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:21">
+<p>FreeRTOS+TCP 中的“Stream Buffer”（<a href="http://www.FreeRTOS.org/tcp">https://www.FreeRTOS.org/tcp</a>）
+可用于此目的。&#160;<a class="footnote-backref" href="#fnref:21" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:22">
+<p>本节仅部分适用于 Cortex-M0 与 Cortex-M0+ 内核。&#160;<a class="footnote-backref" href="#fnref:22" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

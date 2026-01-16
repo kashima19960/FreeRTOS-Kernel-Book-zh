@@ -1,0 +1,2289 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>6 软件定时器管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#6" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              6 软件定时器管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 章节介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1 章节介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#611" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 软件定时器回调函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 软件定时器的属性与状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.3 软件定时器的属性与状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#631" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.1 软件定时器的周期
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#632" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.2 单次与自动重装载定时器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#633" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.3 软件定时器状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 软件定时器的上下文
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 软件定时器的上下文">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#641-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.1 RTOS 守护（定时器服务）任务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#642" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.2 定时器命令队列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#643" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.3 守护任务调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 创建与启动软件定时器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.5 创建与启动软件定时器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#651-xtimercreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5.1 xTimerCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#652-xtimerstart-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5.2 xTimerStart() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 定时器 ID
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 定时器 ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#661-vtimersettimerid-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6.1 vTimerSetTimerID() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#662-pvtimergettimerid-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6.2 pvTimerGetTimerID() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7 修改定时器周期
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.7 修改定时器周期">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#671-xtimerchangeperiod-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7.1 xTimerChangePeriod() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8 复位软件定时器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.8 复位软件定时器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#681-xtimerreset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8.1 xTimerReset() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 章节介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1 章节介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#611" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 软件定时器回调函数
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 软件定时器的属性与状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.3 软件定时器的属性与状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#631" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.1 软件定时器的周期
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#632" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.2 单次与自动重装载定时器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#633" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3.3 软件定时器状态
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 软件定时器的上下文
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 软件定时器的上下文">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#641-rtos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.1 RTOS 守护（定时器服务）任务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#642" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.2 定时器命令队列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#643" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4.3 守护任务调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 创建与启动软件定时器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.5 创建与启动软件定时器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#651-xtimercreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5.1 xTimerCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#652-xtimerstart-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5.2 xTimerStart() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 定时器 ID
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 定时器 ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#661-vtimersettimerid-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6.1 vTimerSetTimerID() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#662-pvtimergettimerid-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6.2 pvTimerGetTimerID() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7 修改定时器周期
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.7 修改定时器周期">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#671-xtimerchangeperiod-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7.1 xTimerChangePeriod() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8 复位软件定时器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.8 复位软件定时器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#681-xtimerreset-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8.1 xTimerReset() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="6">6 软件定时器管理</h1>
+<h2 id="61">6.1 章节介绍与范围</h2>
+<p>软件定时器用于在未来指定时间点，或以固定频率周期性地调度一个函数执行。
+由软件定时器执行的函数称为软件定时器的回调函数。</p>
+<p>软件定时器由 FreeRTOS 内核实现并受其控制，不需要硬件支持，也与硬件定时器或
+硬件计数器无关。</p>
+<p>注意，符合 FreeRTOS 以创新设计实现最高效率的理念，软件定时器不会占用处理时间，
+除非软件定时器回调函数正在执行。</p>
+<p>软件定时器功能是可选的。要启用软件定时器：</p>
+<ol>
+<li>
+<p>将 FreeRTOS/Source/timers.c 作为工程的一部分进行构建。</p>
+</li>
+<li>
+<p>在应用的 FreeRTOSConfig.h 头文件中定义以下常量：</p>
+</li>
+<li>
+<p><code>configUSE_TIMERS</code></p>
+<p>在 FreeRTOSConfig.h 中将 <code>configUSE_TIMERS</code> 设为 1。</p>
+</li>
+<li>
+<p><code>configTIMER_TASK_PRIORITY</code></p>
+<p>设置定时器服务任务优先级，范围为 0 到 (<code>configMAX_PRIORITIES</code> - 1)。</p>
+</li>
+<li>
+<p><code>configTIMER_QUEUE_LENGTH</code></p>
+<p>设置定时器命令队列任意时刻可容纳的最大未处理命令数。</p>
+</li>
+<li>
+<p><code>configTIMER_TASK_STACK_DEPTH</code></p>
+<p>设置为定时器服务任务分配的栈大小（以字为单位，而非字节）。</p>
+</li>
+</ol>
+<h3 id="611">6.1.1 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>软件定时器与任务特性的差异。</li>
+<li>RTOS 守护任务。</li>
+<li>定时器命令队列。</li>
+<li>单次软件定时器与周期软件定时器的区别。</li>
+<li>如何创建、启动、复位与修改软件定时器周期。</li>
+</ul>
+<h2 id="62">6.2 软件定时器回调函数</h2>
+<p>软件定时器回调函数以 C 函数实现，唯一特殊之处在于其原型：返回 <code>void</code>，且仅接受
+一个软件定时器句柄作为参数。清单 6.1 展示该原型。</p>
+<p><a name="list" title="清单 6.1 软件定时器回调函数原型"></a></p>
+<pre><code class="language-c">void ATimerCallback( TimerHandle_t xTimer );
+</code></pre>
+<p><strong><em>清单 6.1</em></strong> <em>软件定时器回调函数原型</em></p>
+<p>软件定时器回调函数从头执行到尾并正常返回，应保持短小，且不得进入 <em>Blocked</em> 状态。</p>
+<blockquote>
+<p><em>注意：如后文所示，软件定时器回调函数在 FreeRTOS 调度器启动时自动创建的任务
+上下文中执行。因此必须确保软件定时器回调函数不会调用会导致调用任务进入
+</em>Blocked<em> 状态的 FreeRTOS API。可以调用 <code>xQueueReceive()</code> 等函数，但仅在其
+<code>xTicksToWait</code> 参数（阻塞时间）为 0 时才可以。不可调用 <code>vTaskDelay()</code> 等函数，
+因为 <code>vTaskDelay()</code> 总会让调用任务进入 </em>Blocked<em> 状态。</em></p>
+</blockquote>
+<h2 id="63">6.3 软件定时器的属性与状态</h2>
+<h3 id="631">6.3.1 软件定时器的周期</h3>
+<p>软件定时器的“周期”是指软件定时器启动与其回调函数执行之间的时间。</p>
+<h3 id="632">6.3.2 单次与自动重装载定时器</h3>
+<p>软件定时器有两种类型：</p>
+<ol>
+<li>
+<p>单次定时器（One-shot）</p>
+<p>启动后，单次定时器只执行一次回调函数。可手动重新启动，但不会自动重启。</p>
+</li>
+<li>
+<p>自动重装载定时器（Auto-reload）</p>
+<p>启动后，自动重装载定时器每次到期都会自动重启，从而周期性执行回调函数。</p>
+</li>
+</ol>
+<p>图 6.1 展示单次定时器与自动重装载定时器的行为差异。虚线表示 tick 中断发生的时刻。</p>
+<p><a name="fig6.1" title="图 6.1 单次与自动重装载软件定时器的行为差异"></a></p>
+<hr />
+<p><img alt="" src="../media/image38.png" />
+<strong><em>图 6.1</em></strong> <em>单次与自动重装载软件定时器的行为差异</em></p>
+<hr />
+<p>参见图 6.1：</p>
+<ul>
+<li>
+<p>定时器 1</p>
+<p>定时器 1 为单次定时器，周期为 6 个 tick。它在 t1 启动，因此 6 个 tick 后（t7）
+执行回调函数。由于是单次定时器，回调函数不会再次执行。</p>
+</li>
+<li>
+<p>定时器 2</p>
+<p>定时器 2 为自动重装载定时器，周期为 5 个 tick。它在 t1 启动，因此在 t1 之后
+每隔 5 个 tick 执行回调函数。在图 6.1 中发生在 t6、t11 与 t16。</p>
+</li>
+</ul>
+<h3 id="633">6.3.3 软件定时器状态</h3>
+<p>软件定时器可处于以下两种状态之一：</p>
+<ul>
+<li>
+<p>休眠（Dormant）</p>
+<p>休眠状态的软件定时器已存在，可通过句柄引用，但未运行，因此其回调函数不会执行。</p>
+</li>
+<li>
+<p>运行（Running）</p>
+<p>运行状态的软件定时器在自进入 <em>Running</em> 状态以来经过一个周期时间，或自上次复位
+以来经过一个周期时间后执行回调函数。</p>
+</li>
+</ul>
+<p>图 6.2 与图 6.3 分别展示自动重装载定时器与单次定时器在休眠与运行状态之间的
+转换。两者的关键差异在于定时器到期后的状态：自动重装载定时器执行回调后重新进入
+运行状态；单次定时器执行回调后进入休眠状态。</p>
+<p><a name="fig6.2" title="图 6.2 自动重装载软件定时器状态与转换"></a>
+<a name="fig6.3" title="图 6.3 单次软件定时器状态与转换"></a></p>
+<hr />
+<p><img alt="" src="../media/image39.png" />
+<strong><em>图 6.2</em></strong> <em>自动重装载软件定时器状态与转换</em></p>
+<p><img alt="" src="../media/image40.png" />
+<strong><em>图 6.3</em></strong> <em>单次软件定时器状态与转换</em></p>
+<hr />
+<p><code>xTimerDelete()</code> API 函数用于删除定时器，且可在任意时刻调用。其原型见清单 6.2。</p>
+<p><a name="list6.2" title="清单 6.2 xTimerDelete() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTimerDelete( TimerHandle_t xTimer, TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 6.2</em></strong> <em>xTimerDelete() API 函数原型</em></p>
+<p><strong>xTimerDelete() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>要删除的定时器句柄。</p>
+</li>
+<li>
+<p><code>xTicksToWait</code></p>
+<p>指定调用任务在 <em>Blocked</em> 状态中等待删除命令成功发送到定时器命令队列的时间（以 tick
+为单位），若在调用 <code>xTimerDelete()</code> 时队列已满则会等待。若 <code>xTimerDelete()</code> 在
+调度器启动前调用，则忽略 <code>xTicksToWait</code>。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>表示删除命令已成功发送到定时器命令队列。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>表示即使经过 <code>xBlockTime</code> 个 tick，仍无法将删除命令发送到定时器命令队列。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="64">6.4 软件定时器的上下文</h2>
+<h3 id="641-rtos">6.4.1 RTOS 守护（定时器服务）任务</h3>
+<p>所有软件定时器回调函数都在同一个 RTOS 守护（或“定时器服务”）任务的上下文中执行<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">1</a></sup>。</p>
+<p>守护任务是标准 FreeRTOS 任务，会在调度器启动时自动创建。其优先级与栈大小分别由
+<code>configTIMER_TASK_PRIORITY</code> 与 <code>configTIMER_TASK_STACK_DEPTH</code> 编译期配置常量设置，
+这两个常量均定义在 FreeRTOSConfig.h 中。</p>
+<p>软件定时器回调函数不得调用会导致调用任务进入 <em>Blocked</em> 状态的 FreeRTOS API，
+否则守护任务将进入 <em>Blocked</em> 状态。</p>
+<h3 id="642">6.4.2 定时器命令队列</h3>
+<p>软件定时器 API 函数通过名为“定时器命令队列”的队列，将命令从调用任务发送到
+守护任务，如图 6.4 所示。命令示例包括“启动定时器”“停止定时器”“复位定时器”。</p>
+<p>定时器命令队列是标准 FreeRTOS 队列，会在调度器启动时自动创建。其长度由
+FreeRTOSConfig.h 中的 <code>configTIMER_QUEUE_LENGTH</code> 编译期常量设置。</p>
+<p><a name="fig6.4" title="图 6.4 软件定时器 API 通过定时器命令队列与 RTOS 守护任务通信"></a></p>
+<hr />
+<p><img alt="" src="../media/image41.png" />
+<strong><em>图 6.4</em></strong> <em>软件定时器 API 通过定时器命令队列与 RTOS 守护任务通信</em></p>
+<hr />
+<h3 id="643">6.4.3 守护任务调度</h3>
+<p>守护任务与其他 FreeRTOS 任务一样被调度；只有当它是能够运行的最高优先级任务时，
+才会处理命令或执行定时器回调函数。图 6.5 与图 6.6 展示 <code>configTIMER_TASK_PRIORITY</code>
+设置对执行模式的影响。</p>
+<p>图 6.5 显示当调用 <code>xTimerStart()</code> 的任务优先级高于守护任务时的执行模式。</p>
+<p><a name="fig6.5" title="图 6.5 调用 xTimerStart() 的任务优先级高于守护任务时的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/image42.png" />
+<strong><em>图 6.5</em></strong> <em>调用 xTimerStart() 的任务优先级高于守护任务时的执行模式</em></p>
+<hr />
+<p>参见图 6.5（Task 1 优先级高于守护任务，守护任务优先级高于空闲任务）：</p>
+<ol>
+<li>
+<p>在 t1 时刻</p>
+<pre><code>Task 1 处于 *Running* 状态，守护任务处于 *Blocked* 状态。
+
+当有命令发送到定时器命令队列时，守护任务会离开 *Blocked* 状态处理命令；当
+软件定时器到期时，守护任务会执行该定时器的回调函数。
+</code></pre>
+</li>
+<li>
+<p>在 t2 时刻</p>
+<p>Task 1 调用 <code>xTimerStart()</code>。</p>
+<p><code>xTimerStart()</code> 将命令发送到定时器命令队列，使守护任务离开 <em>Blocked</em> 状态。
+ Task 1 优先级高于守护任务，因此守护任务不会抢占 Task 1。</p>
+<p>Task 1 仍处于 <em>Running</em> 状态，守护任务离开 <em>Blocked</em> 进入 <em>Ready</em> 状态。</p>
+</li>
+<li>
+<p>在 t3 时刻</p>
+<p>Task 1 执行完 <code>xTimerStart()</code> API 函数。Task 1 从函数开始执行到结束都未离开
+ <em>Running</em> 状态。</p>
+</li>
+<li>
+<p>在 t4 时刻</p>
+<p>Task 1 调用一个 API 使其进入 <em>Blocked</em> 状态。此时守护任务是 <em>Ready</em> 状态中
+ 最高优先级任务，因此调度器选择守护任务进入 <em>Running</em> 状态，守护任务开始处理
+ Task 1 发送到定时器命令队列的命令。</p>
+<blockquote>
+<p><em>注意：软件定时器到期的时间是从“启动定时器”命令发送到定时器命令队列的时刻
+计算的，而不是从守护任务从队列中接收该命令的时刻计算。</em></p>
+</blockquote>
+</li>
+<li>
+<p>在 t5 时刻</p>
+<p>守护任务完成对 Task 1 命令的处理，并尝试从定时器命令队列接收更多数据。队列为空，
+ 守护任务重新进入 <em>Blocked</em> 状态。之后如果有新命令发送到队列或软件定时器到期，
+ 守护任务将再次离开 <em>Blocked</em> 状态。</p>
+<p>此时空闲任务是 <em>Ready</em> 状态中最高优先级任务，调度器选择空闲任务进入
+ <em>Running</em> 状态。</p>
+</li>
+</ol>
+<p>图 6.6 展示与图 6.5 类似的场景，但这次守护任务优先级高于调用 <code>xTimerStart()</code> 的任务。</p>
+<p><a name="fig6.6" title="图 6.6 调用 xTimerStart() 的任务优先级低于守护任务时的执行模式"></a></p>
+<hr />
+<p><img alt="" src="../media/image43.png" />
+<strong><em>图 6.6</em></strong> <em>调用 xTimerStart() 的任务优先级低于守护任务时的执行模式</em></p>
+<hr />
+<p>参见图 6.6（守护任务优先级高于 Task 1，Task 1 优先级高于空闲任务）：</p>
+<ol>
+<li>
+<p>在 t1 时刻</p>
+<p>与前例相同，Task 1 处于 <em>Running</em> 状态，守护任务处于 <em>Blocked</em> 状态。</p>
+</li>
+<li>
+<p>在 t2 时刻</p>
+<p>Task 1 调用 <code>xTimerStart()</code>。</p>
+<p><code>xTimerStart()</code> 将命令发送到定时器命令队列，使守护任务离开 <em>Blocked</em> 状态。
+ 守护任务优先级高于 Task 1，因此调度器选择守护任务进入 <em>Running</em> 状态。</p>
+<p>Task 1 在完成 <code>xTimerStart()</code> 之前被守护任务抢占，此时处于 <em>Ready</em> 状态。</p>
+<p>守护任务开始处理 Task 1 发送到定时器命令队列的命令。</p>
+</li>
+<li>
+<p>在 t3 时刻</p>
+<p>守护任务完成对 Task 1 命令的处理并尝试从队列接收更多数据。队列为空，守护任务
+ 重新进入 <em>Blocked</em> 状态。</p>
+<p>Task 1 现在是 <em>Ready</em> 状态中最高优先级任务，因此调度器选择 Task 1 进入 <em>Running</em>
+ 状态。</p>
+</li>
+<li>
+<p>在 t4 时刻</p>
+<p>Task 1 在完成 <code>xTimerStart()</code> 之前被守护任务抢占，只有在重新进入 <em>Running</em> 状态
+ 后才退出（返回）<code>xTimerStart()</code>。</p>
+</li>
+<li>
+<p>在 t5 时刻</p>
+<p>Task 1 调用一个 API 导致其进入 <em>Blocked</em> 状态。此时空闲任务是 <em>Ready</em> 状态中
+ 最高优先级任务，调度器选择空闲任务进入 <em>Running</em> 状态。</p>
+</li>
+</ol>
+<p>在图 6.5 的场景中，Task 1 发送命令到定时器命令队列与守护任务接收并处理该命令
+之间存在时间差。在图 6.6 的场景中，守护任务在 Task 1 返回发送命令的函数之前就
+已接收并处理命令。</p>
+<p>发送到定时器命令队列的命令包含时间戳，用于补偿命令从应用任务发送到守护任务
+处理之间的时间差。例如，当发送“启动定时器”命令以启动周期为 10 tick 的定时器时，
+时间戳用于确保定时器在命令发送后 10 tick 到期，而不是在守护任务处理命令后 10 tick。</p>
+<h2 id="65">6.5 创建与启动软件定时器</h2>
+<h3 id="651-xtimercreate-api">6.5.1 xTimerCreate() API 函数</h3>
+<p>FreeRTOS 还提供 <code>xTimerCreateStatic()</code>，用于在编译期静态分配创建定时器所需内存。
+软件定时器必须在使用前显式创建。</p>
+<p>软件定时器通过 <code>TimerHandle_t</code> 类型变量引用。<code>xTimerCreate()</code> 用于创建软件定时器，
+并返回指向该定时器的 <code>TimerHandle_t</code>。软件定时器创建时处于休眠状态。</p>
+<p>软件定时器可以在调度器运行前创建，也可以在调度器启动后由任务创建。</p>
+<p><a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/#25-数据类型与编码风格指南">第 2.5 节：数据类型与编码风格指南</a> 描述了
+所用数据类型与命名规范。</p>
+<p><a name="list6.3" title="清单 6.3 xTimerCreate() API 函数原型"></a></p>
+<pre><code class="language-c">TimerHandle_t xTimerCreate( const char * const pcTimerName,
+                                                        const TickType_t xTimerPeriodInTicks,
+                                                        const BaseType_t xAutoReload,
+                                                        void * const pvTimerID,
+                                                        TimerCallbackFunction_t pxCallbackFunction );
+</code></pre>
+<p><strong><em>清单 6.3</em></strong> <em>xTimerCreate() API 函数原型</em></p>
+<p><strong>xTimerCreate() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>pcTimerName</code></p>
+<p>定时器的描述性名称。FreeRTOS 不会使用该名称，仅作为调试辅助。
+使用可读名称识别定时器比使用句柄更容易。</p>
+</li>
+<li>
+<p><code>xTimerPeriodInTicks</code></p>
+<p>定时器周期（tick）。可使用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。不能为 0。</p>
+</li>
+<li>
+<p><code>xAutoReload</code></p>
+<p>设为 <code>pdTRUE</code> 创建自动重装载定时器；设为 <code>pdFALSE</code> 创建单次定时器。</p>
+</li>
+<li>
+<p><code>pvTimerID</code></p>
+<p>每个软件定时器都有一个 ID 值。ID 为 <code>void *</code> 指针，应用可用于任何目的。
+当多个定时器共用同一回调函数时，ID 可用作定时器专用存储。本章示例将展示
+ID 的使用。</p>
+<p><code>pvTimerID</code> 设置新建定时器的初始 ID 值。</p>
+</li>
+<li>
+<p><code>pxCallbackFunction</code></p>
+<p>软件定时器回调函数为符合清单 6.1 原型的 C 函数。<code>pxCallbackFunction</code> 是
+指向该回调函数的指针（即函数名）。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>若返回 NULL，表示堆内存不足，无法分配所需数据结构。</p>
+<p>若返回非 NULL，表示软件定时器创建成功，返回值即为定时器句柄。</p>
+<p>第 3 章提供了堆内存管理的更多信息。</p>
+</li>
+</ul>
+<h3 id="652-xtimerstart-api">6.5.2 xTimerStart() API 函数</h3>
+<p><code>xTimerStart()</code> 用于启动处于休眠状态的软件定时器，或复位（重新启动）处于运行
+状态的软件定时器。<code>xTimerStop()</code> 用于停止运行中的软件定时器。停止软件定时器等同
+于将其转为休眠状态。</p>
+<p>可以在调度器启动前调用 <code>xTimerStart()</code>，但定时器不会真正开始运行，直到调度器
+启动时。</p>
+<blockquote>
+<p><em>注意：切勿在中断服务例程中调用 <code>xTimerStart()</code>。应使用其中断安全版本
+<code>xTimerStartFromISR()</code>。</em></p>
+</blockquote>
+<p><a name="list6.4" title="清单 6.4 xTimerStart() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTimerStart( TimerHandle_t xTimer, TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 6.4</em></strong> <em>xTimerStart() API 函数原型</em></p>
+<p><strong>xTimerStart() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>要启动或复位的软件定时器句柄。该句柄由 <code>xTimerCreate()</code> 创建时返回。</p>
+</li>
+<li>
+<p><code>xTicksToWait</code></p>
+<p><code>xTimerStart()</code> 使用定时器命令队列向守护任务发送“启动定时器”命令。<code>xTicksToWait</code>
+指定调用任务在队列已满时等待可用空间的最长时间（以 tick 为单位）。</p>
+<p>若 <code>xTicksToWait</code> 为 0 且队列已满，则 <code>xTimerStart()</code> 立即返回。</p>
+<p>阻塞时间以 tick 周期表示，绝对时间取决于 tick 频率。可使用 <code>pdMS_TO_TICKS()</code> 将
+毫秒转换为 tick。</p>
+<p>若 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1，将 <code>xTicksToWait</code> 设为
+<code>portMAX_DELAY</code> 会使调用任务无限期等待（不超时），直到队列有空间。</p>
+<p>若在调度器启动前调用 <code>xTimerStart()</code>，则忽略 <code>xTicksToWait</code>，行为等同于将其设为 0。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>可能的返回值有两个：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当“启动定时器”命令成功发送到定时器命令队列时返回 <code>pdPASS</code>。</p>
+<p>若守护任务优先级高于调用 <code>xTimerStart()</code> 的任务，调度器会确保在
+<code>xTimerStart()</code> 返回前处理该启动命令，因为守护任务会在命令进入队列后
+立即抢占调用任务。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务可能进入 <em>Blocked</em> 状态等待
+队列空间，但在超时前成功写入队列。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>若队列已满导致无法写入启动命令，则返回 <code>pdFAIL</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务会进入 <em>Blocked</em> 状态等待
+守护任务腾出空间，但在超时前未发生。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="_1"><a name="example6.1" title="示例 6.1 创建单次与自动重装载定时器"></a></h2>
+<p><strong><em>示例 6.1</em></strong> <em>创建单次与自动重装载定时器</em></p>
+<hr />
+<p>该示例创建并启动一个单次定时器和一个自动重装载定时器，如清单 6.5 所示。</p>
+<p><a name="list6.5" title="清单 6.5 创建并启动示例 6.1 的定时器"></a></p>
+<pre><code class="language-c">/* 为单次定时器和自动重装载定时器分配的周期分别为 3.333 秒
+     和 0.5 秒。 */
+#define mainONE_SHOT_TIMER_PERIOD pdMS_TO_TICKS( 3333 )
+#define mainAUTO_RELOAD_TIMER_PERIOD pdMS_TO_TICKS( 500 )
+
+int main( void )
+{
+        TimerHandle_t xAutoReloadTimer, xOneShotTimer;
+        BaseType_t xTimer1Started, xTimer2Started;
+
+        /* 创建单次定时器，将创建得到的定时器句柄存入
+             xOneShotTimer。 */
+        xOneShotTimer = xTimerCreate(
+                /* 软件定时器的文本名称——FreeRTOS 不使用该名称。 */
+                                                                    &quot;OneShot&quot;,
+                /* 软件定时器的周期（tick）。 */
+                                                                     mainONE_SHOT_TIMER_PERIOD,
+                /* 将 uxAutoRealod 设为 pdFALSE 可创建单次软件定时器。 */
+                                                                     pdFALSE,
+                /* 本示例不使用定时器 ID。 */
+                                                                     0,
+                /* 创建的软件定时器要使用的回调函数。 */
+                                                                     prvOneShotTimerCallback );
+
+        /* 创建自动重装载定时器，将创建得到的定时器句柄存入
+             xAutoReloadTimer。 */
+        xAutoReloadTimer = xTimerCreate(
+                /* 软件定时器的文本名称——FreeRTOS 不使用该名称。 */
+                                                                         &quot;AutoReload&quot;,
+                /* 软件定时器的周期（tick）。 */
+                                                                         mainAUTO_RELOAD_TIMER_PERIOD,
+                /* 将 uxAutoRealod 设为 pdTRUE 可创建自动重装载定时器。 */
+                                                                         pdTRUE,
+                /* 本示例不使用定时器 ID。 */
+                                                                         0,
+                /* 创建的软件定时器要使用的回调函数。 */
+                                                                         prvAutoReloadTimerCallback );
+
+        /* 检查软件定时器是否创建成功。 */
+        if( ( xOneShotTimer != NULL ) &amp;&amp; ( xAutoReloadTimer != NULL ) )
+        {
+                /* 启动软件定时器，阻塞时间设为 0（不阻塞）。
+                     调度器尚未启动，因此这里指定的任何阻塞时间都会被忽略。 */
+                xTimer1Started = xTimerStart( xOneShotTimer, 0 );
+                xTimer2Started = xTimerStart( xAutoReloadTimer, 0 );
+
+                /* xTimerStart() 的实现会使用定时器命令队列，
+                     若定时器命令队列已满，xTimerStart() 将失败。
+                     定时器服务任务要到调度器启动后才会创建，因此
+                     在调度器启动之前发送到命令队列的所有命令都会留在
+                     队列中。检查两次 xTimerStart() 调用都返回成功。 */
+                if( ( xTimer1Started == pdPASS ) &amp;&amp; ( xTimer2Started == pdPASS ) )
+                {
+                        /* 启动调度器。 */
+                        vTaskStartScheduler();
+                }
+        }
+
+        /* 按惯例，此行不应被执行。 */
+        for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 6.5</em></strong> <em>创建并启动示例 6.1 的定时器</em></p>
+<p>定时器回调函数仅在每次调用时打印一条消息。单次定时器回调函数见清单 6.6，
+自动重装载定时器回调函数见清单 6.7。</p>
+<p><a name="list6.5" title="清单 6.6 示例 6.1 中单次定时器的回调函数"></a></p>
+<pre><code class="language-c">static void prvOneShotTimerCallback( TimerHandle_t xTimer )
+{
+        TickType_t xTimeNow;
+
+        /* 获取当前 tick 计数。 */
+        xTimeNow = xTaskGetTickCount();
+
+        /* 输出字符串以显示回调函数执行的时间。 */
+        vPrintStringAndNumber( &quot;One-shot timer callback executing&quot;, xTimeNow );
+
+        /* 文件作用域变量。 */
+        ulCallCount++;
+}
+</code></pre>
+<p><strong><em>清单 6.6</em></strong> <em>示例 6.1 中单次定时器的回调函数</em></p>
+<p><a name="list6.7" title="清单 6.7 示例 6.1 中自动重装载定时器的回调函数"></a></p>
+<pre><code class="language-c">static void prvAutoReloadTimerCallback( TimerHandle_t xTimer )
+{
+        TickType_t xTimeNow;
+
+        /* 获取当前 tick 计数。 */
+        xTimeNow = xTaskGetTickCount();
+
+        /* 输出字符串以显示回调函数执行的时间。 */
+        vPrintStringAndNumber( &quot;Auto-reload timer callback executing&quot;, xTimeNow);
+
+        ulCallCount++;
+}
+</code></pre>
+<p><strong><em>清单 6.7</em></strong> <em>示例 6.1 中自动重装载定时器的回调函数</em></p>
+<p>执行该示例会产生图 6.7 所示输出。图 6.7 显示自动重装载定时器的回调函数以
+500 tick 的固定周期执行（清单 6.5 中 <code>mainAUTO_RELOAD_TIMER_PERIOD</code> 设为 500），
+单次定时器回调函数仅执行一次，即 tick 计数为 3333 时（清单 6.5 中
+<code>mainONE_SHOT_TIMER_PERIOD</code> 设为 3333）。</p>
+<p><a name="fig6.7" title="图 6.7 执行示例 6.1 的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image44.jpg" />
+<strong><em>图 6.7</em></strong> <em>执行示例 6.1 的输出</em></p>
+<hr />
+<h2 id="66-id">6.6 定时器 ID</h2>
+<p>每个软件定时器都有一个 ID（标签值），应用编写者可将其用于任何目的。ID 存储在
+<code>void *</code> 指针中，因此可以直接保存整数值、指向任意对象，或作为函数指针使用。</p>
+<p>软件定时器创建时会为 ID 赋初值，之后可使用 <code>vTimerSetTimerID()</code> 更新 ID，
+使用 <code>pvTimerGetTimerID()</code> 查询 ID。</p>
+<p>与其他软件定时器 API 不同，<code>vTimerSetTimerID()</code> 与 <code>pvTimerGetTimerID()</code> 直接访问
+软件定时器，不会向定时器命令队列发送命令。</p>
+<h3 id="661-vtimersettimerid-api">6.6.1 vTimerSetTimerID() API 函数</h3>
+<p><a name="list6.8" title="清单 6.8 vTimerSetTimerID() API 函数原型"></a></p>
+<pre><code class="language-c">void vTimerSetTimerID( const TimerHandle_t xTimer, void *pvNewID );
+</code></pre>
+<p><strong><em>清单 6.8</em></strong> <em>vTimerSetTimerID() API 函数原型</em></p>
+<p><strong>vTimerSetTimerID() 参数</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>需要更新 ID 的软件定时器句柄。该句柄由 <code>xTimerCreate()</code> 创建时返回。</p>
+</li>
+<li>
+<p><code>pvNewID</code></p>
+<p>软件定时器 ID 将被设置为的值。</p>
+</li>
+</ul>
+<h3 id="662-pvtimergettimerid-api">6.6.2 pvTimerGetTimerID() API 函数</h3>
+<p><a name="list6.9" title="清单 6.9 pvTimerGetTimerID() API 函数原型"></a></p>
+<pre><code class="language-c">void *pvTimerGetTimerID( const TimerHandle_t xTimer );
+</code></pre>
+<p><strong><em>清单 6.9</em></strong> <em>pvTimerGetTimerID() API 函数原型</em></p>
+<p><strong>pvTimerGetTimerID() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>要查询的定时器句柄。该句柄由 <code>xTimerCreate()</code> 创建时返回。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>被查询软件定时器的 ID。</p>
+</li>
+</ul>
+<h2 id="_2"><a name="example6.2" title="示例 6.2 使用回调函数参数与定时器 ID"></a></h2>
+<p><strong><em>示例 6.2</em></strong> <em>使用回调函数参数与定时器 ID</em></p>
+<hr />
+<p>同一回调函数可分配给多个软件定时器。在这种情况下，回调函数参数用于判断
+哪个软件定时器到期。</p>
+<p>示例 6.1 使用两个回调函数：单次定时器一个，自动重装载定时器一个。示例 6.2
+创建与示例 6.1 类似的功能，但两个定时器共享同一回调函数。</p>
+<p>示例 6.2 的 <code>main()</code> 与示例 6.1 基本相同，唯一不同是定时器创建处，如清单 6.10
+所示，两个定时器都使用 <code>prvTimerCallback()</code> 作为回调函数。</p>
+<p><a name="list6.10" title="清单 6.10 创建示例 6.2 使用的定时器"></a></p>
+<pre><code class="language-c">/* 创建单次软件定时器，将句柄存入
+     xOneShotTimer。 */
+xOneShotTimer = xTimerCreate( &quot;OneShot&quot;,
+                                                            mainONE_SHOT_TIMER_PERIOD,
+                                                            pdFALSE,
+                                            /* 定时器 ID 初始化为 NULL。 */
+                                                            NULL,
+                                            /* 两个定时器都使用 prvTimerCallback()。 */
+                                                            prvTimerCallback );
+
+/* 创建自动重装载软件定时器，将句柄存入
+     xAutoReloadTimer */
+xAutoReloadTimer = xTimerCreate( &quot;AutoReload&quot;,
+                                                                 mainAUTO_RELOAD_TIMER_PERIOD,
+                                                                 pdTRUE,
+                                             /* 定时器 ID 初始化为 NULL。 */
+                                                                 NULL,
+                                             /* 两个定时器都使用 prvTimerCallback()。 */
+                                                                 prvTimerCallback );
+</code></pre>
+<p><strong><em>清单 6.10</em></strong> <em>创建示例 6.2 使用的定时器</em></p>
+<p>当任一定时器到期时都会执行 <code>prvTimerCallback()</code>。该函数使用参数判断是单次定时器
+到期还是自动重装载定时器到期。</p>
+<p><code>prvTimerCallback()</code> 还展示了如何将定时器 ID 用作定时器专用存储；每个定时器在
+自身 ID 中保存其到期次数计数，自动重装载定时器在第 5 次执行时使用该计数停止自己。</p>
+<p><code>prvTimerCallback()</code> 的实现见清单 6.11。</p>
+<p><a name="list6.11" title="清单 6.11 示例 6.2 的定时器回调函数"></a></p>
+<pre><code class="language-c">static void prvTimerCallback( TimerHandle_t xTimer )
+{
+        TickType_t xTimeNow;
+        uint32_t ulExecutionCount;
+
+        /* 该软件定时器到期的次数计数存放在定时器 ID 中。
+             先获取 ID 并递增，然后把它保存为新的 ID 值。
+             ID 是 void 指针，因此需转换为 uint32_t。 */
+        ulExecutionCount = ( uint32_t ) pvTimerGetTimerID( xTimer );
+        ulExecutionCount++;
+        vTimerSetTimerID( xTimer, ( void * ) ulExecutionCount );
+
+        /* 获取当前 tick 计数。 */
+        xTimeNow = xTaskGetTickCount();
+
+        /* 单次定时器的句柄在创建时存入 xOneShotTimer。
+             将传入本函数的句柄与 xOneShotTimer 比较，以确定
+             到期的是单次定时器还是自动重装载定时器，然后输出
+             字符串显示回调执行的时间。 */
+        if( xTimer == xOneShotTimer )
+        {
+                vPrintStringAndNumber( &quot;One-shot timer callback executing&quot;, xTimeNow );
+        }
+        else
+        {
+                /* xTimer 不等于 xOneShotTimer，因此到期的是
+                     自动重装载定时器。 */
+                vPrintStringAndNumber( &quot;Auto-reload timer callback executing&quot;, xTimeNow);
+
+                if( ulExecutionCount == 5 )
+                {
+                        /* 自动重装载定时器执行 5 次后停止它。该回调函数在
+                             RTOS 守护任务上下文中执行，因此不得调用可能使守护任务
+                             进入 Blocked 状态的函数，所以阻塞时间设为 0。 */
+                        xTimerStop( xTimer, 0 );
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 6.11</em></strong> <em>示例 6.2 的定时器回调函数</em></p>
+<p>示例 6.2 的输出如图 6.8 所示，可以看到自动重装载定时器仅执行了 5 次。</p>
+<p><a name="fig6.8" title="图 6.8 执行示例 6.2 的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image45.jpg" />
+<strong><em>图 6.8</em></strong> <em>执行示例 6.2 的输出</em></p>
+<hr />
+<h2 id="67">6.7 修改定时器周期</h2>
+<p>每个官方 FreeRTOS port 都提供一个或多个示例工程。多数示例工程具备自检功能，
+并用 LED 提供可视反馈：如果自检一直通过，则 LED 缓慢闪烁；若自检出现失败，
+LED 则快速闪烁。</p>
+<p>部分示例工程在任务中执行自检，并使用 <code>vTaskDelay()</code> 控制 LED 闪烁速度。另一些
+示例工程在软件定时器回调函数中执行自检，并使用定时器周期控制 LED 闪烁速度。</p>
+<h3 id="671-xtimerchangeperiod-api">6.7.1 xTimerChangePeriod() API 函数</h3>
+<p>软件定时器周期可通过 <code>xTimerChangePeriod()</code> 修改。</p>
+<p>如果使用 <code>xTimerChangePeriod()</code> 修改正在运行的定时器周期，则定时器会使用新的周期
+值重新计算到期时间。新的到期时间相对于调用 <code>xTimerChangePeriod()</code> 的时刻，而不是
+相对于定时器最初启动的时刻。</p>
+<p>如果使用 <code>xTimerChangePeriod()</code> 修改处于休眠状态（未运行）的定时器周期，则定时器
+会计算到期时间并进入运行状态（开始运行）。</p>
+<blockquote>
+<p><em>注意：切勿在中断服务例程中调用 <code>xTimerChangePeriod()</code>。应使用其中断安全版本
+<code>xTimerChangePeriodFromISR()</code>。</em></p>
+</blockquote>
+<p><a name="list6.12" title="清单 6.12 xTimerChangePeriod() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTimerChangePeriod( TimerHandle_t xTimer,
+                                                             TickType_t xNewPeriod,
+                                                             TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 6.12</em></strong> <em>xTimerChangePeriod() API 函数原型</em></p>
+<p><strong>xTimerChangePeriod() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>要更新周期的软件定时器句柄。该句柄由 <code>xTimerCreate()</code> 创建时返回。</p>
+</li>
+<li>
+<p><code>xTimerPeriodInTicks</code></p>
+<p>软件定时器的新周期，以 tick 指定。可使用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。</p>
+</li>
+<li>
+<p><code>xTicksToWait</code></p>
+<p><code>xTimerChangePeriod()</code> 使用定时器命令队列向守护任务发送“修改周期”命令。
+<code>xTicksToWait</code> 指定调用任务在队列已满时等待可用空间的最长时间（以 tick 为单位）。</p>
+<p>若 <code>xTicksToWait</code> 为 0 且队列已满，则 <code>xTimerChangePeriod()</code> 立即返回。</p>
+<p>可使用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。</p>
+<p>若 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1，将 <code>xTicksToWait</code> 设为
+<code>portMAX_DELAY</code> 会使调用任务无限期等待（不超时），直到命令队列有空间。</p>
+<p>若在调度器启动前调用 <code>xTimerChangePeriod()</code>，则忽略 <code>xTicksToWait</code>，行为等同于
+将其设为 0。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>可能的返回值有两个：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当数据成功发送到定时器命令队列时返回 <code>pdPASS</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务可能进入 <em>Blocked</em> 状态等待
+队列空间，但在超时前成功写入队列。</p>
+</li>
+<li>
+<p><code>pdFAIL</code></p>
+<p>若队列已满导致“修改周期”命令无法写入，则返回 <code>pdFAIL</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务会进入 <em>Blocked</em> 状态等待
+守护任务腾出空间，但在超时前未发生。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>清单 6.13 展示了 FreeRTOS 示例中如何使用 <code>xTimerChangePeriod()</code> 在自检失败时加快
+LED 闪烁速度。执行自检的软件定时器称为“检查定时器（check timer）”。</p>
+<p><a name="list6.13" title="清单 6.13 使用 xTimerChangePeriod()"></a></p>
+<pre><code class="language-c">/* 检查定时器的周期为 3000 毫秒，使 LED 每 3 秒翻转一次。
+     如果自检功能检测到异常状态，则将检查定时器周期改为
+     200 毫秒，以获得更快的翻转频率。 */
+const TickType_t xHealthyTimerPeriod = pdMS_TO_TICKS( 3000 );
+const TickType_t xErrorTimerPeriod = pdMS_TO_TICKS( 200 );
+
+/* 检查定时器使用的回调函数。 */
+static void prvCheckTimerCallbackFunction( TimerHandle_t xTimer )
+{
+        static BaseType_t xErrorDetected = pdFALSE;
+
+        if( xErrorDetected == pdFALSE )
+        {
+                /* 尚未检测到错误。再次运行自检函数。
+                     该函数要求示例创建的每个任务报告自身状态，
+                     并检查所有任务是否仍在运行（从而能正确报告状态）。 */
+                if( CheckTasksAreRunningWithoutError() == pdFAIL )
+                {
+                        /* 一个或多个任务报告了异常状态，可能发生错误。
+                             缩短检查定时器周期以提高该回调函数的执行频率，
+                             从而提高 LED 翻转频率。该回调函数在 RTOS 守护任务
+                             上下文中执行，因此阻塞时间设为 0，确保守护任务
+                             不会进入 Blocked 状态。 */
+                        xTimerChangePeriod(
+                                xTimer,            /* 要更新的定时器 */
+                                xErrorTimerPeriod, /* 定时器的新周期 */
+                                0 );               /* 发送该命令时不阻塞 */
+
+                        /* 锁存已检测到错误。 */
+                        xErrorDetected = pdTRUE;
+                }
+        }
+
+        /* 翻转 LED。LED 翻转频率取决于该函数被调用的频率，
+             而调用频率由检查定时器的周期决定。如果
+             CheckTasksAreRunningWithoutError() 曾返回 pdFAIL，
+             定时器周期会从 3000ms 缩短到 200ms。 */
+        ToggleLED();
+}
+</code></pre>
+<p><strong><em>清单 6.13</em></strong> <em>使用 xTimerChangePeriod()</em></p>
+<h2 id="68">6.8 复位软件定时器</h2>
+<p>复位软件定时器意味着重新启动定时器；定时器到期时间会重新计算，并以复位时刻为参考，
+而非以最初启动时刻为参考。图 6.9 展示了一个周期为 6 的定时器：先启动，再被复位两次，
+最终到期并执行回调函数。</p>
+<p><a name="fig6.9" title="图 6.9 启动并复位周期为 6 tick 的软件定时器"></a></p>
+<hr />
+<p><img alt="" src="../media/image46.png" />
+<strong><em>图 6.9</em></strong> <em>启动并复位周期为 6 tick 的软件定时器</em></p>
+<hr />
+<p>参见图 6.9：</p>
+<ul>
+<li>
+<p>定时器 1 在 t1 启动，周期为 6，因此回调函数原本将在 t7 执行（启动后 6 个 tick）。</p>
+</li>
+<li>
+<p>在到达 t7 之前复位定时器 1，即在其到期并执行回调前。t5 时复位，因此其回调执行
+    时间重新计算为 t11（复位后 6 个 tick）。</p>
+</li>
+<li>
+<p>在到达 t11 之前再次复位定时器 1，即在其到期并执行回调前。t9 时复位，因此其回调
+    执行时间重新计算为 t15（最后一次复位后 6 个 tick）。</p>
+</li>
+<li>
+<p>定时器 1 未再次复位，因此在 t15 到期并执行回调。</p>
+</li>
+</ul>
+<h3 id="681-xtimerreset-api">6.8.1 xTimerReset() API 函数</h3>
+<p>使用 <code>xTimerReset()</code> 复位定时器。</p>
+<p><code>xTimerReset()</code> 也可用于启动处于休眠状态的定时器。</p>
+<blockquote>
+<p><em>注意：切勿在中断服务例程中调用 <code>xTimerReset()</code>。应使用其中断安全版本
+<code>xTimerResetFromISR()</code>。</em></p>
+</blockquote>
+<p><a name="list6.14" title="清单 6.14 xTimerReset() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTimerReset( TimerHandle_t xTimer, TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 6.14</em></strong> <em>xTimerReset() API 函数原型</em></p>
+<p><strong>xTimerReset() 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTimer</code></p>
+<p>要复位或启动的软件定时器句柄。该句柄由 <code>xTimerCreate()</code> 创建时返回。</p>
+</li>
+<li>
+<p><code>xTicksToWait</code></p>
+<p><code>xTimerReset()</code> 使用定时器命令队列向守护任务发送“复位”命令。<code>xTicksToWait</code> 指定
+调用任务在队列已满时等待可用空间的最长时间（以 tick 为单位）。</p>
+<p>若 <code>xTicksToWait</code> 为 0 且队列已满，则 <code>xTimerReset()</code> 立即返回。</p>
+<p>若 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1，将 <code>xTicksToWait</code> 设为
+<code>portMAX_DELAY</code> 会使调用任务无限期等待（不超时），直到命令队列有空间。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>有两种可能返回值：</p>
+<ul>
+<li>
+<p><code>pdPASS</code></p>
+<p>仅当数据成功发送到定时器命令队列时返回 <code>pdPASS</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务可能进入 <em>Blocked</em> 状态等待
+队列空间，但在超时前成功写入队列。</p>
+<p><code>pdFAIL</code></p>
+<p>若队列已满导致“复位”命令无法写入，则返回 <code>pdFAIL</code>。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务会进入 <em>Blocked</em> 状态等待
+守护任务腾出空间，但在超时前未发生。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="_3"><a name="example6.3" title="示例 6.3 复位软件定时器"></a></h2>
+<p><strong><em>示例 6.3</em></strong> <em>复位软件定时器</em></p>
+<hr />
+<p>该示例模拟手机背光行为。背光：</p>
+<ul>
+<li>
+<p>按键时点亮。</p>
+</li>
+<li>
+<p>若在一定时间内继续按键则保持点亮。</p>
+</li>
+<li>
+<p>若在一定时间内没有按键则自动熄灭。</p>
+</li>
+</ul>
+<p>使用单次软件定时器实现该行为：</p>
+<ul>
+<li>
+<p>按键时点亮（模拟）背光，并在软件定时器回调函数中关闭背光。</p>
+</li>
+<li>
+<p>每次按键都会复位软件定时器。</p>
+</li>
+<li>
+<p>为防止背光关闭而需要按键的时间窗口等于软件定时器周期；若在定时器到期前没有
+    按键复位，则回调函数执行并关闭背光。</p>
+</li>
+</ul>
+<p><code>xSimulatedBacklightOn</code> 变量保存背光状态。设为 <code>pdTRUE</code> 表示背光开启，设为
+<code>pdFALSE</code> 表示背光关闭。</p>
+<p>软件定时器回调函数见清单 6.15。</p>
+<p><a name="list6.15" title="清单 6.15 示例 6.3 中单次定时器的回调函数"></a></p>
+<pre><code class="language-c">static void prvBacklightTimerCallback( TimerHandle_t xTimer )
+{
+        TickType_t xTimeNow = xTaskGetTickCount();
+
+        /* 背光定时器到期，关闭背光。 */
+        xSimulatedBacklightOn = pdFALSE;
+
+        /* 输出背光关闭的时间。 */
+        vPrintStringAndNumber(
+                        &quot;Timer expired, turning backlight OFF at time\t\t&quot;, xTimeNow );
+}
+</code></pre>
+<p><strong><em>清单 6.15</em></strong> <em>示例 6.3 中单次定时器的回调函数</em></p>
+<p>示例 6.3 创建了一个用于轮询键盘的任务<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">2</a></sup>。任务见清单 6.16，但由于下一段说明的原因，
+清单 6.16 并非最佳设计的代表。</p>
+<p>使用 FreeRTOS 可让应用事件驱动。事件驱动设计非常高效，因为只有发生事件才会使用
+处理时间，不会浪费时间轮询未发生的事件。示例 6.3 无法事件驱动，是因为在 FreeRTOS
+Windows 移植中不便处理键盘中断，因此只能使用效率较低的轮询方式。若清单 6.16
+是中断服务例程，则应使用 <code>xTimerResetFromISR()</code> 代替 <code>xTimerReset()</code>。</p>
+<p><a name="list6.16" title="清单 6.16 示例 6.3 中用于复位定时器的任务"></a></p>
+<pre><code class="language-c">static void vKeyHitTask( void *pvParameters )
+{
+        const TickType_t xShortDelay = pdMS_TO_TICKS( 50 );
+        TickType_t xTimeNow;
+
+        vPrintString( &quot;Press a key to turn the backlight on.\r\n&quot; );
+
+        /* 理想情况下应用应为事件驱动，并使用中断处理按键。
+             在 FreeRTOS Windows 移植中使用键盘中断并不现实，
+             因此该任务用于轮询按键。 */
+        for( ;; )
+        {
+                /* 是否有按键被按下？ */
+                if( _kbhit() != 0 )
+                {
+                        /* 按键已被按下，记录时间。 */
+                        xTimeNow = xTaskGetTickCount();
+
+                        if( xSimulatedBacklightOn == pdFALSE )
+                        {
+
+                                /* 背光此前关闭，因此打开并输出开启时间。 */
+                                xSimulatedBacklightOn = pdTRUE;
+                                vPrintStringAndNumber(
+                                        &quot;Key pressed, turning backlight ON at time\t\t&quot;,
+                                        xTimeNow );
+                        }
+                        else
+                        {
+                                /* 背光已开启，因此输出提示：软件定时器将被复位，并输出复位时间。 */
+                                vPrintStringAndNumber(
+                                        &quot;Key pressed, resetting software timer at time\t\t&quot;,
+                                        xTimeNow );
+                        }
+
+                        /* 复位软件定时器。若背光此前关闭，则该调用会启动定时器；
+                             若背光此前开启，则该调用会重新启动定时器。真实应用可能
+                             在中断中读取按键；如果该函数是中断服务例程，则必须用
+                             xTimerResetFromISR() 代替 xTimerReset()。 */
+                        xTimerReset( xBacklightTimer, xShortDelay );
+
+                        /* 读取并丢弃按下的按键——该简单示例不需要它。 */
+                        ( void ) _getch();
+                }
+        }
+}
+</code></pre>
+<p><strong><em>清单 6.16</em></strong> <em>示例 6.3 中用于复位定时器的任务</em></p>
+<p>执行示例 6.3 的输出如图 6.10 所示。结合图 6.10：</p>
+<ul>
+<li>
+<p>第一次按键发生在 tick 计数为 812 时。此时背光点亮，单次定时器启动。</p>
+</li>
+<li>
+<p>后续按键发生在 tick 计数为 1813、3114、4015 与 5016，这些按键都在定时器到期前
+    复位定时器。</p>
+</li>
+<li>
+<p>定时器在 tick 计数为 10016 时到期，此时背光关闭。</p>
+</li>
+</ul>
+<p><a name="fig6.10" title="图 6.10 执行示例 6.3 的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image47.jpg" />
+<strong><em>图 6.10</em></strong> <em>执行示例 6.3 的输出</em></p>
+<hr />
+<p>从图 6.10 可见，定时器周期为 5000 tick；背光在最后一次按键后恰好 5000 tick 关闭，
+即定时器最后一次复位后 5000 tick 关闭。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:10">
+<p>该任务曾称为“定时器服务任务”，因为最初仅用于执行软件定时器回调函数。
+如今该任务也用于其他用途，因此使用更通用的名称“RTOS 守护任务”。&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p>向 Windows 控制台输出与从 Windows 控制台读取按键都会执行 Windows 系统调用。
+这些系统调用（包括控制台、磁盘或 TCP/IP 栈）会影响 FreeRTOS Windows 移植的行为，
+通常应避免使用。*&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
