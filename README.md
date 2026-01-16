@@ -3,7 +3,7 @@
 [![ci](https://github.com/kashima19960/FreeRTOS-Kernel-Book-zh/workflows/ci/badge.svg)](https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-本仓库包含 [FreeRTOS-Kernel-Book](https://github.com/FreeRTOS/FreeRTOS-Kernel-Book) 一书的中文翻译内容。翻译工作使用了GPT-4o，采用mkdocs-material 主题构建在线文档。
+本仓库包含 [FreeRTOS-Kernel-Book](https://github.com/FreeRTOS/FreeRTOS-Kernel-Book) 一书的中文翻译内容。翻译工作使用了GPT-5.2-Codex，采用mkdocs-material 主题构建在线文档。
 
 ## 📖 关于本书
 
