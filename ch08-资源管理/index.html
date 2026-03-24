@@ -1,0 +1,2037 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>8 资源管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#8" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              8 资源管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 本章介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.1 本章介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#811" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1.1 互斥
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#82" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 临界区与挂起调度器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.2 临界区与挂起调度器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#821" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.1 基本临界区
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#822" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.2 挂起（或锁定）调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#823-vtasksuspendall-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.3 vTaskSuspendAll() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#824-xtaskresumeall-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.4 xTaskResumeAll() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 互斥量（以及二值信号量）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.3 互斥量（以及二值信号量）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#831-xsemaphorecreatemutex-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.1 xSemaphoreCreateMutex() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#832" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.2 优先级反转
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#833" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.3 优先级继承
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#834" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.4 死锁（或“致命拥抱”）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#835" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.5 递归互斥量
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#836" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.6 互斥量与任务调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#84-gatekeeper-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 守门员任务（Gatekeeper Task）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.4 守门员任务（Gatekeeper Task）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#841-vprintstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4.1 使用守门员任务重写 vPrintString()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 本章介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.1 本章介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#811" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1.1 互斥
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#82" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 临界区与挂起调度器
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.2 临界区与挂起调度器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#821" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.1 基本临界区
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#822" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.2 挂起（或锁定）调度器
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#823-vtasksuspendall-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.3 vTaskSuspendAll() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#824-xtaskresumeall-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2.4 xTaskResumeAll() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 互斥量（以及二值信号量）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.3 互斥量（以及二值信号量）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#831-xsemaphorecreatemutex-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.1 xSemaphoreCreateMutex() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#832" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.2 优先级反转
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#833" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.3 优先级继承
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#834" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.4 死锁（或“致命拥抱”）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#835" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.5 递归互斥量
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#836" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3.6 互斥量与任务调度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#84-gatekeeper-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 守门员任务（Gatekeeper Task）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.4 守门员任务（Gatekeeper Task）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#841-vprintstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4.1 使用守门员任务重写 vPrintString()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="8">8 资源管理</h1>
+<h2 id="81">8.1 本章介绍与范围</h2>
+<p>在多任务系统中，如果某个任务开始访问资源后，在完成访问之前就离开运行态，就可能出错。若该任务离开时把资源留在不一致状态，那么其他任务或中断再访问同一资源时，可能造成数据损坏或类似问题。</p>
+<p>下面给出一些示例：</p>
+<ul>
+<li>访问外设</li>
+</ul>
+<p>考虑两个任务同时尝试向液晶显示器（<code>LCD</code>）写数据的场景：</p>
+<ol>
+<li>
+<p>任务 A 开始运行，准备向 <code>LCD</code> 输出字符串 “Hello world”。</p>
+</li>
+<li>
+<p>任务 A 仅输出到 “Hello w” 时被任务 B 抢占。</p>
+</li>
+<li>
+<p>任务 B 在进入阻塞态前向 <code>LCD</code> 输出 “Abort, Retry, Fail?”。</p>
+</li>
+<li>
+<p>任务 A 从被抢占处继续运行，输出剩余字符 “orld”。</p>
+</li>
+</ol>
+<p>此时 <code>LCD</code> 上显示将被破坏为 “Hello wAbort, Retry, Fail?orld”。</p>
+<ul>
+<li>读—改—写操作</li>
+</ul>
+<p>清单 8.1 展示了一行 <code>C</code> 代码及其常见汇编翻译方式。可以看到：先把 <code>PORTA</code> 从内存读入寄存器，再在寄存器中修改，最后写回内存。这就是“读—改—写”操作。</p>
+<pre><code>&lt;a name="list8.1" title="清单 8.1 读—改—写序列示例"&gt;&lt;/a&gt;
+
+```c
+/* The C code being compiled. */
+PORTA |= 0x01;
+
+/* The assembly code produced when the C code is compiled. */
+LOAD  R1,[#PORTA] ; Read a value from PORTA into R1
+MOVE  R2,#0x01    ; Move the absolute constant 1 into R2
+OR    R1,R2       ; Bitwise OR R1 (PORTA) with R2 (constant 1)
+STORE R1,[#PORTA] ; Store the new value back to PORTA
+```
+***清单 8.1*** *读—改—写序列示例*
+
+该操作并非“原子操作”，因为需要多条指令完成，期间可能被打断。考虑两个任务都要更新内存映射寄存器 `PORTA` 的场景：
+
+1. 任务 A 把 `PORTA` 读入寄存器（完成“读”阶段）。
+
+2. 任务 A 在执行“改”和“写”前被任务 B 抢占。
+
+3. 任务 B 更新 `PORTA`，随后进入阻塞态。
+
+4. 任务 A 从被抢占处继续运行，修改自己寄存器中旧的 `PORTA` 副本，再写回 `PORTA`。
+
+在此场景中，任务 A 写回的是过期值。任务 B 对 `PORTA` 的修改发生在“任务 A 读取 `PORTA`”与“任务 A 写回 `PORTA`”之间。最终任务 A 的写回覆盖了任务 B 的修改，造成 `PORTA` 值损坏。
+
+该例使用外设寄存器说明问题，但同样原理也适用于变量上的读—改—写操作。
+</code></pre>
+<ul>
+<li>对变量的非原子访问</li>
+</ul>
+<p>更新一个结构体的多个成员，或在字长较小架构上更新更大位宽变量（例如在 16 位机器上更新 32 位变量），都属于非原子操作。若中途被打断，可能导致数据丢失或损坏。</p>
+<ul>
+<li>函数可重入性</li>
+</ul>
+<p>若函数可被多个任务，或被任务与中断并发调用且仍然安全，则称该函数“可重入（<code>reentrant</code>）”。可重入函数也常称“线程安全（<code>thread safe</code>）”，即可以被多个执行线程访问而不导致数据或逻辑损坏。</p>
+<p>每个任务都维护自己的栈和处理器（硬件）寄存器值集合。若函数只访问栈上或寄存器中的数据，不访问共享状态，则该函数是可重入且线程安全的。清单 8.2 给出可重入函数示例，清单 8.3 给出不可重入函数示例。</p>
+<p>若应用使用 <code>newlib C</code> 库，必须在 <code>FreeRTOSConfig.h</code> 中将 <code>configUSE_NEWLIB_REENTRANT</code> 设为 <code>1</code>，以确保 <code>newlib</code> 所需线程局部存储正确分配。</p>
+<p>若应用使用 <code>picolibc C</code> 库，必须在 <code>FreeRTOSConfig.h</code> 中将 <code>configUSE_PICOLIBC_TLS</code> 设为 <code>1</code>，以确保 <code>picolibc</code> 所需线程局部存储正确分配。</p>
+<p>若应用使用其他需要线程局部存储（<code>TLS</code>）的 <code>C</code> 库，则必须在 <code>FreeRTOSConfig.h</code> 中将 <code>configUSE_C_RUNTIME_TLS_SUPPORT</code> 设为 <code>1</code>，并实现下列宏：
+  - <code>configTLS_BLOCK_TYPE</code>：每任务 <code>TLS</code> 块类型。
+  - <code>configINIT_TLS_BLOCK</code>：初始化每任务 <code>TLS</code> 块。
+  - <code>configSET_TLS_BLOCK</code>：切换当前 <code>TLS</code> 块。在上下文切换期间调用，以确保使用正确 <code>TLS</code> 块。
+  - <code>configDEINIT_TLS_BLOCK</code>：释放 <code>TLS</code> 块。</p>
+<p><a name="list8.2" title="清单 8.2 可重入函数示例"></a></p>
+<p>```c
+  /<em> A parameter is passed into the function. This will either be passed on the 
+      stack, or in a processor register. Either way is safe as each task or 
+      interrupt that calls the function maintains its own stack and its own set 
+      of register values, so each task or interrupt that calls the function will 
+      have its own copy of lVar1. </em>/
+  long lAddOneHundred( long lVar1 )
+  {
+        /<em> This function scope variable will also be allocated to the stack or a 
+            register, depending on the compiler and optimization level. Each task
+            or interrupt that calls this function will have its own copy of lVar2. </em>/
+        long lVar2;</p>
+<pre><code>    lVar2 = lVar1 + 100;
+    return lVar2;
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 8.2</em></strong> <em>可重入函数示例</em></p>
+<p><a name="list8.3" title="清单 8.3 不可重入函数示例"></a></p>
+<p>```c
+  /<em> In this case lVar1 is a global variable, so every task that calls
+      lNonsenseFunction will access the same single copy of the variable. </em>/
+  long lVar1;</p>
+<p>long lNonsenseFunction( void )
+  {
+        /<em> lState is static, so is not allocated on the stack. Each task that
+            calls this function will access the same single copy of the variable. </em>/
+        static long lState = 0;
+        long lReturn;</p>
+<pre><code>    switch( lState )
+    {
+         case 0 : lReturn = lVar1 + 10;
+                     lState = 1;
+                     break;
+
+         case 1 : lReturn = lVar1 + 20;
+                     lState = 0;
+                     break;
+    }
+</code></pre>
+<p>}
+  ```
+  <strong><em>清单 8.3</em></strong> <em>不可重入函数示例</em></p>
+<h3 id="811">8.1.1 互斥</h3>
+<p>要始终保持数据一致性，凡是“任务间共享”或“任务与中断共享”的资源访问，都必须采用互斥技术管理。目标是：当某任务开始访问一个“不可重入、非线程安全”的共享资源后，在该资源恢复到一致状态前，该任务应拥有该资源的独占访问权。</p>
+<p><code>FreeRTOS</code> 提供多种实现互斥的机制。但最好的互斥方法仍是：在可能情况下（尽管常不易做到）通过系统设计避免共享资源，使每个资源只被单一任务访问。</p>
+<h3 id="812">8.1.2 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>何时以及为什么需要资源管理与访问控制。</li>
+<li>什么是临界区。</li>
+<li>什么是互斥。</li>
+<li>什么是挂起调度器。</li>
+<li>如何使用互斥量。</li>
+<li>如何创建并使用守门员任务（<code>Gatekeeper Task</code>）。</li>
+<li>什么是优先级反转，以及优先级继承如何降低（但不能消除）其影响。</li>
+</ul>
+<h2 id="82">8.2 临界区与挂起调度器</h2>
+<h3 id="821">8.2.1 基本临界区</h3>
+<p>基本临界区指由 <code>taskENTER_CRITICAL()</code> 和 <code>taskEXIT_CRITICAL()</code> 宏包围的代码区域，也称“关键区”。</p>
+<p><code>taskENTER_CRITICAL()</code> 与 <code>taskEXIT_CRITICAL()</code> 不接收参数，也不返回值<sup id="fnref:23"><a class="footnote-ref" href="#fn:23">1</a></sup>。其用法见清单 8.4。</p>
+<p><a name="list8.4" title="清单 8.4 使用临界区保护寄存器访问"></a></p>
+<pre><code class="language-c">/* Ensure access to the PORTA register cannot be interrupted by placing
+    it within a critical section. Enter the critical section. */
+taskENTER_CRITICAL();
+
+/* A switch to another task cannot occur between the call to
+    taskENTER_CRITICAL() and the call to taskEXIT_CRITICAL(). Interrupts may
+    still execute on FreeRTOS ports that allow interrupt nesting, but only
+    interrupts whose logical priority is above the value assigned to the
+    configMAX_SYSCALL_INTERRUPT_PRIORITY constant – and those interrupts are
+    not permitted to call FreeRTOS API functions. */
+PORTA |= 0x01;
+
+/* Access to PORTA has finished, so it is safe to exit the critical section. */
+taskEXIT_CRITICAL();
+</code></pre>
+<p><strong><em>清单 8.4</em></strong> <em>使用临界区保护寄存器访问</em></p>
+<p>本书配套示例工程中，使用 <code>vPrintString()</code> 向标准输出写字符串（在 <code>FreeRTOS Windows</code> 端口中即终端窗口）。<code>vPrintString()</code> 会被多个任务调用；理论上，它可像清单 8.5 一样用临界区保护标准输出访问。</p>
+<p><a name="list8.5" title="清单 8.5 vPrintString() 的一种可能实现"></a></p>
+<pre><code class="language-c">void vPrintString( const char *pcString )
+{
+     /* Write the string to stdout, using a critical section as a crude method of
+         mutual exclusion. */
+     taskENTER_CRITICAL();
+     {
+          printf( &quot;%s&quot;, pcString );
+          fflush( stdout );
+     }
+     taskEXIT_CRITICAL();
+}
+</code></pre>
+<p><strong><em>清单 8.5</em></strong> <em><code>vPrintString()</code> 的一种可能实现</em></p>
+<p>这种方式实现的临界区是较粗糙的互斥方法。它通过关闭中断（完全关闭或关闭到 <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code>，取决于端口）实现保护。由于抢占式任务切换只能在中断中发生，因此只要中断保持关闭，调用 <code>taskENTER_CRITICAL()</code> 的任务就必然保持运行态，直到退出临界区。</p>
+<p>基本临界区必须非常短，否则会显著恶化中断响应时间。每次 <code>taskENTER_CRITICAL()</code> 必须与一次 <code>taskEXIT_CRITICAL()</code> 紧密配对。因此，不应像清单 8.5 那样用临界区保护标准输出——向终端写数据可能耗时较长。本章后续会给出替代方案。</p>
+<p>临界区可安全嵌套，因为内核会记录嵌套深度。只有当嵌套深度回到零（即每个 <code>taskENTER_CRITICAL()</code> 都有对应的 <code>taskEXIT_CRITICAL()</code>）时才真正退出临界区。</p>
+<p>对任务而言，改变处理器中断使能状态的唯一合法方式就是调用 <code>taskENTER_CRITICAL()</code> 与 <code>taskEXIT_CRITICAL()</code>。若以其他方式改动中断使能状态，会破坏该宏维护的嵌套计数。</p>
+<p><code>taskENTER_CRITICAL()</code> 与 <code>taskEXIT_CRITICAL()</code> 名称不含 <code>FromISR</code>，因此不能在 <code>ISR</code> 中调用。<code>taskENTER_CRITICAL_FROM_ISR()</code> 是 <code>taskENTER_CRITICAL()</code> 的中断安全版本，<code>taskEXIT_CRITICAL_FROM_ISR()</code> 是 <code>taskEXIT_CRITICAL()</code> 的中断安全版本。这两个版本仅在“支持中断嵌套”的端口中提供——对不支持嵌套的端口它们并无必要。</p>
+<p><code>taskENTER_CRITICAL_FROM_ISR()</code> 会返回一个值，必须传给与之匹配的 <code>taskEXIT_CRITICAL_FROM_ISR()</code> 调用。见清单 8.6。</p>
+<p><a name="list8.6" title="清单 8.6 在中断服务程序中使用临界区"></a></p>
+<pre><code class="language-c">void vAnInterruptServiceRoutine( void )
+{
+     /* Declare a variable in which the return value from 
+         taskENTER_CRITICAL_FROM_ISR() will be saved. */
+     UBaseType_t uxSavedInterruptStatus;
+
+     /* This part of the ISR can be interrupted by any higher priority 
+         interrupt. */
+
+     /* Use taskENTER_CRITICAL_FROM_ISR() to protect a region of this ISR.
+         Save the value returned from taskENTER_CRITICAL_FROM_ISR() so it can 
+         be passed into the matching call to taskEXIT_CRITICAL_FROM_ISR(). */
+     uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+
+     /* This part of the ISR is between the call to 
+         taskENTER_CRITICAL_FROM_ISR() and taskEXIT_CRITICAL_FROM_ISR(), so can 
+         only be interrupted by interrupts that have a priority above that set 
+         by the configMAX_SYSCALL_INTERRUPT_PRIORITY constant. */
+
+     /* Exit the critical section again by calling taskEXIT_CRITICAL_FROM_ISR(),
+         passing in the value returned by the matching call to 
+         taskENTER_CRITICAL_FROM_ISR(). */
+     taskEXIT_CRITICAL_FROM_ISR( uxSavedInterruptStatus );
+
+     /* This part of the ISR can be interrupted by any higher priority 
+         interrupt. */
+}
+</code></pre>
+<p><strong><em>清单 8.6</em></strong> <em>在中断服务程序中使用临界区</em></p>
+<p>若进入/退出临界区所花处理时间，比受保护代码本身还长，就得不偿失。基本临界区进入快、退出快、且确定性高，因此非常适合保护极短代码段。</p>
+<h3 id="822">8.2.2 挂起（或锁定）调度器</h3>
+<p>还可通过挂起调度器来创建临界区。挂起调度器也常称“锁定调度器”。</p>
+<p>基本临界区可防止“其他任务与中断”访问受保护区域；而通过挂起调度器实现的临界区，只能防止“其他任务”访问，因为中断仍保持使能。</p>
+<p>若某段临界区过长，不适合简单地关中断，可考虑用挂起调度器实现。不过，在调度器挂起期间若中断活跃，恢复（解挂）调度器可能变成较耗时操作，因此每个场景都需权衡最优方法。</p>
+<h3 id="823-vtasksuspendall-api">8.2.3 <code>vTaskSuspendAll()</code> <code>API</code> 函数</h3>
+<p><a name="list8.7" title="清单 8.7 vTaskSuspendAll() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskSuspendAll( void );
+</code></pre>
+<p><strong><em>清单 8.7</em></strong> <em><code>vTaskSuspendAll()</code> <code>API</code> 函数原型</em></p>
+<p>调用 <code>vTaskSuspendAll()</code> 可挂起调度器。挂起后不会发生上下文切换，但中断仍可执行。若某中断在调度器挂起期间请求切换，该请求会被挂起，直到调度器恢复后才执行。</p>
+<p>调度器挂起期间不得调用 <code>FreeRTOS API</code> 函数。</p>
+<h3 id="824-xtaskresumeall-api">8.2.4 <code>xTaskResumeAll()</code> <code>API</code> 函数</h3>
+<p><a name="list8.8" title="清单 8.8 xTaskResumeAll() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTaskResumeAll( void );
+</code></pre>
+<p><strong><em>清单 8.8</em></strong> <em><code>xTaskResumeAll()</code> <code>API</code> 函数原型</em></p>
+<p>调用 <code>xTaskResumeAll()</code> 可恢复（解挂）调度器。</p>
+<p><strong><code>xTaskResumeAll()</code> 返回值</strong></p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>在调度器挂起期间产生的上下文切换请求会被延后，并在恢复过程中执行。若 <code>xTaskResumeAll()</code> 返回前执行了待处理切换，则返回 <code>pdTRUE</code>；否则返回 <code>pdFALSE</code>。</p>
+<p><code>vTaskSuspendAll()</code> 与 <code>xTaskResumeAll()</code> 可安全嵌套，因为内核会维护嵌套深度。只有当深度回到 0（即每次 <code>vTaskSuspendAll()</code> 都有对应 <code>xTaskResumeAll()</code>）时调度器才真正恢复。</p>
+<p>清单 8.9 给出了 <code>vPrintString()</code> 的实际实现：通过挂起调度器来保护终端输出访问。</p>
+<p><a name="list8.9" title="清单 8.9 vPrintString() 实现"></a></p>
+<pre><code class="language-c">void vPrintString( const char *pcString )
+{
+     /* Write the string to stdout, suspending the scheduler as a method of 
+         mutual exclusion. */
+     vTaskSuspendScheduler();
+     {
+          printf( &quot;%s&quot;, pcString );
+          fflush( stdout );
+     }
+     xTaskResumeScheduler();
+}
+</code></pre>
+<p><strong><em>清单 8.9</em></strong> <em><code>vPrintString()</code> 实现</em></p>
+<h2 id="83">8.3 互斥量（以及二值信号量）</h2>
+<p>互斥量（<code>Mutex</code>）是一种特殊的二值信号量，用于控制两个或多个任务对共享资源的访问。<code>MUTEX</code> 一词来自 <code>MUTual EXclusion</code>。要启用互斥量，需在 <code>FreeRTOSConfig.h</code> 中将 <code>configUSE_MUTEXES</code> 设为 <code>1</code>。</p>
+<p>在互斥场景中，可把互斥量看作“与共享资源绑定的令牌”。任务若要合法访问资源，必须先成功 <code>take</code> 该令牌（成为持有者）。持有者使用完资源后必须 <code>give</code> 归还令牌。只有令牌归还后，其他任务才能成功获取令牌并安全访问同一资源。未持有令牌的任务不应访问该共享资源。图 8.1 展示了该机制。</p>
+<p>尽管互斥量与二值信号量有许多共性，但图 8.1（互斥）与图 7.6（同步）场景本质不同。关键差异在于“获取信号量后如何处理”：</p>
+<ul>
+<li>用于互斥的信号量必须归还。</li>
+<li>用于同步的信号量通常被消费掉而不归还。</li>
+</ul>
+<p><a name="fig8.1" title="图 8.1 使用互斥量实现互斥"></a></p>
+<hr />
+<p><img alt="" src="../media/image63.png" /> <br />
+<strong><em>图 8.1</em></strong> <em>使用互斥量实现互斥</em></p>
+<hr />
+<p>这一机制依赖应用编写者的自律。技术上任务随时都可直接访问资源，但各任务“约定”只有在持有互斥量时才这样做。</p>
+<h3 id="831-xsemaphorecreatemutex-api">8.3.1 <code>xSemaphoreCreateMutex()</code> <code>API</code> 函数</h3>
+<p><code>FreeRTOS</code> 还提供 <code>xSemaphoreCreateMutexStatic()</code>，可在编译期静态分配创建互斥量所需内存。互斥量本质是信号量的一种。所有类型的 <code>FreeRTOS</code> 信号量句柄都由 <code>SemaphoreHandle_t</code> 类型变量保存。</p>
+<p>互斥量必须先创建再使用。创建互斥量可调用 <code>xSemaphoreCreateMutex()</code>。</p>
+<p><a name="list8.10" title="清单 8.10 xSemaphoreCreateMutex() API 函数原型"></a></p>
+<pre><code class="language-c">SemaphoreHandle_t xSemaphoreCreateMutex( void );
+</code></pre>
+<p><strong><em>清单 8.10</em></strong> <em><code>xSemaphoreCreateMutex()</code> <code>API</code> 函数原型</em></p>
+<p><strong><code>xSemaphoreCreateMutex()</code> 返回值</strong></p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>若返回 <code>NULL</code>，表示堆内存不足，<code>FreeRTOS</code> 无法分配互斥量数据结构。第 3 章提供更多堆内存管理信息。</p>
+<p>若返回非 <code>NULL</code>，表示互斥量创建成功。该值应保存为所创建互斥量句柄。</p>
+<h2 id="_1"><a name="example8.1" title="示例 8.1 使用信号量重写 vPrintString()"></a></h2>
+<p><strong><em>示例 8.1</em></strong> <em>使用信号量重写 <code>vPrintString()</code></em></p>
+<hr />
+<p>本示例创建 <code>vPrintString()</code> 的新版本 <code>prvNewPrintString()</code>，并在多个任务中调用。<code>prvNewPrintString()</code> 与 <code>vPrintString()</code> 功能相同，但它通过互斥量而不是锁定调度器来控制标准输出访问。实现见清单 8.11。</p>
+<p><a name="list8.11" title="清单 8.11 prvNewPrintString() 实现"></a></p>
+<pre><code class="language-c">static void prvNewPrintString( const char *pcString )
+{
+     /* The mutex is created before the scheduler is started, so already exists
+         by the time this task executes.
+
+         Attempt to take the mutex, blocking indefinitely to wait for the mutex
+         if it is not available straight away. The call to xSemaphoreTake() will
+         only return when the mutex has been successfully obtained, so there is 
+         no need to check the function return value. If any other delay period 
+         was used then the code must check that xSemaphoreTake() returns pdTRUE 
+         before accessing the shared resource (which in this case is standard 
+         out). As noted earlier in this book, indefinite time outs are not 
+         recommended for production code. */
+     xSemaphoreTake( xMutex, portMAX_DELAY );
+     {
+          /* The following line will only execute once the mutex has been 
+              successfully obtained. Standard out can be accessed freely now as 
+              only one task can have the mutex at any one time. */
+          printf( &quot;%s&quot;, pcString );
+          fflush( stdout );
+
+          /* The mutex MUST be given back! */
+     }
+     xSemaphoreGive( xMutex );
+}
+</code></pre>
+<p><strong><em>清单 8.11</em></strong> <em><code>prvNewPrintString()</code> 实现</em></p>
+<p><code>prvNewPrintString()</code> 由 <code>prvPrintTask()</code> 实现的任务反复调用，两份任务实例都运行该代码，并在每次调用间插入随机延时。任务参数用于向每个任务实例传入不同字符串。<code>prvPrintTask()</code> 实现见清单 8.12。</p>
+<p><a name="list8.12" title="清单 8.12 示例 8.1 中 prvPrintTask() 实现"></a></p>
+<pre><code class="language-c">static void prvPrintTask( void *pvParameters )
+{
+     char *pcStringToPrint;
+     const TickType_t xMaxBlockTimeTicks = 0x20;
+
+     /* Two instances of this task are created. The string printed by the task 
+         is passed into the task using the task's parameter. The parameter is 
+         cast to the required type. */
+     pcStringToPrint = ( char * ) pvParameters;
+
+     for( ;; )
+     {
+          /* Print out the string using the newly defined function. */
+          prvNewPrintString( pcStringToPrint );
+
+          /* Wait a pseudo random time. Note that rand() is not necessarily
+              reentrant, but in this case it does not really matter as the code 
+              does not care what value is returned. In a more secure application 
+              a version of rand() that is known to be reentrant should be used - 
+              or calls to rand() should be protected using a critical section. */
+          vTaskDelay( ( rand() % xMaxBlockTimeTicks ) );
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.12</em></strong> <em>示例 8.1 中 <code>prvPrintTask()</code> 实现</em></p>
+<p>如常规流程，<code>main()</code> 只需创建互斥量、创建任务、启动调度器，见清单 8.13。</p>
+<p>示例中两个 <code>prvPrintTask()</code> 实例优先级不同，因此低优先级任务有时会被高优先级任务抢占。由于使用互斥量保证任务对终端访问互斥，即便发生抢占，输出字符串也不会被破坏。减小 <code>xMaxBlockTimeTicks</code> 可提高抢占发生频率。</p>
+<p>将示例 8.1 运行在 <code>FreeRTOS Windows</code> 端口时需注意：</p>
+<ul>
+<li>
+<p>调用 <code>printf()</code> 会触发 <code>Windows</code> 系统调用，而系统调用不受 <code>FreeRTOS</code> 控制，可能引入不稳定性。</p>
+</li>
+<li>
+<p><code>Windows</code> 系统调用执行方式决定了：即便不使用互斥量，也较少看到字符串明显损坏。</p>
+</li>
+</ul>
+<p><a name="list8.13" title="清单 8.13 示例 8.1 的 main() 实现"></a></p>
+<pre><code class="language-c">int main( void )
+{
+     /* Before a semaphore is used it must be explicitly created. In this
+         example a mutex type semaphore is created. */
+     xMutex = xSemaphoreCreateMutex();
+
+     /* Check the semaphore was created successfully before creating the
+         tasks. */
+     if( xMutex != NULL )
+     {
+          /* Create two instances of the tasks that write to stdout. The string
+              they write is passed in to the task as the task's parameter. The 
+              tasks are created at different priorities so some pre-emption will 
+              occur. */
+          xTaskCreate( prvPrintTask, &quot;Print1&quot;, 1000,
+                            &quot;Task 1 ***************************************\r\n&quot;,
+                            1, NULL );
+
+          xTaskCreate( prvPrintTask, &quot;Print2&quot;, 1000,
+                            &quot;Task 2 ---------------------------------------\r\n&quot;, 
+                            2, NULL );
+
+          /* Start the scheduler so the created tasks start executing. */
+          vTaskStartScheduler();
+     }
+
+     /* If all is well then main() will never reach here as the scheduler will
+         now be running the tasks. If main() does reach here then it is likely 
+         that there was insufficient heap memory available for the idle task to 
+         be created.  Chapter 3 provides more information on heap memory 
+         management. */
+     for( ;; );
+}
+</code></pre>
+<p><strong><em>清单 8.13</em></strong> <em>示例 8.1 的 <code>main()</code> 实现</em></p>
+<p>示例 8.1 输出见图 8.2。图 8.3 给出了一个可能的执行时序。</p>
+<p><a name="fig8.2" title="图 8.2 示例 8.1 运行输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image64.jpg" /> <br />
+<strong><em>图 8.2</em></strong> <em>示例 8.1 运行输出</em></p>
+<hr />
+<p>图 8.2 可见，终端字符串没有损坏，符合预期。输出先后顺序随机，源于任务使用了随机延时。</p>
+<p><a name="fig8.3" title="图 8.3 示例 8.1 的一种可能执行时序"></a></p>
+<hr />
+<p><img alt="" src="../media/image65.png" /> <br />
+<strong><em>图 8.3</em></strong> <em>示例 8.1 的一种可能执行时序</em></p>
+<hr />
+<h3 id="832">8.3.2 优先级反转</h3>
+<p>图 8.3 也展示了使用互斥量互斥访问时的一个潜在陷阱：高优先级任务 2 需要等待低优先级任务 1 释放互斥量。高优先级任务被低优先级任务延迟的现象称为“优先级反转”。</p>
+<p>如果此时又有一个中等优先级任务开始执行，问题会更严重：高优先级任务在等待低优先级任务，而低优先级任务又可能被中优先级任务持续压住无法运行。该情况常称“无界优先级反转”，因为中优先级任务可能无限期阻塞高低两个任务。图 8.4 展示了这一最坏场景。</p>
+<p><a name="fig8.4" title="图 8.4 最坏情况下的优先级反转"></a></p>
+<hr />
+<p><img alt="" src="../media/image66.png" /> <br />
+<strong><em>图 8.4</em></strong> <em>最坏情况下的优先级反转</em></p>
+<hr />
+<p>优先级反转可能是严重问题，但在小型嵌入式系统中，常可在系统设计阶段通过合理规划资源访问来避免。</p>
+<h3 id="833">8.3.3 优先级继承</h3>
+<p><code>FreeRTOS</code> 互斥量与二值信号量非常相似，差别在于：互斥量带基础“优先级继承”机制，而二值信号量不带。优先级继承用于减轻优先级反转负面影响。它并不能“修复”优先级反转，只是把反转约束为有界时间。但优先级继承会增加时序分析复杂度，因此不应依赖它来保证系统正确性。</p>
+<p>优先级继承的工作方式是：当高优先级任务等待某互斥量时，临时把当前互斥量持有者提升到该等待任务的优先级。即低优先级持有者“继承”了等待者优先级。图 8.5 展示了该过程。持有者释放互斥量后，其优先级会自动恢复为原值。</p>
+<p><a name="fig8.5" title="图 8.5 优先级继承降低优先级反转影响"></a></p>
+<hr />
+<p><img alt="" src="../media/image67.png" /> <br />
+<strong><em>图 8.5</em></strong> <em>优先级继承降低优先级反转影响</em></p>
+<hr />
+<p>如上所示，优先级继承会影响正在使用互斥量的任务优先级，因此互斥量不能在 <code>ISR</code> 中使用。</p>
+<p><code>FreeRTOS</code> 实现的是“基础版优先级继承”，设计重点是优化空间和执行开销。完整优先级继承机制需要更多数据和处理周期，尤其在任务同时持有多个互斥量时，要实时计算继承优先级会更复杂。</p>
+<p>关于该机制，需要记住以下行为：
+* 若任务在未释放已持有互斥量前又获取了新互斥量，其继承优先级可能继续提升。
+* 任务会保持在“其获得过的最高继承优先级”，直到它释放手中所有互斥量，与释放顺序无关。
+* 当任务持有多个互斥量时，即便某些等待者已超时或不再等待，只要仍持有多个互斥量，任务仍会保持最高继承优先级。</p>
+<h3 id="834">8.3.4 死锁（或“致命拥抱”）</h3>
+<p>使用互斥量还有另一个陷阱：死锁。死锁有时也被称作更形象的“致命拥抱”。</p>
+<p>死锁发生在两个任务都无法继续执行，因为它们各自在等待对方持有的资源。考虑任务 A 与任务 B 都需要同时获取互斥量 X 和互斥量 Y 才能完成某操作的场景：</p>
+<ol>
+<li>
+<p>任务 A 运行并成功获取互斥量 X。</p>
+</li>
+<li>
+<p>任务 A 被任务 B 抢占。</p>
+</li>
+<li>
+<p>任务 B 成功获取互斥量 Y，然后尝试获取互斥量 X；但 X 被任务 A 持有，任务 B 进入阻塞态等待 X。</p>
+</li>
+<li>
+<p>任务 A 继续运行，尝试获取互斥量 Y；但 Y 被任务 B 持有，任务 A 进入阻塞态等待 Y。</p>
+</li>
+</ol>
+<p>场景结束时，任务 A 等任务 B 的锁，任务 B 等任务 A 的锁，二者都无法推进，死锁发生。</p>
+<p>与优先级反转一样，避免死锁的最佳方法是在设计阶段评估并消除潜在死锁路径。尤其是，本书前文已强调：任务无限期等待（无超时）获取互斥量通常不是好实践。应设置一个略大于“正常最大等待时间”的超时值——若超时仍未拿到锁，通常意味着设计存在问题，可能就是死锁。</p>
+<p>在实践中，小型嵌入式系统中死锁通常不是大问题，因为系统设计者往往能较完整掌握全局并提前规避。</p>
+<h3 id="835">8.3.5 递归互斥量</h3>
+<p>任务也可能“与自己死锁”。当任务在未归还互斥量前再次获取同一互斥量时，就会发生。考虑以下场景：</p>
+<ol>
+<li>
+<p>任务成功获取某互斥量。</p>
+</li>
+<li>
+<p>持锁期间，任务调用某库函数。</p>
+</li>
+<li>
+<p>该库函数实现里又尝试获取同一互斥量，并进入阻塞态等待其可用。</p>
+</li>
+</ol>
+<p>最终该任务阻塞等待“自己释放自己持有的锁”，因此发生死锁。</p>
+<p>这种死锁可通过“递归互斥量”避免。与标准互斥量不同，同一任务可多次 <code>take</code> 递归互斥量；只有当 <code>give</code> 调用次数与此前 <code>take</code> 次数完全匹配后，互斥量才真正被归还。</p>
+<p>标准互斥量与递归互斥量的创建与使用方式对比如下：</p>
+<ul>
+<li>
+<p>标准互斥量用 <code>xSemaphoreCreateMutex()</code> 创建；递归互斥量用 <code>xSemaphoreCreateRecursiveMutex()</code> 创建。二者函数原型一致。</p>
+</li>
+<li>
+<p>标准互斥量用 <code>xSemaphoreTake()</code> 获取；递归互斥量用 <code>xSemaphoreTakeRecursive()</code> 获取。二者函数原型一致。</p>
+</li>
+<li>
+<p>标准互斥量用 <code>xSemaphoreGive()</code> 归还；递归互斥量用 <code>xSemaphoreGiveRecursive()</code> 归还。二者函数原型一致。</p>
+</li>
+</ul>
+<p>清单 8.14 演示了递归互斥量的创建与使用。</p>
+<p><a name="list8.14" title="清单 8.14 创建并使用递归互斥量"></a></p>
+<pre><code class="language-c">/* Recursive mutexes are variables of type SemaphoreHandle_t. */
+SemaphoreHandle_t xRecursiveMutex;
+
+/* The implementation of a task that creates and uses a recursive mutex. */
+void vTaskFunction( void *pvParameters )
+{
+     const TickType_t xMaxBlock20ms = pdMS_TO_TICKS( 20 );
+
+     /* Before a recursive mutex is used it must be explicitly created. */
+     xRecursiveMutex = xSemaphoreCreateRecursiveMutex();
+
+     /* Check the semaphore was created successfully. configASSERT() is 
+         described in section 11.2. */
+     configASSERT( xRecursiveMutex );
+
+     /* As per most tasks, this task is implemented as an infinite loop. */
+     for( ;; )
+     {
+          /* ... */
+
+          /* Take the recursive mutex. */
+          if( xSemaphoreTakeRecursive( xRecursiveMutex, xMaxBlock20ms ) == pdPASS )
+          {
+                /* The recursive mutex was successfully obtained. The task can now
+                    access the resource the mutex is protecting. At this point the 
+                    recursive call count (which is the number of nested calls to 
+                    xSemaphoreTakeRecursive()) is 1, as the recursive mutex has 
+                    only been taken once. */
+
+                /* While it already holds the recursive mutex, the task takes the 
+                    mutex again. In a real application, this is only likely to occur
+                    inside a sub-function called by this task, as there is no 
+                    practical reason to knowingly take the same mutex more than 
+                    once. The calling task is already the mutex holder, so the 
+                    second call to xSemaphoreTakeRecursive() does nothing more than
+                    increment the recursive call count to 2. */
+                xSemaphoreTakeRecursive( xRecursiveMutex, xMaxBlock20ms );
+
+                /* ... */
+
+                /* The task returns the mutex after it has finished accessing the
+                    resource the mutex is protecting. At this point the recursive 
+                    call count is 2, so the first call to xSemaphoreGiveRecursive()
+                    does not return the mutex. Instead, it simply decrements the 
+                    recursive call count back to 1. */
+                xSemaphoreGiveRecursive( xRecursiveMutex );
+
+                /* The next call to xSemaphoreGiveRecursive() decrements the 
+                    recursive call count to 0, so this time the recursive mutex is 
+                    returned. */
+                xSemaphoreGiveRecursive( xRecursiveMutex );
+
+                /* Now one call to xSemaphoreGiveRecursive() has been executed for
+                    every proceeding call to xSemaphoreTakeRecursive(), so the task
+                    is no longer the mutex holder. */
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.14</em></strong> <em>创建并使用递归互斥量</em></p>
+<h3 id="836">8.3.6 互斥量与任务调度</h3>
+<p>若不同优先级任务使用同一互斥量，<code>FreeRTOS</code> 调度策略能明确执行顺序：可运行任务中优先级最高者进入运行态。举例：若高优先级任务阻塞等待某个由低优先级任务持有的互斥量，那么低优先级任务一旦归还互斥量，高优先级任务就会抢占并成为新持有者。这一场景已在图 8.5 出现。</p>
+<p>但在“任务优先级相同”时，常有人误判执行顺序。若任务 1 与任务 2 同优先级，且任务 1 阻塞等待任务 2 持有的互斥量，那么任务 2 在 <code>give</code> 该互斥量后，任务 1 不会立刻抢占任务 2。任务 2 继续保持运行态，任务 1 只是从阻塞态转为就绪态。图 8.6 展示了该场景（图中竖线表示节拍中断时刻）。</p>
+<p><a name="fig8.6" title="图 8.6 同优先级任务共享同一互斥量时的一种可能执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/image68.png" /> <br />
+<strong><em>图 8.6</em></strong> <em>同优先级任务共享同一互斥量时的一种可能执行序列</em></p>
+<hr />
+<p>在图 8.6 场景中，调度器不会在互斥量一可用就立刻让任务 1 进入运行态，原因是：</p>
+<ul>
+<li>
+<p>任务 1 与任务 2 同优先级。因此在任务 2 未进入阻塞态前，按规则应等到下一次节拍中断才切换到任务 1（假设 <code>FreeRTOSConfig.h</code> 中 <code>configUSE_TIME_SLICING</code> 为 <code>1</code>）。</p>
+</li>
+<li>
+<p>若任务在紧密循环中频繁使用互斥量，并在每次 <code>give</code> 时都立即发生切换，则每次运行片段会很短。多个任务在同一互斥量上紧密竞争时，系统将浪费大量时间在频繁切换上。</p>
+</li>
+</ul>
+<p>若有多个同优先级任务在紧密循环中使用同一互斥量，需要额外注意保证各任务获得大致均衡的处理器时间。图 8.7 展示了一个可能导致不均衡的执行序列：假设创建了两个清单 8.15 所示任务实例，且它们优先级相同。</p>
+<p><a name="list8.15" title="清单 8.15 在紧密循环中使用互斥量的任务"></a></p>
+<pre><code class="language-c">/* The implementation of a task that uses a mutex in a tight loop. The task 
+    creates a text string in a local buffer, then writes the string to a display.
+    Access to the display is protected by a mutex. */
+
+void vATask( void *pvParameter )
+{
+     extern SemaphoreHandle_t xMutex;
+     char cTextBuffer[ 128 ];
+
+     for( ;; )
+     {
+          /* Generate the text string – this is a fast operation. */
+          vGenerateTextInALocalBuffer( cTextBuffer );
+
+          /* Obtain the mutex that is protecting access to the display. */
+          xSemaphoreTake( xMutex, portMAX_DELAY );
+
+          /* Write the generated text to the display–this is a slow operation. */
+          vCopyTextToFrameBuffer( cTextBuffer );
+
+          /* The text has been written to the display, so return the mutex. */
+          xSemaphoreGive( xMutex );
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.15</em></strong> <em>在紧密循环中使用互斥量的任务</em></p>
+<p>清单 8.15 注释指出：构造字符串是快操作，刷新显示是慢操作。因此互斥量在显示更新期间被持有，而这段时间占任务运行时间的大头。</p>
+<p>图 8.7 中竖线表示节拍中断时刻。</p>
+<p><a name="fig8.7" title="图 8.7 若两个清单 8.15 任务实例以同优先级创建，可能出现的执行序列"></a></p>
+<hr />
+<p><img alt="" src="../media/image69.png" /> <br />
+<strong><em>图 8.7</em></strong> <em>若两个清单 8.15 任务实例以同优先级创建，可能出现的执行序列</em></p>
+<hr />
+<p>图 8.7 的步骤 7 显示任务 1 重新进入阻塞态——该动作发生在 <code>xSemaphoreTake()</code> 内部。</p>
+<p>图 8.7 说明：只有当“时间片起点”恰好落在任务 2 不持有互斥量的短时间窗口内，任务 1 才能成功获取互斥量。</p>
+<p>可在 <code>xSemaphoreGive()</code> 后增加 <code>taskYIELD()</code> 来避免该问题。清单 8.16 展示了这一做法：仅当任务持锁期间节拍计数发生变化时才调用 <code>taskYIELD()</code>。</p>
+<p><a name="list8.16" title="清单 8.16 让循环中使用互斥量的任务更均衡获得处理时间，同时避免过度切换"></a></p>
+<pre><code class="language-c">void vFunction( void *pvParameter )
+{
+     extern SemaphoreHandle_t xMutex;
+     char cTextBuffer[ 128 ];
+     TickType_t xTimeAtWhichMutexWasTaken;
+
+     for( ;; )
+     {
+          /* Generate the text string – this is a fast operation. */
+          vGenerateTextInALocalBuffer( cTextBuffer );
+
+          /* Obtain the mutex that is protecting access to the display. */
+          xSemaphoreTake( xMutex, portMAX_DELAY );
+
+          /* Record the time at which the mutex was taken. */
+          xTimeAtWhichMutexWasTaken = xTaskGetTickCount();
+
+          /* Write the generated text to the display–this is a slow operation. */
+          vCopyTextToFrameBuffer( cTextBuffer );
+
+          /* The text has been written to the display, so return the mutex. */
+          xSemaphoreGive( xMutex );
+
+          /* If taskYIELD() was called on each iteration then this task would
+              only ever remain in the Running state for a short period of time, 
+              and processing time would be wasted by rapidly switching between 
+              tasks. Therefore, only call taskYIELD() if the tick count changed 
+              while the mutex was held. */
+          if( xTaskGetTickCount() != xTimeAtWhichMutexWasTaken )
+          {
+                taskYIELD();
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.16</em></strong> <em>让循环中使用互斥量的任务更均衡获得处理时间，同时避免过度切换</em></p>
+<h2 id="84-gatekeeper-task">8.4 守门员任务（<code>Gatekeeper Task</code>）</h2>
+<p>守门员任务是一种更整洁的互斥实现方式，且可避免优先级反转与死锁风险。</p>
+<p>守门员任务指“独占某资源的任务”。只有守门员任务能直接访问该资源；其他任务若要访问，只能间接通过守门员提供的服务完成。</p>
+<h3 id="841-vprintstring">8.4.1 使用守门员任务重写 <code>vPrintString()</code></h3>
+<p>示例 8.2 给出 <code>vPrintString()</code> 的另一种实现：由守门员任务管理标准输出访问。任务要输出消息时，不再直接调用打印函数，而是把消息发送给守门员任务。</p>
+<p>守门员任务通过 <code>FreeRTOS</code> 队列串行化标准输出访问。由于只有它自己可以直接访问标准输出，其内部实现无需处理互斥问题。</p>
+<p>守门员任务大部分时间处于阻塞态，等待队列消息到达。消息到达后，守门员输出该消息，然后再次阻塞等待下一条。实现见清单 8.18。</p>
+<p>中断也可向队列发送，因此 <code>ISR</code> 同样可以借守门员任务安全地向终端输出。本示例使用节拍钩子函数每 200 个节拍输出一次消息。</p>
+<p>节拍钩子（<code>tick hook</code> 或 <code>tick callback</code>）是在每次节拍中断期间由内核调用的函数。启用方式如下：</p>
+<ol>
+<li>
+<p>在 <code>FreeRTOSConfig.h</code> 中将 <code>configUSE_TICK_HOOK</code> 设为 <code>1</code>。</p>
+</li>
+<li>
+<p>按清单 8.17 给出的“函数名与原型”提供钩子实现。</p>
+</li>
+</ol>
+<p><a name="list8.17" title="清单 8.17 节拍钩子函数名称与原型"></a></p>
+<pre><code class="language-c">void vApplicationTickHook( void );
+</code></pre>
+<p><strong><em>清单 8.17</em></strong> <em>节拍钩子函数名称与原型</em></p>
+<p>节拍钩子在节拍中断上下文执行，因此必须保持非常短小、栈占用适中，且不能调用任何不以 <code>FromISR()</code> 结尾的 <code>FreeRTOS API</code>。</p>
+<p>节拍钩子函数之后调度器总会立即运行，因此在钩子中调用中断安全 <code>FreeRTOS API</code> 时，无需使用其 <code>pxHigherPriorityTaskWoken</code> 参数，可将该参数设为 <code>NULL</code>。</p>
+<p><a name="list8.18" title="清单 8.18 守门员任务"></a></p>
+<pre><code class="language-c">static void prvStdioGatekeeperTask( void *pvParameters )
+{
+     char *pcMessageToPrint;
+
+     /* This is the only task that is allowed to write to standard out. Any
+         other task wanting to write a string to the output does not access 
+         standard out directly, but instead sends the string to this task. As 
+         only this task accesses standard out there are no mutual exclusion or 
+         serialization issues to consider within the implementation of the task 
+         itself. */
+     for( ;; )
+     {
+          /* Wait for a message to arrive. An indefinite block time is specified
+              so there is no need to check the return value – the function will 
+              only return when a message has been successfully received. */
+          xQueueReceive( xPrintQueue, &amp;pcMessageToPrint, portMAX_DELAY );
+
+          /* Output the received string. */
+          printf( &quot;%s&quot;, pcMessageToPrint );
+          fflush( stdout );
+
+          /* Loop back to wait for the next message. */
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.18</em></strong> <em>守门员任务</em></p>
+<h2 id="_2"><a name="example8.2" title="示例 8.2 打印任务的替代实现"></a></h2>
+<p><strong><em>示例 8.2</em></strong> <em>打印任务的替代实现</em></p>
+<hr />
+<p>向队列写消息的任务见清单 8.19。与前例相同，本示例创建该任务的两个实例，并通过任务参数传入各自要发送的字符串索引。</p>
+<p><a name="list8.19" title="示例 8.2 的打印任务实现"></a></p>
+<pre><code class="language-c">static void prvPrintTask( void *pvParameters )
+{
+     int iIndexToString;
+     const TickType_t xMaxBlockTimeTicks = 0x20;
+
+     /* Two instances of this task are created. The task parameter is used to 
+         pass an index into an array of strings into the task. Cast this to the
+         required type. */
+     iIndexToString = ( int ) pvParameters;
+
+     for( ;; )
+     {
+          /* Print out the string, not directly, but instead by passing a pointer
+              to the string to the gatekeeper task via a queue. The queue is 
+              created before the scheduler is started so will already exist by the
+              time this task executes for the first time. A block time is not 
+              specified because there should always be space in the queue. */
+          xQueueSendToBack( xPrintQueue, &amp;( pcStringsToPrint[ iIndexToString ]), 0 );
+
+          /* Wait a pseudo random time. Note that rand() is not necessarily
+              reentrant, but in this case it does not really matter as the code 
+              does not care what value is returned. In a more secure application 
+              a version of rand() that is known to be reentrant should be used - 
+              or calls to rand() should be protected using a critical section. */
+          vTaskDelay( ( rand() % xMaxBlockTimeTicks ) );
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.19</em></strong> <em>示例 8.2 的打印任务实现</em></p>
+<p>节拍钩子函数会统计调用次数；计数达到 200 时，就把消息发送给守门员任务。仅为演示目的，钩子向队列头发送，而任务向队列尾发送。实现见清单 8.20。</p>
+<p><a name="list8.20" title="清单 8.20 节拍钩子实现"></a></p>
+<pre><code class="language-c">void vApplicationTickHook( void )
+{
+     static int iCount = 0;
+
+     /* Print out a message every 200 ticks. The message is not written out
+         directly, but sent to the gatekeeper task. */
+     iCount++;
+
+     if( iCount &gt;= 200 )
+     {
+          /* As xQueueSendToFrontFromISR() is being called from the tick hook, it
+              is not necessary to use the xHigherPriorityTaskWoken parameter (the 
+              third parameter), and the parameter is set to NULL. */
+          xQueueSendToFrontFromISR( xPrintQueue, 
+                                             &amp;( pcStringsToPrint[ 2 ] ), 
+                                             NULL );
+
+          /* Reset the count ready to print out the string again in 200 ticks
+              time. */
+          iCount = 0;
+     }
+}
+</code></pre>
+<p><strong><em>清单 8.20</em></strong> <em>节拍钩子实现</em></p>
+<p>如常规流程，<code>main()</code> 创建运行示例所需队列与任务后启动调度器。实现见清单 8.21。</p>
+<pre><code class="language-c">/* Define the strings that the tasks and interrupt will print out via the
+    gatekeeper. */
+static char *pcStringsToPrint[] =
+{
+     &quot;Task 1 ****************************************************\r\n&quot;,
+     &quot;Task 2 ----------------------------------------------------\r\n&quot;,
+     &quot;Message printed from the tick hook interrupt ##############\r\n&quot;
+};
+
+/*-----------------------------------------------------------*/
+
+/* Declare a variable of type QueueHandle_t. The queue is used to send messages
+    from the print tasks and the tick interrupt to the gatekeeper task. */
+QueueHandle_t xPrintQueue;
+
+/*-----------------------------------------------------------*/
+
+int main( void )
+{
+     /* Before a queue is used it must be explicitly created. The queue is 
+         created to hold a maximum of 5 character pointers. */
+     xPrintQueue = xQueueCreate( 5, sizeof( char * ) );
+
+     /* Check the queue was created successfully. */
+     if( xPrintQueue != NULL )
+     {
+          /* Create two instances of the tasks that send messages to the 
+              gatekeeper. The index to the string the task uses is passed to the 
+              task via the task parameter (the 4th parameter to xTaskCreate()). 
+              The tasks are created at different priorities so the higher priority
+              task will occasionally preempt the lower priority task. */
+          xTaskCreate( prvPrintTask, &quot;Print1&quot;, 1000, ( void * ) 0, 1, NULL );
+          xTaskCreate( prvPrintTask, &quot;Print2&quot;, 1000, ( void * ) 1, 2, NULL );
+
+          /* Create the gatekeeper task. This is the only task that is permitted
+              to directly access standard out. */
+          xTaskCreate( prvStdioGatekeeperTask, &quot;Gatekeeper&quot;, 1000, NULL, 0, NULL );
+
+          /* Start the scheduler so the created tasks start executing. */
+          vTaskStartScheduler();
+     }
+
+     /* If all is well then main() will never reach here as the scheduler will 
+         now be running the tasks. If main() does reach here then it is likely 
+         that there was insufficient heap memory available for the idle task to 
+         be created. Chapter 3 provides more information on heap memory 
+         management. */
+     for( ;; );
+}
+</code></pre>
+<p><a name="list8.21" title="清单 8.21 示例 8.2 的 main() 实现"></a></p>
+<p><strong><em>清单 8.21</em></strong> <em>示例 8.2 的 <code>main()</code> 实现</em></p>
+<p>示例 8.2 输出见图 8.8。可以看到，来自任务和来自中断的字符串都被正确打印，未发生破坏。</p>
+<p><a name="fig8.8" title="图 8.8 示例 8.2 运行输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image70.jpg" /> <br />
+<strong><em>图 8.8</em></strong> <em>示例 8.2 运行输出</em></p>
+<hr />
+<p>守门员任务优先级低于打印任务，因此发给守门员的消息会留在队列中，直到两个打印任务都进入阻塞态才会被处理。在某些场景下，给守门员更高优先级更合适，可让消息立刻处理；但代价是守门员在访问受保护资源期间会延迟低优先级任务执行。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:23">
+<p>类函数宏与真实函数在“返回值”语义上并不完全相同。本书为便于理解，在合适场景下仍把宏按“像函数一样返回值”来描述。&#160;<a class="footnote-backref" href="#fnref:23" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

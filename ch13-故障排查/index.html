@@ -1,0 +1,1377 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/">
+      
+      
+        <link rel="prev" href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/">
+      
+      
+        <link rel="next" href="../%E4%B9%A6%E5%90%8D/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>13 故障排查 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#13" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              13 故障排查
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#131" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 章节介绍与范围
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 中断优先级
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#133" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 栈溢出
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.3 栈溢出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1331-uxtaskgetstackhighwatermark-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.1 uxTaskGetStackHighWaterMark() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1332" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.2 运行时栈检查——概述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1333-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.3 运行时栈检查——方法 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1334-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.4 运行时栈检查——方法 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1334-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.4 运行时栈检查——方法 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#134-printf-sprintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4 printf() 与 sprintf() 的使用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.4 printf() 与 sprintf() 的使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1341-printf-stdargc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4.1 Printf-stdarg.c 文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#135" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5 其他常见错误来源
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.5 其他常见错误来源">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1351" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.1 症状：在示例中新增一个简单任务后，示例崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1352-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.2 症状：在中断里调用 API 函数导致应用崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1353" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.3 症状：应用有时会在中断服务例程内崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1354" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.4 症状：调度器尝试启动第一个任务时崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1355" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.5 症状：中断意外保持禁用，或临界区嵌套行为异常
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1356" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.6 症状：调度器尚未启动前应用就崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1357-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.7 症状：在调度器挂起期间或临界区内调用 API 导致应用崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#136" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.6 额外调试步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#131" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 章节介绍与范围
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 中断优先级
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#133" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 栈溢出
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.3 栈溢出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1331-uxtaskgetstackhighwatermark-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.1 uxTaskGetStackHighWaterMark() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1332" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.2 运行时栈检查——概述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1333-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.3 运行时栈检查——方法 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1334-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.4 运行时栈检查——方法 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1334-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3.4 运行时栈检查——方法 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#134-printf-sprintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4 printf() 与 sprintf() 的使用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.4 printf() 与 sprintf() 的使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1341-printf-stdargc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4.1 Printf-stdarg.c 文件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#135" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5 其他常见错误来源
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13.5 其他常见错误来源">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1351" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.1 症状：在示例中新增一个简单任务后，示例崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1352-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.2 症状：在中断里调用 API 函数导致应用崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1353" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.3 症状：应用有时会在中断服务例程内崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1354" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.4 症状：调度器尝试启动第一个任务时崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1355" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.5 症状：中断意外保持禁用，或临界区嵌套行为异常
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1356" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.6 症状：调度器尚未启动前应用就崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1357-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.5.7 症状：在调度器挂起期间或临界区内调用 API 导致应用崩溃
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#136" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.6 额外调试步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="13">13 故障排查</h1>
+<h2 id="131">13.1 章节介绍与范围</h2>
+<p>本章重点介绍 FreeRTOS 新用户最常遇到的问题。首先，会聚焦多年支持请求中最常见的三类问题：中断优先级配置错误、栈溢出，以及不恰当使用 <code>printf()</code>。随后，将以 FAQ 风格简要覆盖其它常见错误、可能原因和对应解决办法。</p>
+<blockquote>
+<p><em>使用 <code>configASSERT()</code> 能显著提升开发效率：它可以在错误发生点立即捕获并定位许多常见问题。强烈建议在 FreeRTOS 应用开发或调试阶段启用 <code>configASSERT()</code>。<code>configASSERT()</code> 的介绍见 12.2 节。</em></p>
+</blockquote>
+<h2 id="132">13.2 中断优先级</h2>
+<blockquote>
+<p><em>注意：这是支持请求中排名第一的问题根源，而且在大多数端口中，定义 <code>configASSERT()</code> 后可立即捕获该错误！</em></p>
+</blockquote>
+<p>如果所用 FreeRTOS 端口支持中断嵌套，且某个中断服务程序使用了 FreeRTOS API，那么该中断优先级<em>必须</em>配置为不高于（逻辑上不高于）<code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code>，详见 7.8 节“中断嵌套”。若不满足该要求，将导致临界区失效，继而引发间歇性故障。</p>
+<p>在以下处理器上运行 FreeRTOS 时请特别小心：</p>
+<ul>
+<li>
+<p>中断优先级默认就是最高优先级（某些 ARM Cortex 处理器以及可能的其它处理器属于这种情况）。在此类处理器上，凡是使用 FreeRTOS API 的中断，其优先级都不能保持未初始化状态。</p>
+</li>
+<li>
+<p>数值上“较大”的优先级数字反而表示逻辑上“较低”的中断优先级，这个设定容易让人困惑。ARM Cortex 处理器及某些其它处理器就是如此。</p>
+</li>
+<li>
+<p>例如，在这类处理器上，优先级为 5 的中断可以被优先级为 4 的中断打断。因此，若 <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 设置为 5，则凡是使用 FreeRTOS API 的中断，其优先级数值必须大于或等于 5。此时，优先级 5 或 6 是合法的，而优先级 3 明显非法。</p>
+<p><img alt="" src="../media/image91.png" /></p>
+</li>
+<li>
+<p>不同库实现对“如何指定中断优先级”的要求不一致。这个问题在 ARM Cortex 相关库中尤为常见，因为写入硬件寄存器前通常需要对优先级位进行移位。有些库会自行移位，有些库则要求调用者先移位后再传入。</p>
+</li>
+<li>
+<p>同一架构的不同实现，可能支持不同数量的中断优先级位。比如某厂商的 Cortex-M 处理器可能实现 3 个优先级位，而另一厂商可能实现 4 个。</p>
+</li>
+<li>
+<p>定义中断优先级的位，可能被拆分为“抢占优先级位”和“子优先级位”。请确保所有位都用于抢占优先级，避免使用子优先级。</p>
+</li>
+</ul>
+<p>在某些 FreeRTOS 端口中，<code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 还有一个别名：<code>configMAX_API_CALL_INTERRUPT_PRIORITY</code>。</p>
+<h2 id="133">13.3 栈溢出</h2>
+<p>栈溢出是支持请求中第二常见的问题。FreeRTOS 提供了若干特性，便于捕获和调试栈相关问题<sup id="fnref:28"><a class="footnote-ref" href="#fn:28">1</a></sup>。</p>
+<h3 id="1331-uxtaskgetstackhighwatermark-api">13.3.1 <code>uxTaskGetStackHighWaterMark()</code> API 函数</h3>
+<p>每个任务都有自己的栈，且总栈大小在创建任务时指定。<code>uxTaskGetStackHighWaterMark()</code> 用于查询任务距离溢出其分配栈空间还有多远。这个值被称为栈“高水位（high water mark）”。</p>
+<p><a name="list13.1" title="清单 13.1 uxTaskGetStackHighWaterMark() API 函数原型"></a></p>
+<pre><code class="language-c">UBaseType_t uxTaskGetStackHighWaterMark( TaskHandle_t xTask );
+</code></pre>
+<p><strong><em>清单 13.1</em></strong> <em>uxTaskGetStackHighWaterMark() API 函数原型</em></p>
+<p><strong><code>uxTaskGetStackHighWaterMark()</code> 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>xTask</code></p>
+<p>被查询任务（目标任务）的句柄。关于如何获取任务句柄，可参考 <code>xTaskCreate()</code> API 的 <code>pxCreatedTask</code> 参数说明。</p>
+<p>任务可通过传入 NULL（而非有效任务句柄）来查询自身的栈高水位。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>任务执行和中断处理中，任务的栈使用量会动态增减。<code>uxTaskGetStackHighWaterMark()</code> 返回的是该任务自开始运行以来“剩余栈空间”的最小值。也就是在栈使用最深时仍未被使用的栈空间。高水位越接近 0，表示任务越接近栈溢出。</p>
+</li>
+</ul>
+<p><code>uxTaskGetStackHighWaterMark2()</code> API 可替代 <code>uxTaskGetStackHighWaterMark()</code>，两者主要区别在于返回类型。</p>
+<p><a name="list13.2" title="清单 13.2 uxTaskGetStackHighWaterMark2() API 函数原型"></a></p>
+<pre><code class="language-c">configSTACK_DEPTH_TYPE uxTaskGetStackHighWaterMark2( TaskHandle_t xTask );
+</code></pre>
+<p><strong><em>清单 13.2</em></strong> <em>uxTaskGetStackHighWaterMark2() API 函数原型</em></p>
+<p>使用 <code>configSTACK_DEPTH_TYPE</code> 可让应用开发者控制栈深度所使用的数据类型。</p>
+<h3 id="1332">13.3.2 运行时栈检查——概述</h3>
+<p>FreeRTOS 提供三种可选的运行时栈检查机制，这些机制由 FreeRTOSConfig.h 中的编译期配置常量 <code>configCHECK_FOR_STACK_OVERFLOW</code> 控制。三种方法都会增加上下文切换时间。</p>
+<p>栈溢出钩子函数（stack overflow hook/callback）是内核检测到栈溢出时调用的函数。要使用该钩子函数，需要：</p>
+<ol>
+<li>
+<p>在 FreeRTOSConfig.h 中将 <code>configCHECK_FOR_STACK_OVERFLOW</code> 设为 1、2 或 3（详见后续小节）。</p>
+</li>
+<li>
+<p>按清单 13.3 所示的精确函数名和函数原型提供钩子实现。</p>
+</li>
+</ol>
+<p><a name="list13.3" title="清单 13.3 栈溢出钩子函数原型"></a></p>
+<pre><code class="language-c">void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed char *pcTaskName );
+</code></pre>
+<p><strong><em>清单 13.3</em></strong> <em>栈溢出钩子函数原型</em></p>
+<p>栈溢出钩子旨在简化栈错误的捕获和调试，但一旦发生栈溢出，实际上几乎没有可靠的恢复手段。该函数参数会将发生溢出的任务句柄和任务名传入钩子。</p>
+<p>栈溢出钩子在中断上下文中被调用。</p>
+<p>某些微控制器在检测到错误内存访问时会触发 fault 异常，因此有可能在内核来得及调用栈溢出钩子之前就已触发故障。</p>
+<h3 id="1333-1">13.3.3 运行时栈检查——方法 1</h3>
+<p>当 <code>configCHECK_FOR_STACK_OVERFLOW</code> 设为 1 时，选择方法 1。</p>
+<p>任务每次被切出时，其完整执行上下文都会保存到任务栈上。这通常也是栈使用量达到峰值的时刻。当 <code>configCHECK_FOR_STACK_OVERFLOW</code> 设为 1 时，内核会在保存完上下文后检查栈指针是否仍位于有效栈空间内。若栈指针超出有效范围，则调用栈溢出钩子。</p>
+<p>方法 1 执行速度快，但可能漏掉发生在两次上下文切换之间的栈溢出。</p>
+<h3 id="1334-2">13.3.4 运行时栈检查——方法 2</h3>
+<p>方法 2 在方法 1 的基础上增加了额外检查。当 <code>configCHECK_FOR_STACK_OVERFLOW</code> 设为 2 时选择该方法。</p>
+<p>任务创建时，任务栈会被填充为已知模式。方法 2 会检查任务栈空间末尾 20 字节是否仍保持该模式，验证是否被覆盖。若任一字节与预期不符，则调用栈溢出钩子函数。</p>
+<p>方法 2 的执行速度不如方法 1，但仍较快，因为只检查 20 字节。通常它能捕获几乎所有栈溢出；不过从理论上说，仍存在极小概率漏检。</p>
+<h3 id="1334-3">13.3.4 运行时栈检查——方法 3</h3>
+<p>当 <code>configCHECK_FOR_STACK_OVERFLOW</code> 设为 3 时，选择方法 3。</p>
+<p>该方法仅在部分端口可用。可用时，它会启用 ISR 栈检查。检测到 ISR 栈溢出时会触发 assert。注意这种情况下不会调用栈溢出钩子函数，因为该钩子仅针对任务栈，而非 ISR 栈。</p>
+<h2 id="134-printf-sprintf">13.4 <code>printf()</code> 与 <code>sprintf()</code> 的使用</h2>
+<p>通过 <code>printf()</code> 进行日志输出是常见错误来源。开发者往往未意识到这一点，随后又继续增加 <code>printf()</code> 调用以辅助调试，反而会进一步恶化问题。</p>
+<p>许多交叉编译器厂商会提供适合小型嵌入式系统使用的 <code>printf()</code> 实现。即便如此，该实现也可能并非线程安全，通常也不适合在中断服务例程中使用，并且根据输出目标不同，执行时间可能较长。</p>
+<p>若不存在专为小型嵌入式系统设计的 <code>printf()</code> 实现，而改用通用 <code>printf()</code>，则必须特别谨慎，因为：</p>
+<ul>
+<li>
+<p>仅仅引入一次 <code>printf()</code> 或 <code>sprintf()</code> 调用，就可能大幅增加应用可执行文件体积。</p>
+</li>
+<li>
+<p><code>printf()</code> 与 <code>sprintf()</code> 可能调用 <code>malloc()</code>；如果当前内存分配方案不是 heap_3，这可能不合法。更多信息见 3.2 节“内存分配方案示例”。</p>
+</li>
+<li>
+<p><code>printf()</code> 与 <code>sprintf()</code> 可能需要远大于常规需求的栈空间。</p>
+</li>
+</ul>
+<h3 id="1341-printf-stdargc">13.4.1 Printf-stdarg.c 文件</h3>
+<p>许多 FreeRTOS 演示工程使用名为 printf-stdarg.c 的文件。它提供了一个最小化且栈开销更低的 <code>sprintf()</code> 实现，可替代标准库版本。在多数情况下，这允许调用 <code>sprintf()</code> 及相关函数的任务分配更小的栈。</p>
+<p>printf-stdarg.c 还提供一种机制，可将 <code>printf()</code> 输出按字符逐个导向端口。虽然这种方式较慢，但可以进一步降低栈使用。</p>
+<p>请注意：FreeRTOS 下载包中的 printf-stdarg.c 并非全部实现了 <code>snprintf()</code>。未实现 <code>snprintf()</code> 的版本会忽略缓冲区大小参数，因为其内部直接映射到 <code>sprintf()</code>。</p>
+<p>printf-stdarg.c 是开源代码，但归第三方所有，因此其许可证与 FreeRTOS 分离。许可条款位于该源文件顶部。</p>
+<h2 id="135">13.5 其他常见错误来源</h2>
+<h3 id="1351">13.5.1 症状：在示例中新增一个简单任务后，示例崩溃</h3>
+<p>创建任务需要从堆中申请内存。许多示例工程会把堆大小配置为“刚好够创建示例任务”，因此示例任务创建完成后，往往没有足够堆空间再创建新任务、队列、事件组或信号量。</p>
+<p>调用 <code>vTaskStartScheduler()</code> 时，空闲任务（Idle task）以及可能存在的 RTOS daemon 任务会自动创建。仅当剩余堆内存不足以创建这些任务时，<code>vTaskStartScheduler()</code> 才会返回。<br />
+在 <code>vTaskStartScheduler()</code> 调用之后加一个空循环 <code>[ for(;;); ]</code>，通常有助于更快定位此类问题。</p>
+<p>若要继续增加任务，必须增大堆大小，或移除部分已有示例任务。堆大小增加始终受限于可用 RAM 容量。更多信息见 3.2 节“内存分配方案示例”。</p>
+<h3 id="1352-api">13.5.2 症状：在中断里调用 API 函数导致应用崩溃</h3>
+<p>除非 API 名称以 <code>...FromISR()</code> 结尾，否则不要在中断服务例程中调用该 API。尤其不要在中断中创建临界区，除非使用了中断安全宏。更多信息见 7.2 节“在 ISR 中使用 FreeRTOS API”。</p>
+<p>在支持中断嵌套的 FreeRTOS 端口中，不要在优先级高于 <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> 的中断里使用任何 API。更多信息见 7.8 节“中断嵌套”。</p>
+<h3 id="1353">13.5.3 症状：应用有时会在中断服务例程内崩溃</h3>
+<p>首先应检查是否由中断引发了栈溢出。有些端口只检查任务栈溢出，不检查中断栈溢出。</p>
+<p>中断的定义和使用方式在不同端口、不同编译器之间存在差异。因此，第二步应确认中断服务例程使用的语法、宏与调用约定，完全符合所用端口文档说明，并与该端口提供的示例应用保持一致。</p>
+<p>如果应用运行在“数值优先级越小，逻辑优先级越高”的处理器上，务必确认每个中断分配的优先级考虑了这一点，因为这往往不直观。<br />
+如果应用运行在“中断默认优先级即为最大可能值”的处理器上，务必确保每个中断都已从默认值重新配置。更多信息见 7.8 节“中断嵌套”与 13.2 节“中断优先级”。</p>
+<h3 id="1354">13.5.4 症状：调度器尝试启动第一个任务时崩溃</h3>
+<p>请确认 FreeRTOS 中断处理函数已正确安装。具体信息请参考所用 FreeRTOS 端口文档，以及该端口的示例应用。</p>
+<p>某些处理器在启动调度器前必须处于特权模式。最简单的实现方式是在调用 main() 前，于 C 启动代码中先将处理器切换到特权模式。</p>
+<h3 id="1355">13.5.5 症状：中断意外保持禁用，或临界区嵌套行为异常</h3>
+<p>若在调度器启动前调用 FreeRTOS API，系统会有意保持中断禁用状态，且直到第一个任务开始执行才重新使能。这样做是为了防止系统初始化期间（调度器尚未启动且可能处于不一致状态）由中断调用 FreeRTOS API 而导致崩溃。</p>
+<p>不要通过 <code>taskENTER_CRITICAL()</code> 与 <code>taskEXIT_CRITICAL()</code> 以外的方法修改 MCU 中断使能位或优先级标志。上述宏会维护调用嵌套深度计数，确保仅当嵌套完全回退至 0 时才重新使能中断。另请注意：某些库函数本身也可能开启或关闭中断。</p>
+<h3 id="1356">13.5.6 症状：调度器尚未启动前应用就崩溃</h3>
+<p>凡是可能触发上下文切换的中断服务例程，在调度器启动前都不得执行。对任何尝试向 FreeRTOS 对象（如队列或信号量）发送或接收的中断服务例程，也同样适用。上下文切换必须在调度器启动后才可能发生。</p>
+<p>很多 API 在调度器启动前都不能调用。在 <code>vTaskStartScheduler()</code> 之前，最好将 API 使用限制在“创建对象（任务、队列、信号量等）”，而不是“使用这些对象”。</p>
+<h3 id="1357-api">13.5.7 症状：在调度器挂起期间或临界区内调用 API 导致应用崩溃</h3>
+<p>调用 <code>vTaskSuspendAll()</code> 可挂起调度器，调用 <code>xTaskResumeAll()</code> 可恢复（解除挂起）调度器。调用 <code>taskENTER_CRITICAL()</code> 进入临界区，调用 <code>taskEXIT_CRITICAL()</code> 退出临界区。</p>
+<p>不要在调度器挂起期间调用 API，也不要在临界区内调用 API。</p>
+<h2 id="136">13.6 额外调试步骤</h2>
+<p>如果你遇到的问题不属于上述常见原因，可尝试以下调试步骤：</p>
+<ul>
+<li>定义 <code>configASSERT()</code>，并在应用的 FreeRTOSConfig 文件中启用 malloc 失败检查和栈溢出检查。</li>
+<li>检查 FreeRTOS API 的返回值，确认调用均成功。</li>
+<li>检查调度器相关配置（如 <code>configUSE_TIME_SLICING</code> 与 <code>configUSE_PREEMPTION</code>）是否符合应用需求。</li>
+<li><a href="https://www.freertos.org/Debugging-Hard-Faults-On-Cortex-M-Microcontrollers.html">这个页面</a> 提供了在 Cortex-M 微控制器上调试硬 Fault 的详细说明。</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:28">
+<p>这些特性在 FreeRTOS Windows 端口中不可用。&#160;<a class="footnote-backref" href="#fnref:28" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

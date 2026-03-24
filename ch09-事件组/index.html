@@ -1,0 +1,1932 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/">
+      
+      
+        <link rel="prev" href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>9 事件组 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#9" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              9 事件组
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 本章介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.1 本章介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#911" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 事件组的特性
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.2 事件组的特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#921" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.1 事件组、事件标志与事件位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#922-eventbits_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.2 关于 EventBits_t 数据类型的更多说明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#923" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.3 多任务访问
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#924" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.4 使用事件组的一个实际示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 使用事件组进行事件管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.3 使用事件组进行事件管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#931-xeventgroupcreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.1 xEventGroupCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#932-xeventgroupsetbits-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.2 xEventGroupSetBits() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#933-xeventgroupsetbitsfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.3 xEventGroupSetBitsFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#934-xeventgroupwaitbits-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.4 xEventGroupWaitBits() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#935-xeventgroupgetstaticbuffer-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.5 xEventGroupGetStaticBuffer() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#94" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 使用事件组进行任务同步
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.4 使用事件组进行任务同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#941-xeventgroupsync-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4.1 xEventGroupSync() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 本章介绍与范围
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.1 本章介绍与范围">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#911" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1.1 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 事件组的特性
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.2 事件组的特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#921" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.1 事件组、事件标志与事件位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#922-eventbits_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.2 关于 EventBits_t 数据类型的更多说明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#923" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.3 多任务访问
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#924" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2.4 使用事件组的一个实际示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 使用事件组进行事件管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.3 使用事件组进行事件管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#931-xeventgroupcreate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.1 xEventGroupCreate() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#932-xeventgroupsetbits-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.2 xEventGroupSetBits() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#933-xeventgroupsetbitsfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.3 xEventGroupSetBitsFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#934-xeventgroupwaitbits-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.4 xEventGroupWaitBits() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#935-xeventgroupgetstaticbuffer-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.5 xEventGroupGetStaticBuffer() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#94" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 使用事件组进行任务同步
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.4 使用事件组进行任务同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#941-xeventgroupsync-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4.1 xEventGroupSync() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="9">9 事件组</h1>
+<h2 id="91">9.1 本章介绍与范围</h2>
+<p>前文已经提到，实时嵌入式系统必须对事件作出响应。前面的章节描述了 FreeRTOS 中可用于向任务传递事件的特性，例如信号量和队列，它们都具有以下属性：</p>
+<ul>
+<li>
+<p>它们允许任务在阻塞态等待单个事件发生。</p>
+</li>
+<li>
+<p>当事件发生时，它们只会解除一个任务的阻塞。被解除阻塞的任务是等待该事件的最高优先级任务。</p>
+</li>
+</ul>
+<p>事件组是 FreeRTOS 的另一项特性，也可用于向任务传递事件。与队列和信号量不同：</p>
+<ul>
+<li>
+<p>事件组允许任务在阻塞态等待“一个或多个事件的组合条件”发生。</p>
+</li>
+<li>
+<p>当事件发生时，事件组会解除所有等待同一事件（或同一事件组合）的任务阻塞。</p>
+</li>
+</ul>
+<p>事件组的这些独特属性使其非常适合：同步多个任务、向多个任务广播事件、让任务在一组事件中等待任意一个发生、以及让任务等待多个动作全部完成。</p>
+<p>事件组还可能减少应用的 RAM 占用，因为在很多场景下，可以用一个事件组替换多个二值信号量。</p>
+<p>事件组功能是可选的。若要启用事件组功能，需要将 FreeRTOS 源文件 <code>event_groups.c</code> 编译进你的工程。</p>
+<h3 id="911">9.1.1 范围</h3>
+<p>本章旨在帮助读者理解：</p>
+<ul>
+<li>事件组的实际用途。</li>
+<li>相对其他 FreeRTOS 特性，事件组的优缺点。</li>
+<li>如何在事件组中置位。</li>
+<li>如何在阻塞态等待事件组中的位被置位。</li>
+<li>如何使用事件组同步一组任务。</li>
+</ul>
+<h2 id="92">9.2 事件组的特性</h2>
+<h3 id="921">9.2.1 事件组、事件标志与事件位</h3>
+<p>事件“标志（flag）”是一个布尔值（1 或 0），用于表示某事件是否发生。事件“组（group）”是一组事件标志。</p>
+<p>事件标志只能是 1 或 0，因此单个事件标志的状态可以存储在 1 个 bit 中，而一个事件组内所有事件标志的状态可以存储在一个变量中；事件组内每个事件标志都对应 <code>EventBits_t</code> 类型变量中的一个 bit。基于这个原因，事件标志也被称为事件“位（bit）”。如果 <code>EventBits_t</code> 变量中的某 bit 为 1，则表示该 bit 对应的事件已发生；如果该 bit 为 0，则表示该事件未发生。</p>
+<p>图 9.1 展示了如何将单个事件标志映射到 <code>EventBits_t</code> 类型变量中的单个位。</p>
+<p><a name="fig9.1" title="图 9.1 EventBits_t 类型变量中的事件标志与位号映射"></a></p>
+<hr />
+<p><img alt="" src="../media/image71.png" />
+<strong><em>图 9.1</em></strong> <em><code>EventBits_t</code> 类型变量中的事件标志与位号映射</em></p>
+<hr />
+<p>例如，若某事件组的值为 0x92（二进制 1001 0010），则只有事件位 1、4、7 被置位，也就表示仅这三个位对应的事件已经发生。图 9.2 展示了一个 <code>EventBits_t</code> 变量：位 1、4、7 置位，其余位清零，因此该事件组值为 0x92。</p>
+<p><a name="fig9.2" title="图 9.2 仅位 1、4、7 置位，其余事件标志清零时，事件组值为 0x92"></a></p>
+<hr />
+<p><img alt="" src="../media/image72.png" />
+<strong><em>图 9.2</em></strong> <em>仅位 1、4、7 置位，其余事件标志清零时，事件组值为 0x92</em></p>
+<hr />
+<p>事件组中每一位的具体含义由应用编写者自行定义。比如可以创建一个事件组，然后：</p>
+<ul>
+<li>
+<p>将 bit 0 定义为“收到网络消息”。</p>
+</li>
+<li>
+<p>将 bit 1 定义为“有消息待发送到网络”。</p>
+</li>
+<li>
+<p>将 bit 2 定义为“中止当前网络连接”。</p>
+</li>
+</ul>
+<h3 id="922-eventbits_t">9.2.2 关于 EventBits_t 数据类型的更多说明</h3>
+<p>事件组中可用事件位数量取决于 FreeRTOSConfig.h 中的 <code>configTICK_TYPE_WIDTH_IN_BITS</code> 编译期配置常量<sup id="fnref:24"><a class="footnote-ref" href="#fn:24">1</a></sup>：</p>
+<ul>
+<li>
+<p>若 <code>configTICK_TYPE_WIDTH_IN_BITS</code> 为 <code>TICK_TYPE_WIDTH_16_BITS</code>，每个事件组包含 8 个可用事件位。</p>
+</li>
+<li>
+<p>若 <code>configTICK_TYPE_WIDTH_IN_BITS</code> 为 <code>TICK_TYPE_WIDTH_32_BITS</code>，每个事件组包含 24 个可用事件位。</p>
+</li>
+<li>
+<p>若 <code>configTICK_TYPE_WIDTH_IN_BITS</code> 为 <code>TICK_TYPE_WIDTH_64_BITS</code>，每个事件组包含 56 个可用事件位。</p>
+</li>
+</ul>
+<h3 id="923">9.2.3 多任务访问</h3>
+<p>事件组本身就是一个对象，任何知道其存在的任务或 ISR 都可以访问。任意数量的任务都可以向同一事件组置位，也可以从同一事件组读取位。</p>
+<h3 id="924">9.2.4 使用事件组的一个实际示例</h3>
+<p>FreeRTOS+TCP TCP/IP 协议栈的实现提供了一个很实用的示例，说明如何使用事件组在简化设计的同时降低资源占用。</p>
+<p>一个 TCP 套接字必须响应很多不同事件，例如 accept、bind、read 和 close 事件。套接字在任一时刻可能接收哪些事件，取决于其状态。比如套接字已创建但尚未绑定地址，则它可能接收 bind 事件，但不应接收 read 事件（没有地址就无法读数据）。</p>
+<p>FreeRTOS+TCP 套接字状态存储在 <code>FreeRTOS_Socket_t</code> 结构体中。该结构体包含一个事件组，套接字需要处理的每种事件都对应一个事件位。凡是需要阻塞等待某事件或事件组的 FreeRTOS+TCP API 调用，都只需阻塞在该事件组上。</p>
+<p>该事件组还包含一个“abort”位，使得无论套接字当前在等待哪类事件，都可以中止 TCP 连接。</p>
+<h2 id="93">9.3 使用事件组进行事件管理</h2>
+<h3 id="931-xeventgroupcreate-api">9.3.1 xEventGroupCreate() API 函数</h3>
+<p>FreeRTOS 还提供了 <code>xEventGroupCreateStatic()</code> 函数，用于在编译期静态分配创建事件组所需内存：事件组在使用前必须先显式创建。</p>
+<p>事件组通过 <code>EventGroupHandle_t</code> 类型变量进行引用。<code>xEventGroupCreate()</code> API 函数用于创建事件组，并返回 <code>EventGroupHandle_t</code> 句柄供后续引用。</p>
+<p><a name="list9.1" title="清单 9.1 xEventGroupCreate() API 函数原型"></a></p>
+<pre><code class="language-c">EventGroupHandle_t xEventGroupCreate( void );
+</code></pre>
+<p><strong><em>清单 9.1</em></strong> <em><code>xEventGroupCreate()</code> API 函数原型</em></p>
+<p><strong>xEventGroupCreate() 返回值</strong></p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>若返回 NULL，则表示可用堆内存不足，FreeRTOS 无法分配事件组数据结构，因此事件组创建失败。第 3 章提供了更多堆内存管理信息。</p>
+<p>若返回非 NULL，则表示事件组创建成功。返回值应保存为该事件组的句柄。</p>
+<h3 id="932-xeventgroupsetbits-api">9.3.2 xEventGroupSetBits() API 函数</h3>
+<p><code>xEventGroupSetBits()</code> API 函数用于在事件组中置位一个或多个 bit，通常用于通知任务：被置位 bit 所表示的事件已经发生。</p>
+<blockquote>
+<p><em>注意：绝不能在中断服务程序中调用 <code>xEventGroupSetBits()</code>。在 ISR 中应使用其中断安全版本 <code>xEventGroupSetBitsFromISR()</code>。</em></p>
+</blockquote>
+<p><a name="list9.2" title="清单 9.2 xEventGroupSetBits() API 函数原型"></a></p>
+<pre><code class="language-c">EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
+
+const EventBits_t uxBitsToSet );
+</code></pre>
+<p><strong><em>清单 9.2</em></strong> <em><code>xEventGroupSetBits()</code> API 函数原型</em></p>
+<p><strong>xEventGroupSetBits() 参数与返回值</strong></p>
+<ul>
+<li><code>xEventGroup</code></li>
+</ul>
+<p>要置位的目标事件组句柄。该句柄应来自创建事件组时对 <code>xEventGroupCreate()</code> 的调用返回值。</p>
+<ul>
+<li><code>uxBitsToSet</code></li>
+</ul>
+<p>指定位掩码，指定要在事件组中置为 1 的事件位。事件组的值会通过“事件组当前值 与 <code>uxBitsToSet</code> 做按位或”来更新。</p>
+<p>例如将 <code>uxBitsToSet</code> 设为 0x04（二进制 0100），会导致事件组中的事件位 2 被置位（若原本未置位），而不改变其他事件位。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>调用 <code>xEventGroupSetBits()</code> 返回时事件组的值。注意：返回值不一定包含 <code>uxBitsToSet</code> 指定的位，因为这些位可能已被其他任务再次清零。</p>
+<h3 id="933-xeventgroupsetbitsfromisr-api">9.3.3 xEventGroupSetBitsFromISR() API 函数</h3>
+<p><code>xEventGroupSetBitsFromISR()</code> 是 <code>xEventGroupSetBits()</code> 的中断安全版本。</p>
+<p>“给一个信号量”是确定性操作，因为可以预先知道最多只有一个任务会离开阻塞态。而在事件组里置位时，无法预先知道会有多少任务离开阻塞态，因此“事件组置位”不是确定性操作。</p>
+<p>FreeRTOS 的设计与实现规范不允许在 ISR 或关中断期间执行非确定性操作。基于这个原因，<code>xEventGroupSetBitsFromISR()</code> 不会在 ISR 内直接置位，而是把该动作延后到 RTOS 守护任务（daemon task）中执行。</p>
+<p><a name="list9.3" title="清单 9.3 xEventGroupSetBitsFromISR() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xEventGroupSetBitsFromISR( EventGroupHandle_t xEventGroup,
+                                                  const EventBits_t uxBitsToSet,
+                                                  BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 9.3</em></strong> <em><code>xEventGroupSetBitsFromISR()</code> API 函数原型</em></p>
+<p><strong>xEventGroupSetBitsFromISR() 参数与返回值</strong></p>
+<ul>
+<li><code>xEventGroup</code></li>
+</ul>
+<p>要置位的目标事件组句柄。该句柄应来自创建事件组时对 <code>xEventGroupCreate()</code> 的调用返回值。</p>
+<ul>
+<li><code>uxBitsToSet</code></li>
+</ul>
+<p>指定位掩码，指定要在事件组中置为 1 的事件位。事件组的值通过与 <code>uxBitsToSet</code> 做按位或更新。</p>
+<p>例如将 <code>uxBitsToSet</code> 设为 0x05（二进制 0101），会导致事件组中的事件位 0 和事件位 2 被置位（若它们原本未置位），其余位不变。</p>
+<ul>
+<li><code>pxHigherPriorityTaskWoken</code></li>
+</ul>
+<p><code>xEventGroupSetBitsFromISR()</code> 不在 ISR 中直接置位，而是通过向定时器命令队列发送命令，将操作延后给 RTOS 守护任务。若守护任务当时阻塞在等待该队列数据，那么写队列会使守护任务离开阻塞态。若守护任务优先级高于当前被中断任务（即 ISR 打断的任务），则 <code>xEventGroupSetBitsFromISR()</code> 内部会将 <code>*pxHigherPriorityTaskWoken</code> 置为 <code>pdTRUE</code>。</p>
+<p>如果该值被设为 <code>pdTRUE</code>，则在退出中断前应进行一次上下文切换，以确保中断直接返回到守护任务，因为此时它将是最高优先级的就绪态任务。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能返回两个值：</p>
+<ul>
+<li>
+<p>仅当“置位命令”成功写入定时器命令队列时，返回 <code>pdPASS</code>。</p>
+</li>
+<li>
+<p>若“置位命令”无法写入（因为队列已满），返回 <code>pdFALSE</code>。</p>
+</li>
+</ul>
+<h3 id="934-xeventgroupwaitbits-api">9.3.4 xEventGroupWaitBits() API 函数</h3>
+<p><code>xEventGroupWaitBits()</code> API 函数允许任务读取事件组值，并可选地在阻塞态等待事件组中一个或多个事件位被置位（若这些位尚未置位）。</p>
+<p><a name="list9.4" title="清单 9.4 xEventGroupWaitBits() API 函数原型"></a></p>
+<pre><code class="language-c">EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
+                                            const EventBits_t uxBitsToWaitFor,
+                                            const BaseType_t xClearOnExit,
+                                            const BaseType_t xWaitForAllBits,
+                                            TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 9.4</em></strong> <em><code>xEventGroupWaitBits()</code> API 函数原型</em></p>
+<p>调度器用于判断任务是否进入阻塞态、以及何时离开阻塞态的条件称为“解除阻塞条件（unblock condition）”。该条件由 <code>uxBitsToWaitFor</code> 与 <code>xWaitForAllBits</code> 参数组合指定：</p>
+<ul>
+<li>
+<p><code>uxBitsToWaitFor</code> 指定要测试的事件组位。</p>
+</li>
+<li>
+<p><code>xWaitForAllBits</code> 指定使用按位 OR 条件还是按位 AND 条件。</p>
+</li>
+</ul>
+<p>若调用 <code>xEventGroupWaitBits()</code> 时任务的解除阻塞条件已满足，任务就不会进入阻塞态。</p>
+<p>表 6 给出了会导致任务进入阻塞态或离开阻塞态的一些条件示例。表 6 仅展示事件组值和 <code>uxBitsToWaitFor</code> 值的低 4 位二进制位，其余位均假设为 0。</p>
+<p><a name="tbl6" title="表 6 uxBitsToWaitFor 与 xWaitForAllBits 参数的影响"></a></p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>事件组当前值</th>
+<th>uxBitsToWaitFor 值</th>
+<th>xWaitForAllBits 值</th>
+<th>结果行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0000</td>
+<td>0101</td>
+<td>pdFALSE</td>
+<td>调用任务将进入阻塞态，因为事件组中 bit0 与 bit2 都未置位；当 bit0 <strong>或</strong> bit2 任一被置位时离开阻塞态。</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>0101</td>
+<td>pdTRUE</td>
+<td>调用任务将进入阻塞态，因为 bit0 与 bit2 并未同时置位；当 bit0 <strong>且</strong> bit2 同时置位时离开阻塞态。</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>0110</td>
+<td>pdFALSE</td>
+<td>调用任务不会进入阻塞态，因为 <code>xWaitForAllBits</code> 为 <code>pdFALSE</code>，且 <code>uxBitsToWaitFor</code> 指定的两个位中已有一个位被置位。</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>0110</td>
+<td>pdTRUE</td>
+<td>调用任务将进入阻塞态，因为 <code>xWaitForAllBits</code> 为 <code>pdTRUE</code>，而 <code>uxBitsToWaitFor</code> 指定的两个位中只有一个已置位。任务会在 bit1 与 bit2 同时置位时离开阻塞态。</td>
+</tr>
+</tbody>
+</table>
+<p><strong><em>表 6</em></strong> <em><code>uxBitsToWaitFor</code> 与 <code>xWaitForAllBits</code> 参数的影响</em></p>
+<hr />
+<p>调用任务通过 <code>uxBitsToWaitFor</code> 参数指定要测试的位。通常在解除阻塞条件满足后，调用任务还需要把这些位清零。虽然可以通过 <code>xEventGroupClearBits()</code> API 函数清位，但若满足以下条件，手动清位会在应用代码中引入竞争：</p>
+<ul>
+<li>同一个事件组被多个任务使用。</li>
+<li>事件组位由其他任务或 ISR 置位。</li>
+</ul>
+<p><code>xClearOnExit</code> 参数用于避免这些潜在竞争条件。若 <code>xClearOnExit</code> 设为 <code>pdTRUE</code>，则“测试位 + 清位”对调用任务而言是原子操作（不会被其他任务或中断打断）。</p>
+<p><strong>xEventGroupWaitBits() 参数与返回值</strong></p>
+<ul>
+<li><code>xEventGroup</code></li>
+</ul>
+<p>包含待读取事件位的事件组句柄。该句柄应来自创建事件组时对 <code>xEventGroupCreate()</code> 的调用返回值。</p>
+<ul>
+<li><code>uxBitsToWaitFor</code></li>
+</ul>
+<p>位掩码，指定事件组中要测试的事件位。</p>
+<p>例如，若调用任务希望等待事件位 0 和/或事件位 2 被置位，则将 <code>uxBitsToWaitFor</code> 设为 0x05（二进制 0101）。更多示例可参考表 6。</p>
+<ul>
+<li><code>xClearOnExit</code></li>
+</ul>
+<p>若调用任务的解除阻塞条件已满足，且 <code>xClearOnExit</code> 设为 <code>pdTRUE</code>，则 <code>uxBitsToWaitFor</code> 指定的事件位会在调用任务退出 <code>xEventGroupWaitBits()</code> 前被清零。</p>
+<p>若 <code>xClearOnExit</code> 设为 <code>pdFALSE</code>，则 <code>xEventGroupWaitBits()</code> 不会修改事件组中事件位状态。</p>
+<ul>
+<li><code>xWaitForAllBits</code></li>
+</ul>
+<p><code>uxBitsToWaitFor</code> 指定要测试哪些位；<code>xWaitForAllBits</code> 指定调用任务在以下哪种情况离开阻塞态：</p>
+<ul>
+<li><code>uxBitsToWaitFor</code> 指定的位中“一个或多个”被置位；</li>
+<li>还是“全部”被置位。</li>
+</ul>
+<p>若 <code>xWaitForAllBits</code> 设为 <code>pdFALSE</code>，则进入阻塞态等待解除条件的任务会在 <code>uxBitsToWaitFor</code> 指定位中任意一位被置位时离开阻塞态（或 <code>xTicksToWait</code> 超时）。</p>
+<p>若 <code>xWaitForAllBits</code> 设为 <code>pdTRUE</code>，则该任务仅在 <code>uxBitsToWaitFor</code> 指定位全部置位时才离开阻塞态（或 <code>xTicksToWait</code> 超时）。</p>
+<p>示例见表 6。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>任务在阻塞态等待解除阻塞条件满足的最长时间。</p>
+<p>若 <code>xTicksToWait</code> 为 0，或调用 <code>xEventGroupWaitBits()</code> 时解除阻塞条件已满足，则函数立即返回。</p>
+<p>阻塞时间单位是 tick 周期，因此其绝对时长取决于系统 tick 频率。可使用 <code>pdMS_TO_TICKS()</code> 宏把毫秒转换为 tick。</p>
+<p>若将 <code>xTicksToWait</code> 设为 <code>portMAX_DELAY</code>，则任务将无限期等待（不超时），前提是 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>若 <code>xEventGroupWaitBits()</code> 因调用任务解除阻塞条件满足而返回，则返回值是“解除阻塞条件满足时”的事件组值（若 <code>xClearOnExit</code> 为 <code>pdTRUE</code>，则是自动清位之前的值）。这种情况下，返回值必然满足解除阻塞条件。</p>
+<p>若 <code>xEventGroupWaitBits()</code> 因 <code>xTicksToWait</code> 指定的阻塞时间到期而返回，则返回值是超时瞬间的事件组值。这种情况下，返回值不会满足解除阻塞条件。</p>
+<h3 id="935-xeventgroupgetstaticbuffer-api">9.3.5 xEventGroupGetStaticBuffer() API 函数</h3>
+<p><code>xEventGroupGetStaticBuffer()</code> API 函数用于获取静态创建事件组所使用缓冲区的指针。该缓冲区与创建事件组时传入的是同一个。</p>
+<p><em>注意：绝不要在中断服务程序中调用 <code>xEventGroupGetStaticBuffer()</code>。</em></p>
+<p><a name="list9.5" title="清单 9.5 xEventGroupGetStaticBuffer() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xEventGroupGetStaticBuffer( EventGroupHandle_t xEventGroup,
+
+StaticEventGroup_t ** ppxEventGroupBuffer );
+</code></pre>
+<p><strong><em>清单 9.5</em></strong> <em><code>xEventGroupGetStaticBuffer()</code> API 函数原型</em></p>
+<p><strong>xEventGroupGetStaticBuffer() 参数与返回值</strong></p>
+<ul>
+<li><code>xEventGroup</code></li>
+</ul>
+<p>要获取缓冲区的事件组。该事件组必须由 <code>xEventGroupCreateStatic()</code> 创建。</p>
+<ul>
+<li><code>ppxEventGroupBuffer</code></li>
+</ul>
+<p>用于返回事件组数据结构缓冲区的指针。该缓冲区就是创建事件组时提供的同一缓冲区。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能返回两个值：</p>
+<ul>
+<li>
+<p>成功获取缓冲区时返回 <code>pdTRUE</code>。</p>
+</li>
+<li>
+<p>获取失败时返回 <code>pdFALSE</code>。</p>
+</li>
+</ul>
+<h2 id="_1"><a name="example9.1" title="示例 9.1 事件组实验"></a></h2>
+<p><strong><em>示例 9.1</em></strong> <em>事件组实验</em></p>
+<hr />
+<p>本示例演示如何：</p>
+<ul>
+<li>创建事件组。</li>
+<li>在 ISR 中向事件组置位。</li>
+<li>在任务中向事件组置位。</li>
+<li>阻塞等待事件组。</li>
+</ul>
+<p><code>xEventGroupWaitBits()</code> 的 <code>xWaitForAllBits</code> 参数效果将通过两次运行来展示：先将 <code>xWaitForAllBits</code> 设为 <code>pdFALSE</code>，再设为 <code>pdTRUE</code>。</p>
+<p>事件位 0 与事件位 1 由任务置位；事件位 2 由 ISR 置位。这三个位通过清单 9.6 中的 <code>#define</code> 语句赋予了可读性名称。</p>
+<p><a name="list9.6" title="清单 9.6 示例 9.1 使用的事件位定义"></a></p>
+<pre><code class="language-c">/* Definitions for the event bits in the event group. */
+#define mainFIRST_TASK_BIT ( 1UL &lt;&lt; 0UL )  /* Event bit 0, set by a task */
+#define mainSECOND_TASK_BIT ( 1UL &lt;&lt; 1UL ) /* Event bit 1, set by a task */
+#define mainISR_BIT ( 1UL &lt;&lt; 2UL )         /* Event bit 2, set by an ISR */
+</code></pre>
+<p><strong><em>清单 9.6</em></strong> <em>示例 9.1 使用的事件位定义</em></p>
+<p>清单 9.7 展示了“置位事件位 0 与事件位 1”的任务实现。它在循环中交替置位两个 bit，并在每次调用 <code>xEventGroupSetBits()</code> 之间延时 200 毫秒。每次置位前会打印一条字符串，便于在控制台观察执行顺序。</p>
+<p><a name="list9.7" title="清单 9.7 示例 9.1 中向事件组置两个位的任务"></a></p>
+<pre><code class="language-c">static void vEventBitSettingTask( void *pvParameters )
+{
+     const TickType_t xDelay200ms = pdMS_TO_TICKS( 200UL );
+
+     for( ;; )
+     {
+          /* Delay for a short while before starting the next loop. */
+          vTaskDelay( xDelay200ms );
+
+          /* Print out a message to say event bit 0 is about to be set by the
+              task, then set event bit 0. */
+          vPrintString( &quot;Bit setting task -\t about to set bit 0.\r\n&quot; );
+          xEventGroupSetBits( xEventGroup, mainFIRST_TASK_BIT );
+
+          /* Delay for a short while before setting the other bit. */
+          vTaskDelay( xDelay200ms );
+
+          /* Print out a message to say event bit 1 is about to be set by the
+              task, then set event bit 1. */
+          vPrintString( &quot;Bit setting task -\t about to set bit 1.\r\n&quot; );
+          xEventGroupSetBits( xEventGroup, mainSECOND_TASK_BIT );
+     }
+}
+</code></pre>
+<p><strong><em>清单 9.7</em></strong> <em>示例 9.1 中向事件组置两个位的任务</em></p>
+<p>清单 9.8 展示了在事件组中置位 bit 2 的 ISR 实现。与前面类似，置位前会打印消息，以便观察执行顺序。但本例中由于不应在 ISR 里直接输出到控制台，因此使用 <code>xTimerPendFunctionCallFromISR()</code> 将输出动作放到 RTOS 守护任务上下文中执行。</p>
+<p>与前面的示例一样，这个 ISR 由一个简单的周期任务触发，该任务会强制产生软件中断。本示例中中断每 500 毫秒产生一次。</p>
+<p><a name="list9.8" title="清单 9.8 示例 9.1 中在事件组内置位 bit 2 的 ISR"></a></p>
+<pre><code class="language-c">static uint32_t ulEventBitSettingISR( void )
+{
+     /* The string is not printed within the interrupt service routine, but is
+         instead sent to the RTOS daemon task for printing. It is therefore
+         declared static to ensure the compiler does not allocate the string on
+         the stack of the ISR, as the ISR's stack frame will not exist when the
+         string is printed from the daemon task. */
+     static const char *pcString = &quot;Bit setting ISR -\t about to set bit 2.\r\n&quot;;
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+     /* Print out a message to say bit 2 is about to be set. Messages cannot
+         be printed from an ISR, so defer the actual output to the RTOS daemon
+         task by pending a function call to run in the context of the RTOS
+         daemon task. */
+     xTimerPendFunctionCallFromISR( vPrintStringFromDaemonTask,
+                                              ( void * ) pcString,
+                                              0,
+                                              &amp;xHigherPriorityTaskWoken );
+
+     /* Set bit 2 in the event group. */
+     xEventGroupSetBitsFromISR( xEventGroup,
+                                         mainISR_BIT,
+                                         &amp;xHigherPriorityTaskWoken );
+
+     /* xTimerPendFunctionCallFromISR() and xEventGroupSetBitsFromISR() both
+         write to the timer command queue, and both used the same
+         xHigherPriorityTaskWoken variable. If writing to the timer command
+         queue resulted in the RTOS daemon task leaving the Blocked state, and
+         if the priority of the RTOS daemon task is higher than the priority of
+         the currently executing task (the task this interrupt interrupted) then
+         xHigherPriorityTaskWoken will have been set to pdTRUE.
+
+         xHigherPriorityTaskWoken is used as the parameter to
+         portYIELD_FROM_ISR(). If xHigherPriorityTaskWoken equals pdTRUE, then
+         calling portYIELD_FROM_ISR() will request a context switch. If
+         xHigherPriorityTaskWoken is still pdFALSE, then calling
+         portYIELD_FROM_ISR() will have no effect.
+
+         The implementation of portYIELD_FROM_ISR() used by the Windows port
+         includes a return statement, which is why this function does not
+         explicitly return a value. */
+
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 9.8</em></strong> <em>示例 9.1 中在事件组内置位 bit 2 的 ISR</em></p>
+<p>清单 9.9 展示了调用 <code>xEventGroupWaitBits()</code> 并阻塞等待事件组的任务实现。该任务会针对事件组中每一个被置位的 bit 打印一条字符串。</p>
+<p><code>xEventGroupWaitBits()</code> 的 <code>xClearOnExit</code> 参数设为 <code>pdTRUE</code>，因此使 <code>xEventGroupWaitBits()</code> 返回的事件位会在函数返回前自动清零。</p>
+<p><a name="list9.9" title="清单 9.9 示例 9.1 中阻塞等待事件位被置位的任务"></a></p>
+<pre><code class="language-c">static void vEventBitReadingTask( void *pvParameters )
+{
+     EventBits_t xEventGroupValue;
+     const EventBits_t xBitsToWaitFor = ( mainFIRST_TASK_BIT  |
+                                                      mainSECOND_TASK_BIT |
+                                                      mainISR_BIT );
+
+     for( ;; )
+     {
+          /* Block to wait for event bits to become set within the event
+              group. */
+          xEventGroupValue = xEventGroupWaitBits( /* The event group to read */
+                                                                xEventGroup,
+
+                                                                /* Bits to test */
+                                                                xBitsToWaitFor,
+
+                                                                /* Clear bits on exit if the
+                                                                    unblock condition is met */
+                                                                pdTRUE,
+
+                                                                /* Don't wait for all bits. This
+                                                                    parameter is set to pdTRUE for the
+                                                                    second execution. */
+                                                                pdFALSE,
+
+                                                                /* Don't time out. */
+                                                                portMAX_DELAY );
+
+          /* Print a message for each bit that was set. */
+          if( ( xEventGroupValue &amp; mainFIRST_TASK_BIT ) != 0 )
+          {
+                vPrintString( &quot;Bit reading task -\t Event bit 0 was set\r\n&quot; );
+          }
+
+          if( ( xEventGroupValue &amp; mainSECOND_TASK_BIT ) != 0 )
+          {
+                vPrintString( &quot;Bit reading task -\t Event bit 1 was set\r\n&quot; );
+          }
+
+          if( ( xEventGroupValue &amp; mainISR_BIT ) != 0 )
+          {
+                vPrintString( &quot;Bit reading task -\t Event bit 2 was set\r\n&quot; );
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 9.9</em></strong> <em>示例 9.1 中阻塞等待事件位被置位的任务</em></p>
+<p><code>main()</code> 函数先创建事件组和各任务，再启动调度器。实现见清单 9.10。读取事件组的任务优先级高于写事件组的任务，因此每次其解除阻塞条件满足时，读取任务都会抢占写任务。</p>
+<p><a name="list9.10" title="清单 9.10 示例 9.1 中创建事件组与任务"></a></p>
+<pre><code class="language-c">int main( void )
+{
+     /* Before an event group can be used it must first be created. */
+     xEventGroup = xEventGroupCreate();
+
+     /* Create the task that sets event bits in the event group. */
+     xTaskCreate( vEventBitSettingTask, &quot;Bit Setter&quot;, 1000, NULL, 1, NULL );
+
+     /* Create the task that waits for event bits to get set in the event
+         group. */
+     xTaskCreate( vEventBitReadingTask, &quot;Bit Reader&quot;, 1000, NULL, 2, NULL );
+
+     /* Create the task that is used to periodically generate a software
+         interrupt. */
+     xTaskCreate( vInterruptGenerator, &quot;Int Gen&quot;, 1000, NULL, 3, NULL );
+
+     /* Install the handler for the software interrupt. The syntax necessary
+         to do this is dependent on the FreeRTOS port being used. The syntax
+         shown here can only be used with the FreeRTOS Windows port, where such
+         interrupts are only simulated. */
+     vPortSetInterruptHandler( mainINTERRUPT_NUMBER, ulEventBitSettingISR );
+
+     /* Start the scheduler so the created tasks start executing. */
+     vTaskStartScheduler();
+
+     /* The following line should never be reached. */
+     for( ;; );
+     return 0;
+}
+</code></pre>
+<p><strong><em>清单 9.10</em></strong> <em>示例 9.1 中创建事件组与任务</em></p>
+<p>当示例 9.1 在 <code>xEventGroupWaitBits()</code> 的 <code>xWaitForAllBits</code> 参数设为 <code>pdFALSE</code> 时运行，输出如图 9.3 所示。图中可以看到，由于 <code>xEventGroupWaitBits()</code> 调用中 <code>xWaitForAllBits</code> 为 <code>pdFALSE</code>，读取事件组的任务在任意一个事件位被置位时都会立即离开阻塞态并执行。</p>
+<p><a name="fig9.3" title="图 9.3 示例 9.1 以 xWaitForAllBits=pdFALSE 运行时的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image73.jpg" />
+<strong><em>图 9.3</em></strong> <em>示例 9.1 以 <code>xWaitForAllBits=pdFALSE</code> 运行时的输出</em></p>
+<hr />
+<p>当示例 9.1 在 <code>xEventGroupWaitBits()</code> 的 <code>xWaitForAllBits</code> 参数设为 <code>pdTRUE</code> 时运行，输出如图 9.4 所示。图 9.4 中可以看到，由于 <code>xWaitForAllBits</code> 为 <code>pdTRUE</code>，读取事件组的任务只有在三个事件位全部置位后才会离开阻塞态。</p>
+<p><a name="fig9.4" title="图 9.4 示例 9.1 以 xWaitForAllBits=pdTRUE 运行时的输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image74.jpg" />
+<strong><em>图 9.4</em></strong> <em>示例 9.1 以 <code>xWaitForAllBits=pdTRUE</code> 运行时的输出</em></p>
+<hr />
+<h2 id="94">9.4 使用事件组进行任务同步</h2>
+<p>有时应用设计要求两个或更多任务彼此同步。比如：任务 A 接收到一个事件后，将部分处理委托给任务 B、C、D。若任务 A 在 B、C、D 全部完成前不能接收下一个事件，那么这四个任务就必须同步。每个任务的同步点位于“该任务完成其处理之后”，且在其他任务也完成之前不能继续。只有当四个任务都到达同步点后，任务 A 才能接收下一个事件。</p>
+<p>在 FreeRTOS+TCP 某个演示工程中有一个更具体的同步需求：两个任务共享一个 TCP 套接字；一个任务向套接字发送数据，另一个任务从同一套接字接收数据<sup id="fnref:25"><a class="footnote-ref" href="#fn:25">2</a></sup>。在未确认对方任务不会再访问该套接字之前，任何一方都不能安全地关闭它。若其中一方想关闭套接字，必须先通知另一方，然后等待另一方停止使用套接字后再继续。清单 9.11 的伪代码演示了“发送任务希望关闭套接字”的场景。</p>
+<p>清单 9.11 演示的场景只有两个任务参与同步，因此较为简单；但很容易看出，如果还有其他依赖套接字保持打开状态的处理任务加入，同步场景会更复杂、参与任务也会更多。</p>
+<p><a name="list9.11" title="清单 9.11 两个任务相互同步，确保共享 TCP 套接字在关闭前已不再被任何一方使用的伪代码"></a></p>
+<pre><code class="language-c">void SocketTxTask( void *pvParameters )
+{
+     xSocket_t xSocket;
+     uint32_t ulTxCount = 0UL;
+
+     for( ;; )
+     {
+          /* Create a new socket. This task will send to this socket, and another
+              task will receive from this socket. */
+          xSocket = FreeRTOS_socket( ... );
+
+          /* Connect the socket. */
+          FreeRTOS_connect( xSocket, ... );
+
+          /* Use a queue to send the socket to the task that receives data. */
+          xQueueSend( xSocketPassingQueue, &amp;xSocket, portMAX_DELAY );
+
+          /* Send 1000 messages to the socket before closing the socket. */
+          for( ulTxCount = 0; ulTxCount &lt; 1000; ulTxCount++ )
+          {
+                if( FreeRTOS_send( xSocket, ... ) &lt; 0 )
+                {
+                     /* Unexpected error - exit the loop, after which the socket
+                         will be closed. */
+                     break;
+                }
+          }
+
+          /* Let the Rx task know the Tx task wants to close the socket. */
+          TxTaskWantsToCloseSocket();
+
+          /* This is the Tx task's synchronization point. The Tx task waits here
+              for the Rx task to reach its synchronization point. The Rx task will
+              only reach its synchronization point when it is no longer using the
+              socket, and the socket can be closed safely. */
+          xEventGroupSync( ... );
+
+          /* Neither task is using the socket. Shut down the connection, then
+              close the socket. */
+          FreeRTOS_shutdown( xSocket, ... );
+          WaitForSocketToDisconnect();
+          FreeRTOS_closesocket( xSocket );
+     }
+}
+/*-----------------------------------------------------------*/
+
+void SocketRxTask( void *pvParameters )
+{
+     xSocket_t xSocket;
+
+     for( ;; )
+     {
+          /* Wait to receive a socket that was created and connected by the Tx
+              task. */
+          xQueueReceive( xSocketPassingQueue, &amp;xSocket, portMAX_DELAY );
+
+          /* Keep receiving from the socket until the Tx task wants to close the
+              socket. */
+          while( TxTaskWantsToCloseSocket() == pdFALSE )
+          {
+              /* Receive then process data. */
+              FreeRTOS_recv( xSocket, ... );
+              ProcessReceivedData();
+          }
+
+          /* This is the Rx task's synchronization point - it only reaches here
+              when it is no longer using the socket, and it is therefore safe for
+              the Tx task to close the socket. */
+          xEventGroupSync( ... );
+     }
+}
+</code></pre>
+<p><strong><em>清单 9.11</em></strong> <em>两个任务相互同步，确保共享 TCP 套接字在关闭前已不再被任何一方使用的伪代码</em></p>
+<p>可以使用事件组创建同步点：</p>
+<ul>
+<li>
+<p>为每个参与同步的任务分配一个唯一事件位。</p>
+</li>
+<li>
+<p>每个任务到达同步点时置位自己的事件位。</p>
+</li>
+<li>
+<p>置位自己的位后，每个任务在该事件组上阻塞，等待表示“其他所有同步任务”的事件位也被置位。</p>
+</li>
+</ul>
+<p>但在该场景中不能直接使用 <code>xEventGroupSetBits()</code> 与 <code>xEventGroupWaitBits()</code>。如果这么做，“置位（表示任务到达同步点）”和“测位（判断其他任务是否到达同步点）”会是两个分离操作。看下面这个任务 A、B、C 尝试用事件组同步的例子：</p>
+<ol>
+<li>
+<p>任务 A 和任务 B 已到达同步点，它们的事件位已置位，并都阻塞等待任务 C 的事件位也被置位。</p>
+</li>
+<li>
+<p>任务 C 到达同步点，并调用 <code>xEventGroupSetBits()</code> 置自己的位。C 的位一置上，A 与 B 立刻离开阻塞态，并清除三个事件位。</p>
+</li>
+<li>
+<p>任务 C 随后调用 <code>xEventGroupWaitBits()</code> 等待三个事件位全部置位，但此时三个位已经被清掉，A 与 B 也已离开各自同步点，因此同步失败。</p>
+</li>
+</ol>
+<p>要让事件组可靠地用于同步点，“置位”与“后续测位”必须作为一个不可中断的单一操作执行。为此提供了 <code>xEventGroupSync()</code> API 函数。</p>
+<h3 id="941-xeventgroupsync-api">9.4.1 xEventGroupSync() API 函数</h3>
+<p><code>xEventGroupSync()</code> 用于让两个或更多任务使用事件组彼此同步。它允许任务先在事件组中置一个或多个位，再等待同一事件组中的某个位组合被置位，并且两步是单个不可中断操作。</p>
+<p><code>xEventGroupSync()</code> 的 <code>uxBitsToWaitFor</code> 参数用于指定调用任务的解除阻塞条件。若 <code>xEventGroupSync()</code> 是因为解除阻塞条件满足而返回，则 <code>uxBitsToWaitFor</code> 指定的位会在返回前自动清零。</p>
+<p><a name="list9.12" title="清单 9.12 xEventGroupSync() API 函数原型"></a></p>
+<pre><code class="language-c">EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
+                                      const EventBits_t uxBitsToSet,
+                                      const EventBits_t uxBitsToWaitFor,
+                                      TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 9.12</em></strong> <em><code>xEventGroupSync()</code> API 函数原型</em></p>
+<p><strong>xEventGroupSync() 参数与返回值</strong></p>
+<ul>
+<li><code>xEventGroup</code></li>
+</ul>
+<p>要置位并随后测试的事件组句柄。该句柄应来自创建事件组时对 <code>xEventGroupCreate()</code> 的调用返回值。</p>
+<ul>
+<li><code>uxBitsToSet</code></li>
+</ul>
+<p>位掩码，指定要在事件组中置为 1 的事件位。事件组值会通过“当前值 与 <code>uxBitsToSet</code> 按位或”更新。</p>
+<p>例如将 <code>uxBitsToSet</code> 设为 0x04（二进制 0100）会导致事件位 2 被置位（若尚未置位），其余位不变。</p>
+<ul>
+<li><code>uxBitsToWaitFor</code></li>
+</ul>
+<p>位掩码，指定在事件组中要测试的事件位。</p>
+<p>例如，若调用任务希望等待事件位 0、1、2 全部置位，可将 <code>uxBitsToWaitFor</code> 设为 0x07（二进制 111）。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>任务在阻塞态等待解除阻塞条件满足的最长时间。</p>
+<p>若 <code>xTicksToWait</code> 为 0，或调用 <code>xEventGroupSync()</code> 时解除阻塞条件已满足，则函数立即返回。</p>
+<p>阻塞时间单位为 tick 周期，绝对时长取决于 tick 频率。可使用 <code>pdMS_TO_TICKS()</code> 宏把毫秒转换为 tick。</p>
+<p>若将 <code>xTicksToWait</code> 设为 <code>portMAX_DELAY</code>，则任务会无限期等待（不超时），前提是 FreeRTOSConfig.h 中 <code>INCLUDE_vTaskSuspend</code> 设为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>若 <code>xEventGroupSync()</code> 因调用任务解除阻塞条件满足而返回，则返回值是解除条件满足瞬间的事件组值（自动清零之前）。这种情况下返回值也会满足调用任务的解除阻塞条件。</p>
+<p>若 <code>xEventGroupSync()</code> 因 <code>xTicksToWait</code> 指定阻塞时间超时而返回，则返回值是超时时刻事件组值。这种情况下返回值不会满足调用任务的解除阻塞条件。</p>
+<h2 id="_2"><a name="example9.2" title="示例 9.2 任务同步"></a></h2>
+<p><strong><em>示例 9.2</em></strong> <em>任务同步</em></p>
+<hr />
+<p>示例 9.2 使用 <code>xEventGroupSync()</code> 同步同一个任务实现的三个实例。通过任务参数向每个实例传入“该任务调用 <code>xEventGroupSync()</code> 时要置位的事件位”。</p>
+<p>任务在调用 <code>xEventGroupSync()</code> 前后各打印一条消息，且每条消息都带时间戳。这样可以在输出中观察执行顺序。示例还使用伪随机延时，避免所有任务在同一时刻到达同步点。</p>
+<p>任务实现见清单 9.13。</p>
+<p><a name="list9.13" title="清单 9.13 示例 9.2 中任务实现"></a></p>
+<pre><code class="language-c">static void vSyncingTask( void *pvParameters )
+{
+     const TickType_t xMaxDelay = pdMS_TO_TICKS( 4000UL );
+     const TickType_t xMinDelay = pdMS_TO_TICKS( 200UL );
+     TickType_t xDelayTime;
+     EventBits_t uxThisTasksSyncBit;
+     const EventBits_t uxAllSyncBits = ( mainFIRST_TASK_BIT  |
+                                                     mainSECOND_TASK_BIT |
+                                                     mainTHIRD_TASK_BIT );
+
+     /* Three instances of this task are created - each task uses a different
+         event bit in the synchronization. The event bit to use is passed into
+         each task instance using the task parameter. Store it in the
+         uxThisTasksSyncBit variable. */
+     uxThisTasksSyncBit = ( EventBits_t ) pvParameters;
+
+     for( ;; )
+     {
+          /* Simulate this task taking some time to perform an action by delaying
+              for a pseudo random time. This prevents all three instances of this
+              task reaching the synchronization point at the same time, and so
+              allows the example's behavior to be observed more easily. */
+          xDelayTime = ( rand() % xMaxDelay ) + xMinDelay;
+          vTaskDelay( xDelayTime );
+
+          /* Print out a message to show this task has reached its synchronization
+              point. pcTaskGetTaskName() is an API function that returns the name
+              assigned to the task when the task was created. */
+          vPrintTwoStrings( pcTaskGetTaskName( NULL ), &quot;reached sync point&quot; );
+
+          /* Wait for all the tasks to have reached their respective
+              synchronization points. */
+          xEventGroupSync( /* The event group used to synchronize. */
+                                 xEventGroup,
+
+                                 /* The bit set by this task to indicate it has reached
+                                     the synchronization point. */
+                                 uxThisTasksSyncBit,
+
+                                 /* The bits to wait for, one bit for each task taking
+                                     part in the synchronization. */
+                                 uxAllSyncBits,
+
+                                 /* Wait indefinitely for all three tasks to reach the
+                                     synchronization point. */
+                                 portMAX_DELAY );
+
+          /* Print out a message to show this task has passed its synchronization
+              point. As an indefinite delay was used the following line will only
+              be executed after all the tasks reached their respective
+              synchronization points. */
+          vPrintTwoStrings( pcTaskGetTaskName( NULL ), &quot;exited sync point&quot; );
+     }
+}
+</code></pre>
+<p><strong><em>清单 9.13</em></strong> <em>示例 9.2 中任务实现</em></p>
+<p><code>main()</code> 函数创建事件组、创建三个任务并启动调度器，见清单 9.14。</p>
+<p><a name="list9.14" title="清单 9.14 示例 9.2 使用的 main() 函数"></a></p>
+<pre><code class="language-c">/* Definitions for the event bits in the event group. */
+
+#define mainFIRST_TASK_BIT ( 1UL &lt;&lt; 0UL ) /* Event bit 0, set by the 1st task */
+#define mainSECOND_TASK_BIT( 1UL &lt;&lt; 1UL ) /* Event bit 1, set by the 2nd task */
+#define mainTHIRD_TASK_BIT ( 1UL &lt;&lt; 2UL ) /* Event bit 2, set by the 3rd task */
+
+/* Declare the event group used to synchronize the three tasks. */
+EventGroupHandle_t xEventGroup;
+
+int main( void )
+{
+     /* Before an event group can be used it must first be created. */
+     xEventGroup = xEventGroupCreate();
+
+     /* Create three instances of the task. Each task is given a different
+         name, which is later printed out to give a visual indication of which
+         task is executing. The event bit to use when the task reaches its
+         synchronization point is passed into the task using the task parameter. */
+     xTaskCreate( vSyncingTask, &quot;Task 1&quot;, 1000, mainFIRST_TASK_BIT, 1, NULL );
+     xTaskCreate( vSyncingTask, &quot;Task 2&quot;, 1000, mainSECOND_TASK_BIT, 1, NULL );
+     xTaskCreate( vSyncingTask, &quot;Task 3&quot;, 1000, mainTHIRD_TASK_BIT, 1, NULL );
+
+     /* Start the scheduler so the created tasks start executing. */
+     vTaskStartScheduler();
+
+     /* As always, the following line should never be reached. */
+     for( ;; );
+     return 0;
+}
+</code></pre>
+<p><strong><em>清单 9.14</em></strong> <em>示例 9.2 使用的 <code>main()</code> 函数</em></p>
+<p>示例 9.2 的输出见图 9.5。可以看到，虽然每个任务到达同步点的时间不同（伪随机），但它们离开同步点的时刻相同<sup id="fnref:26"><a class="footnote-ref" href="#fn:26">3</a></sup>（即最后一个任务到达同步点的时刻）。</p>
+<p><a name="fig9.5" title="图 9.5 示例 9.2 运行输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image75.jpg" />
+<strong><em>图 9.5</em></strong> <em>示例 9.2 运行输出</em></p>
+<hr />
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:24">
+<p><code>configTICK_TYPE_WIDTH_IN_BITS</code> 用于配置 RTOS tick 计数所使用的类型，看起来与事件组无关。它对 <code>EventBits_t</code> 类型的影响是 FreeRTOS 内部实现带来的结果。虽然将 <code>configTICK_TYPE_WIDTH_IN_BITS</code> 设为 <code>TICK_TYPE_WIDTH_16_BITS</code> 很有吸引力，但仅应在运行 FreeRTOS 的架构对 16 位类型处理效率高于 32 位类型时这样做。&#160;<a class="footnote-backref" href="#fnref:24" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:25">
+<p>在撰写本书时，这是在任务间共享单个 FreeRTOS+TCP 套接字的唯一方式。&#160;<a class="footnote-backref" href="#fnref:25" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:26">
+<p>图 9.5 展示的是示例在 FreeRTOS Windows 端口上运行的结果，该端口不具备严格实时行为（尤其当使用 Windows 系统调用向控制台打印时），因此会看到一些时序抖动。&#160;<a class="footnote-backref" href="#fnref:26" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

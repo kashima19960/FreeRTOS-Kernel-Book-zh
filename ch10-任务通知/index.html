@@ -1,0 +1,2317 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/">
+      
+      
+        <link rel="prev" href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/">
+      
+      
+        <link rel="next" href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>10 任务通知 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#10" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10 任务通知
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 引言
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.1 引言">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1011" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.1 通过中间对象通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1012" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.2 任务通知——直接面向任务的通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1013" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.3 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 任务通知：优势与限制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.2 任务通知：优势与限制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1021" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.1 任务通知的性能优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1022-ram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.2 任务通知的 RAM 占用优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1023" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.3 任务通知的限制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 使用任务通知
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3 使用任务通知">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1031-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.1 任务通知 API 选项
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3.1 任务通知 API 选项">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#10311-api-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.1.1 API 函数完整列表 27
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1032-xtasknotifygive-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.2 xTaskNotifyGive() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1033-vtasknotifygivefromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.3 vTaskNotifyGiveFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1034-ultasknotifytake-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.4 ulTaskNotifyTake() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1035-xtasknotify-xtasknotifyfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.5 xTaskNotify() 与 xTaskNotifyFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1036-xtasknotifywait-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.6 xTaskNotifyWait() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1037-uart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.7 在外设驱动中使用任务通知：UART 示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1038-adc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.8 在外设驱动中使用任务通知：ADC 示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1039" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.9 在应用中直接使用任务通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 引言
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.1 引言">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1011" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.1 通过中间对象通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1012" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.2 任务通知——直接面向任务的通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1013" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1.3 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 任务通知：优势与限制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.2 任务通知：优势与限制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1021" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.1 任务通知的性能优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1022-ram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.2 任务通知的 RAM 占用优势
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1023" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2.3 任务通知的限制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 使用任务通知
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3 使用任务通知">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1031-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.1 任务通知 API 选项
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3.1 任务通知 API 选项">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#10311-api-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.1.1 API 函数完整列表 27
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1032-xtasknotifygive-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.2 xTaskNotifyGive() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1033-vtasknotifygivefromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.3 vTaskNotifyGiveFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1034-ultasknotifytake-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.4 ulTaskNotifyTake() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1035-xtasknotify-xtasknotifyfromisr-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.5 xTaskNotify() 与 xTaskNotifyFromISR() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1036-xtasknotifywait-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.6 xTaskNotifyWait() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1037-uart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.7 在外设驱动中使用任务通知：UART 示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1038-adc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.8 在外设驱动中使用任务通知：ADC 示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1039" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.9 在应用中直接使用任务通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="10">10 任务通知</h1>
+<h2 id="101">10.1 引言</h2>
+<p>FreeRTOS 应用通常由一组相互独立的任务构成，这些任务通过彼此通信协同实现系统功能。任务通知是一种高效机制，允许一个任务直接通知另一个任务。</p>
+<h3 id="1011">10.1.1 通过中间对象通信</h3>
+<p>本书前文已经介绍了多种任务间通信方式。到目前为止介绍的方法都需要先创建一个通信对象。通信对象的例子包括队列、事件组和多种不同类型的信号量。</p>
+<p>使用通信对象时，事件和数据并不是直接发给接收任务（或接收 ISR），而是先发送到通信对象。同样地，任务和 ISR 也是从通信对象中接收事件与数据，而不是直接从发送方任务或 ISR 接收。图 10.1 展示了该过程。</p>
+<p><a name="fig10.1" title="图 10.1 使用通信对象将事件从一个任务发送到另一个任务"></a></p>
+<hr />
+<p><img alt="" src="../media/image76.png" />  <br />
+<strong><em>图 10.1</em></strong> <em>使用通信对象将事件从一个任务发送到另一个任务</em></p>
+<hr />
+<h3 id="1012">10.1.2 任务通知——直接面向任务的通信</h3>
+<p>“任务通知（Task Notifications）”允许任务之间交互，也允许任务与 ISR 同步，而且不需要单独的通信对象。通过任务通知，任务或 ISR 可以把事件直接发送给目标任务。图 10.2 展示了这种方式。</p>
+<p><a name="fig10.2" title="图 10.2 使用任务通知将事件从一个任务直接发送到另一个任务"></a></p>
+<hr />
+<p><img alt="" src="../media/image77.png" />  <br />
+<strong><em>图 10.2</em></strong> <em>使用任务通知将事件从一个任务直接发送到另一个任务</em></p>
+<hr />
+<p>任务通知功能是可选的。要启用任务通知功能，请在 FreeRTOSConfig.h 中将 <code>configUSE_TASK_NOTIFICATIONS</code> 设为 1。</p>
+<p>当 <code>configUSE_TASK_NOTIFICATIONS</code> 为 1 时，每个任务至少拥有一个“通知状态（Notification State）”（取值为“Pending”或“Not-Pending”）和一个“通知值（Notification Value）”（32 位无符号整数）。当任务收到通知时，其通知状态会变为 pending；当任务读取通知值时，其通知状态会变为 not-pending。若 <code>configTASK_NOTIFICATION_ARRAY_ENTRIES</code> 设为大于 1，则会存在多个通过索引区分的通知状态和通知值。</p>
+<p>任务可以在阻塞态（可选超时）等待其通知状态变为 pending。</p>
+<h3 id="1013">10.1.3 范围</h3>
+<p>本章将讨论：</p>
+<ul>
+<li>任务的通知状态与通知值。</li>
+<li>在何种情况下可用任务通知替代通信对象（例如信号量）。</li>
+<li>使用任务通知替代通信对象的优势。</li>
+</ul>
+<h2 id="102">10.2 任务通知：优势与限制</h2>
+<h3 id="1021">10.2.1 任务通知的性能优势</h3>
+<p>使用任务通知向任务发送事件或数据，速度显著快于使用队列、信号量或事件组执行等效操作。</p>
+<h3 id="1022-ram">10.2.2 任务通知的 RAM 占用优势</h3>
+<p>同样地，使用任务通知向任务发送事件或数据所需 RAM 显著少于使用队列、信号量或事件组执行等效操作。原因在于：每个通信对象（队列、信号量或事件组）在使用前都必须被创建，而启用任务通知功能只有固定开销。任务通知的 RAM 成本是每个任务 <code>configTASK_NOTIFICATION_ARRAY_ENTRIES * 5</code> 字节。<code>configTASK_NOTIFICATION_ARRAY_ENTRIES</code> 默认值为 1，因此默认任务通知开销是每任务 5 字节。</p>
+<h3 id="1023">10.2.3 任务通知的限制</h3>
+<p>任务通知比通信对象更快、占用 RAM 更少，但并非所有场景都适用。以下场景不适合使用任务通知：</p>
+<ul>
+<li>向 ISR 发送事件或数据</li>
+</ul>
+<p>通信对象可用于 ISR→任务，也可用于任务→ISR 的事件/数据传递。</p>
+<p>任务通知可用于 ISR→任务，但不能用于任务→ISR。</p>
+<ul>
+<li>启用多个接收任务</li>
+</ul>
+<p>通信对象可被任何知道其句柄的任务或 ISR 访问（句柄可能是队列句柄、信号量句柄或事件组句柄）。任意数量的任务和 ISR 都可以处理发送到某个通信对象的数据或事件。</p>
+<p>任务通知是直接发送到接收任务，因此只能由该任务处理。不过在实践中这很少是限制，因为虽然多个任务/ISR 向同一通信对象发送很常见，但多个任务/ISR 从同一通信对象接收并不常见。</p>
+<ul>
+<li>缓冲多个数据项</li>
+</ul>
+<p>队列是一种可同时容纳多个数据项的通信对象。已经发送到队列但尚未被接收的数据会缓冲在队列对象内部。</p>
+<p>任务通知通过更新目标任务的通知值来传递数据，而任务通知值同一时刻只能保存一个值。</p>
+<ul>
+<li>向多个任务广播</li>
+</ul>
+<p>事件组是一种可以同时向多个任务发送事件的通信对象。</p>
+<p>任务通知是直接发往单个目标任务的，因此只能被该接收任务处理。</p>
+<ul>
+<li>在阻塞态等待“发送完成”</li>
+</ul>
+<p>若通信对象暂时处于“无法继续写入”的状态（例如队列满，无法继续发送），尝试写入的任务可以选择进入阻塞态等待写操作完成。</p>
+<p>若任务尝试向一个“已经有通知 pending”的任务发送任务通知，则发送任务无法进入阻塞态等待接收任务重置其通知状态。正如后文将看到的，在任务通知常见用法中，这通常也不构成实际限制。</p>
+<h2 id="103">10.3 使用任务通知</h2>
+<h3 id="1031-api">10.3.1 任务通知 API 选项</h3>
+<p>任务通知功能非常强大，很多情况下可替代二值信号量、计数信号量、事件组，甚至有时可替代队列。实现这类广泛用法可通过 <code>xTaskNotify()</code> 发送通知、<code>xTaskNotifyWait()</code> 接收通知。</p>
+<p>但在大多数场景中，并不需要 <code>xTaskNotify()</code> / <code>xTaskNotifyWait()</code> 提供的全部灵活性，更简单的函数就足够。因此提供了 <code>xTaskNotifyGive()</code> 作为更简单但不那么灵活的 <code>xTaskNotify()</code> 替代项，同时提供了 <code>ulTaskNotifyTake()</code> 作为更简单但不那么灵活的 <code>xTaskNotifyWait()</code> 替代项。</p>
+<p>任务通知系统不只支持一个通知事件。配置参数 <code>configTASK_NOTIFICATION_ARRAY_ENTRIES</code> 默认值为 1。若其设置为大于 1，则每个任务内部会创建一个通知数组，从而可通过索引管理通知。每个任务通知 API 函数都有对应的“带索引版本”。使用非索引版本时，默认访问 <code>notification[0]</code>（数组中的第一个）。每个 API 的带索引版本以 <code>Indexed</code> 后缀标识，例如 <code>xTaskNotify</code> 对应 <code>xTaskNotifyIndexed</code>。为简化叙述，本书后续仅使用非索引版本。</p>
+<p>任务通知 API 实际上以宏形式实现，宏会调用底层 <code>Generic</code> 版本函数。为简化表达，本书仍把这些 API 宏称为“函数”。</p>
+<h4 id="10311-api-27">10.3.1.1 API 函数完整列表 <sup>27</sup></h4>
+<ul>
+<li><code>xTaskNotifyGive</code></li>
+<li><code>xTaskNotifyGiveIndexed</code></li>
+<li><code>vTaskNotifyGiveFromISR</code></li>
+<li><code>vTaskNotifyGiveIndexedFromISR</code></li>
+<li><code>vTaskNotifyTake</code></li>
+<li><code>vTaskNotifyTakeIndexed</code></li>
+<li><code>xTaskNotify</code></li>
+<li><code>xTaskNotifyIndexed</code></li>
+<li><code>xTaskNotifyWait</code></li>
+<li><code>xTaskNotifyWaitIndexed</code></li>
+<li><code>xTaskNotifyStateClear</code></li>
+<li><code>xTaskNotifyStateClearIndexed</code></li>
+<li><code>ulTaskNotifyValueClear</code></li>
+<li><code>ulTaskNotifyValueClearIndexed</code></li>
+<li><code>xTaskNotifyAndQueryIndexedFromISR</code></li>
+<li><code>xTaskNotifyAndQueryFromISR</code></li>
+<li><code>xTaskNotifyFromISR</code></li>
+<li><code>xTaskNotifyIndexedFromISR</code></li>
+<li><code>xTaskNotifyAndQuery</code></li>
+<li><code>xTaskNotifyAndQueryIndexed</code></li>
+</ul>
+<p><em>(27): 这些函数实际都以宏方式实现。</em></p>
+<blockquote>
+<p>注意：不存在“在 ISR 中接收通知”的 <code>FromISR</code> 函数，因为通知总是发送给任务，而中断并不与某个任务关联。</p>
+</blockquote>
+<h3 id="1032-xtasknotifygive-api">10.3.2 xTaskNotifyGive() API 函数</h3>
+<p><code>xTaskNotifyGive()</code> 会直接向任务发送通知，并将接收任务的通知值加 1。调用 <code>xTaskNotifyGive()</code> 会把接收任务通知状态设为 pending（若之前不是 pending）。</p>
+<p><code>xTaskNotifyGive()</code> 旨在让任务通知可作为二值/计数信号量的更轻量、更快速替代方案。</p>
+<p><a name="list10.1" title="清单 10.1 xTaskNotifyGive() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTaskNotifyGive( TaskHandle_t xTaskToNotify );
+BaseType_t xTaskNotifyGiveIndexed( TaskHandle_t xTaskToNotify, UBaseType_t uxIndexToNotify );
+</code></pre>
+<p><strong><em>清单 10.1</em></strong> <em><code>xTaskNotifyGive()</code> API 函数原型</em></p>
+<p><strong>xTaskNotifyGive()/xTaskNotifyGiveIndexed() 参数与返回值</strong></p>
+<ul>
+<li><code>xTaskToNotify</code></li>
+</ul>
+<p>要接收通知的任务句柄——关于如何获取任务句柄，请参考 <code>xTaskCreate()</code> API 函数的 <code>pxCreatedTask</code> 参数说明。</p>
+<ul>
+<li><code>uxIndexToNotify</code></li>
+</ul>
+<p>通知数组中的索引。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p><code>xTaskNotifyGive()</code> 是调用 <code>xTaskNotify()</code> 的宏。该宏传给 <code>xTaskNotify()</code> 的参数配置保证了其唯一可能返回值是 <code>pdPASS</code>。<code>xTaskNotify()</code> 会在本章后文介绍。</p>
+<h3 id="1033-vtasknotifygivefromisr-api">10.3.3 vTaskNotifyGiveFromISR() API 函数</h3>
+<p><code>vTaskNotifyGiveFromISR()</code> 是 <code>xTaskNotifyGive()</code> 的 ISR 版本，可在中断服务程序中使用。</p>
+<p><a name="list10.2" title="清单 10.2 vTaskNotifyGiveFromISR() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskNotifyGiveFromISR( TaskHandle_t xTaskToNotify,
+                                      BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 10.2</em></strong> <em><code>vTaskNotifyGiveFromISR()</code> API 函数原型</em></p>
+<p><strong>vTaskNotifyGiveFromISR() 参数与返回值</strong></p>
+<ul>
+<li><code>xTaskToNotify</code></li>
+</ul>
+<p>要接收通知的任务句柄——关于如何获取任务句柄，请参考 <code>xTaskCreate()</code> API 函数的 <code>pxCreatedTask</code> 参数说明。</p>
+<ul>
+<li><code>pxHigherPriorityTaskWoken</code></li>
+</ul>
+<p>若被通知任务正阻塞等待通知，则发送通知会使其离开阻塞态。</p>
+<p>若调用 <code>vTaskNotifyGiveFromISR()</code> 导致某任务离开阻塞态，且该任务优先级高于当前执行任务（被中断的任务），则 <code>vTaskNotifyGiveFromISR()</code> 内部会将 <code>*pxHigherPriorityTaskWoken</code> 设为 <code>pdTRUE</code>。</p>
+<p>若该值被设为 <code>pdTRUE</code>，则应在退出中断前执行一次上下文切换，以确保中断直接返回到最高优先级就绪态任务。</p>
+<p>与所有中断安全 API 一样，<code>pxHigherPriorityTaskWoken</code> 在使用前必须初始化为 <code>pdFALSE</code>。</p>
+<h3 id="1034-ultasknotifytake-api">10.3.4 ulTaskNotifyTake() API 函数</h3>
+<p><code>ulTaskNotifyTake()</code> 允许任务在阻塞态等待其通知值大于 0；函数返回前会将该通知值减 1（decrement）或清零。</p>
+<p><code>ulTaskNotifyTake()</code> 的目标是让任务通知成为二值/计数信号量的更轻量、更快速替代方案。</p>
+<p><a name="list10.3" title="清单 10.3 ulTaskNotifyTake() API 函数原型"></a></p>
+<pre><code class="language-c">uint32_t ulTaskNotifyTake( BaseType_t xClearCountOnExit, TickType_t
+xTicksToWait );
+</code></pre>
+<p><strong><em>清单 10.3</em></strong> <em><code>ulTaskNotifyTake()</code> API 函数原型</em></p>
+<p><strong>ulTaskNotifyTake() 参数与返回值</strong></p>
+<ul>
+<li><code>xClearCountOnExit</code></li>
+</ul>
+<p>若 <code>xClearCountOnExit</code> 设为 <code>pdTRUE</code>，则调用任务的通知值会在 <code>ulTaskNotifyTake()</code> 返回前被清零。</p>
+<p>若 <code>xClearCountOnExit</code> 设为 <code>pdFALSE</code>，且调用任务通知值大于 0，则调用任务通知值会在 <code>ulTaskNotifyTake()</code> 返回前减 1。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>调用任务在阻塞态等待通知值大于 0 的最长时间。</p>
+<p>阻塞时间单位为 tick 周期，其绝对时间取决于 tick 频率。可使用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。</p>
+<p>若将 <code>xTicksToWait</code> 设为 <code>portMAX_DELAY</code>，则任务会无限期等待（不超时），前提是 <code>FreeRTOSConfig.h</code> 中 <code>INCLUDE_vTaskSuspend</code> 设为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>返回值是调用任务的通知值在被清零或减 1 <em>之前</em> 的值，具体由 <code>xClearCountOnExit</code> 参数决定。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），且返回值非 0，则调用任务可能先进入阻塞态等待通知值大于 0，随后在超时前通知值被更新。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），且返回值为 0，则调用任务进入阻塞态后在通知值变为大于 0 之前先超时。</p>
+<h2 id="_1"><a name="example10.1" title="示例 10.1 用任务通知替代信号量，方法 1"></a></h2>
+<p><strong><em>示例 10.1</em></strong> <em>用任务通知替代信号量，方法 1</em></p>
+<hr />
+<p>示例 7.1 使用二值信号量在 ISR 中解除任务阻塞——本质上实现了任务与中断同步。本示例复现示例 7.1 的功能，但把二值信号量替换为“直接到任务”的通知。</p>
+<p>清单 10.4 展示了与中断同步的任务实现。示例 7.1 中使用的 <code>xSemaphoreTake()</code> 被替换为 <code>ulTaskNotifyTake()</code>。</p>
+<p><code>ulTaskNotifyTake()</code> 的 <code>xClearCountOnExit</code> 参数设为 <code>pdTRUE</code>，这会在 <code>ulTaskNotifyTake()</code> 返回前把接收任务通知值清零。因此，两次 <code>ulTaskNotifyTake()</code> 调用之间必须处理所有已到达事件。示例 7.1 中使用二值信号量，因此待处理事件数需从硬件判断，这并不总是方便。示例 10.1 中待处理事件数由 <code>ulTaskNotifyTake()</code> 返回。</p>
+<p>两次 <code>ulTaskNotifyTake</code> 调用之间发生的中断事件会被“锁存”在任务通知值中。若调用任务已存在 pending 通知，<code>ulTaskNotifyTake()</code> 会立即返回。</p>
+<p><a name="list10.4" title="清单 10.4 示例 10.1 中将中断处理延后到任务执行（与中断同步的任务）"></a></p>
+<pre><code class="language-c">/* The rate at which the periodic task generates software interrupts. */
+const TickType_t xInterruptFrequency = pdMS_TO_TICKS( 500UL );
+
+static void vHandlerTask( void *pvParameters )
+{
+     /* xMaxExpectedBlockTime is set to be a little longer than the maximum
+         expected time between events. */
+     const TickType_t xMaxExpectedBlockTime = xInterruptFrequency +
+                                                            pdMS_TO_TICKS( 10 );
+     uint32_t ulEventsToProcess;
+
+     /* As per most tasks, this task is implemented within an infinite loop. */
+     for( ;; )
+     {
+          /* Wait to receive a notification sent directly to this task from the
+              interrupt service routine. */
+          ulEventsToProcess = ulTaskNotifyTake( pdTRUE, xMaxExpectedBlockTime );
+          if( ulEventsToProcess != 0 )
+          {
+                /* To get here at least one event must have occurred. Loop here 
+                    until all the pending events have been processed (in this case,
+                    just print out a message for each event). */
+                while( ulEventsToProcess &gt; 0 )
+                {
+                     vPrintString( &quot;Handler task - Processing event.\r\n&quot; );
+                     ulEventsToProcess--;
+                }
+          }
+          else
+          {
+                /* If this part of the function is reached then an interrupt did 
+                    not arrive within the expected time, and (in a real application)
+                    it may be necessary to perform some error recovery operations. */
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 10.4</em></strong> <em>示例 10.1 中将中断处理延后到任务执行（与中断同步的任务）</em></p>
+<p>用于产生软件中断的周期任务会在中断产生前后各打印一条消息，以便在输出中观察执行顺序。</p>
+<p>清单 10.5 展示中断处理函数实现。其核心动作很少，主要就是直接向“被延后处理的任务”发送通知。</p>
+<p><a name="list10.5" title="清单 10.5 示例 10.1 中断服务程序实现"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+     BaseType_t xHigherPriorityTaskWoken;
+
+     /* The xHigherPriorityTaskWoken parameter must be initialized to pdFALSE as
+         it will get set to pdTRUE inside the interrupt safe API function if a
+         context switch is required. */
+     xHigherPriorityTaskWoken = pdFALSE;
+
+     /* Send a notification directly to the task to which interrupt processing 
+         is being deferred. */
+     vTaskNotifyGiveFromISR( /* The handle of the task to which the notification
+                                         is being sent. The handle was saved when the task
+                                         was created. */
+                                     xHandlerTask,
+
+                                     /* xHigherPriorityTaskWoken is used in the usual 
+                                         way. */
+                                     &amp;xHigherPriorityTaskWoken );
+
+     /* Pass the xHigherPriorityTaskWoken value into portYIELD_FROM_ISR(). If 
+         xHigherPriorityTaskWoken was set to pdTRUE inside vTaskNotifyGiveFromISR()
+         then calling portYIELD_FROM_ISR() will request a context switch. If
+         xHigherPriorityTaskWoken is still pdFALSE then calling 
+         portYIELD_FROM_ISR() will have no effect. The implementation of
+         portYIELD_FROM_ISR() used by the Windows port includes a return statement,
+         which is why this function does not explicitly return a value. */
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 10.5</em></strong> <em>示例 10.1 中断服务程序实现</em></p>
+<p>示例 10.1 的输出如图 10.3 所示。正如预期，它与示例 7.1 的输出相同。<code>vHandlerTask()</code> 在中断产生后立即进入运行态，因此该任务输出会“切开”周期任务输出。图 10.4 提供了更进一步说明。</p>
+<p><a name="fig10.3" title="图 10.3 示例 7.1 执行输出"></a>
+<a name="fig10.4" title="图 10.4 示例 10.1 执行时序"></a></p>
+<hr />
+<p><img alt="" src="../media/image78.png" />  <br />
+<strong><em>图 10.3</em></strong> <em>示例 7.1 执行输出</em></p>
+<p><img alt="" src="../media/image79.png" />  <br />
+<strong><em>图 10.4</em></strong> <em>示例 10.1 执行时序</em></p>
+<hr />
+<h2 id="_2"><a name="example10.2" title="示例 10.2 用任务通知替代信号量，方法 2"></a></h2>
+<p><strong><em>示例 10.2</em></strong> <em>用任务通知替代信号量，方法 2</em></p>
+<hr />
+<p>在示例 10.1 中，<code>ulTaskNotifyTake()</code> 的 <code>xClearOnExit</code> 参数设置为 <code>pdTRUE</code>。示例 10.2 在示例 10.1 基础上做了小幅修改，用于展示 <code>ulTaskNotifyTake()</code> 的 <code>xClearOnExit</code> 改为 <code>pdFALSE</code> 时的行为。</p>
+<p>当 <code>xClearOnExit</code> 为 <code>pdFALSE</code> 时，调用 <code>ulTaskNotifyTake()</code> 只会把调用任务通知值减 1，而不是清零。因此通知计数表示“已发生事件数 - 已处理事件数”。这使 <code>vHandlerTask()</code> 可在两个方面简化：</p>
+<ol>
+<li>
+<p>待处理事件数保存在通知值中，无需再用局部变量保存。</p>
+</li>
+<li>
+<p>两次 <code>ulTaskNotifyTake()</code> 调用之间只需处理一个事件。</p>
+</li>
+</ol>
+<p>示例 10.2 的 <code>vHandlerTask()</code> 实现见清单 10.6。</p>
+<p><a name="list10.6" title="清单 10.6 示例 10.2 中将中断处理延后到任务执行（与中断同步的任务）"></a></p>
+<pre><code class="language-c">static void vHandlerTask( void *pvParameters )
+{
+     /* xMaxExpectedBlockTime is set to be a little longer than the maximum 
+         expected time between events. */
+     const TickType_t xMaxExpectedBlockTime = xInterruptFrequency + 
+                                                            pdMS_TO_TICKS( 10 );
+
+     /* As per most tasks, this task is implemented within an infinite loop. */
+     for( ;; )
+     {
+          /* Wait to receive a notification sent directly to this task from the
+              interrupt service routine. The xClearCountOnExit parameter is now
+              pdFALSE, so the task's notification value will be decremented by
+              ulTaskNotifyTake(), and not cleared to zero. */
+          if( ulTaskNotifyTake( pdFALSE, xMaxExpectedBlockTime ) != 0 )
+          {
+                /* To get here an event must have occurred. Process the event (in 
+                    this case just print out a message). */
+                vPrintString( &quot;Handler task - Processing event.\r\n&quot; );
+          }
+          else
+          {
+                /* If this part of the function is reached then an interrupt did 
+                    not arrive within the expected time, and (in a real application)
+                    it may be necessary to perform some error recovery operations. */
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 10.6</em></strong> <em>示例 10.2 中将中断处理延后到任务执行（与中断同步的任务）</em></p>
+<p>为了演示效果，中断服务程序也改为“每次中断发送多个任务通知”，从而模拟高频多次中断。示例 10.2 的 ISR 实现见清单 10.7。</p>
+<p><a name="list10.7" title="清单 10.7 示例 10.2 中断服务程序实现"></a></p>
+<pre><code class="language-c">static uint32_t ulExampleInterruptHandler( void )
+{
+     BaseType_t xHigherPriorityTaskWoken;
+
+     xHigherPriorityTaskWoken = pdFALSE;
+
+     /* Send a notification to the handler task multiple times. The first
+         'give' will unblock the task, the following 'gives' are to demonstrate 
+         that the receiving task's notification value is being used to count 
+         (latch) events - allowing the task to process each event in turn. */
+     vTaskNotifyGiveFromISR( xHandlerTask, &amp;xHigherPriorityTaskWoken );
+     vTaskNotifyGiveFromISR( xHandlerTask, &amp;xHigherPriorityTaskWoken );
+     vTaskNotifyGiveFromISR( xHandlerTask, &amp;xHigherPriorityTaskWoken );
+
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 10.7</em></strong> <em>示例 10.2 中断服务程序实现</em></p>
+<p>示例 10.2 的输出如图 10.5 所示。可以看到，每次中断产生时，<code>vHandlerTask()</code> 都会处理全部三个事件。</p>
+<p><a name="fig10.5" title="图 10.5 示例 10.2 执行输出"></a></p>
+<hr />
+<p><img alt="" src="../media/image80.jpg" />  <br />
+<strong><em>图 10.5</em></strong> <em>示例 10.2 执行输出</em></p>
+<hr />
+<h3 id="1035-xtasknotify-xtasknotifyfromisr-api">10.3.5 xTaskNotify() 与 xTaskNotifyFromISR() API 函数</h3>
+<p><code>xTaskNotify()</code> 是 <code>xTaskNotifyGive()</code> 的增强版本，可按以下任一方式更新接收任务的通知值：</p>
+<ul>
+<li>
+<p>对接收任务通知值递增（加 1），此时 <code>xTaskNotify()</code> 等价于 <code>xTaskNotifyGive()</code>。</p>
+</li>
+<li>
+<p>在接收任务通知值中置一个或多个 bit。
+  这样可将任务通知值用作事件组的更轻量、更快速替代。</p>
+</li>
+<li>
+<p>把一个全新数值写入接收任务通知值，但前提是接收任务自上次更新后已读取过该通知值。
+  这样可获得类似“长度为 1 的队列”的语义。</p>
+</li>
+<li>
+<p>无论接收任务是否已读取上次通知值，都把一个全新数值写入通知值。
+  这样可获得类似 <code>xQueueOverwrite()</code> API 函数的语义，常被称为“邮箱（mailbox）”行为。</p>
+</li>
+</ul>
+<p><code>xTaskNotify()</code> 比 <code>xTaskNotifyGive()</code> 更灵活、能力更强，但也因此稍复杂一些。</p>
+<p><code>xTaskNotifyFromISR()</code> 是 <code>xTaskNotify()</code> 的 ISR 版本，因此额外包含 <code>pxHigherPriorityTaskWoken</code> 参数。</p>
+<p>调用 <code>xTaskNotify()</code> 总会把接收任务通知状态设为 pending（若此前不是 pending）。</p>
+<p><a name="list10.8" title="清单 10.8 xTaskNotify() 与 xTaskNotifyFromISR() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTaskNotify( TaskHandle_t xTaskToNotify,
+                                uint32_t ulValue,
+                                eNotifyAction eAction );
+
+BaseType_t xTaskNotifyFromISR( TaskHandle_t xTaskToNotify,
+                                         uint32_t ulValue,
+                                         eNotifyAction eAction,
+                                         BaseType_t *pxHigherPriorityTaskWoken );
+</code></pre>
+<p><strong><em>清单 10.8</em></strong> <em><code>xTaskNotify()</code> 与 <code>xTaskNotifyFromISR()</code> API 函数原型</em></p>
+<p><strong>xTaskNotify() 参数与返回值</strong></p>
+<ul>
+<li><code>xTaskToNotify</code></li>
+</ul>
+<p>要接收通知的任务句柄——关于如何获取任务句柄，请参考 <code>xTaskCreate()</code> API 函数的 <code>pxCreatedTask</code> 参数说明。</p>
+<ul>
+<li><code>ulValue</code></li>
+</ul>
+<p><code>ulValue</code> 的用途取决于 <code>eNotifyAction</code> 的取值，详见下文。</p>
+<ul>
+<li><code>eNotifyAction</code></li>
+</ul>
+<p>枚举类型，指定如何更新接收任务通知值，详见下文。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p><code>xTaskNotify()</code> 除了下文注明的一种情况外，都会返回 <code>pdPASS</code>。</p>
+<p><strong>xTaskNotify() 的有效 eNotifyAction 取值及其对接收任务通知值的影响</strong></p>
+<ul>
+<li><code>eNoAction</code></li>
+</ul>
+<p>将接收任务通知状态设为 pending，但不更新其通知值。<code>xTaskNotify()</code> 的 <code>ulValue</code> 参数在此模式下不使用。</p>
+<p><code>eNoAction</code> 可将任务通知用作二值信号量的更快、更轻量替代。</p>
+<ul>
+<li><code>eSetBits</code></li>
+</ul>
+<p>接收任务通知值与 <code>xTaskNotify()</code> 的 <code>ulValue</code> 做按位 OR。比如 <code>ulValue=0x01</code> 时会置通知值 bit0；再如 <code>ulValue=0x06</code>（二进制 0110）时会置 bit1 与 bit2。</p>
+<p><code>eSetBits</code> 可将任务通知用作事件组的更快、更轻量替代。</p>
+<ul>
+<li><code>eIncrement</code></li>
+</ul>
+<p>接收任务通知值加 1。<code>xTaskNotify()</code> 的 <code>ulValue</code> 参数在此模式下不使用。</p>
+<p><code>eIncrement</code> 可将任务通知用作二值/计数信号量的更快、更轻量替代，其行为等价于更简单的 <code>xTaskNotifyGive()</code>。</p>
+<ul>
+<li><code>eSetValueWithoutOverwrite</code></li>
+</ul>
+<p>若 <code>xTaskNotify()</code> 调用前接收任务已是 pending，则不执行任何操作并返回 <code>pdFAIL</code>。</p>
+<p>若调用前接收任务不是 pending，则将其通知值设置为 <code>xTaskNotify()</code> 的 <code>ulValue</code> 参数。</p>
+<ul>
+<li><code>eSetValueWithOverwrite</code></li>
+</ul>
+<p>无论 <code>xTaskNotify()</code> 调用前接收任务是否为 pending，都将其通知值设为 <code>ulValue</code>。</p>
+<h3 id="1036-xtasknotifywait-api">10.3.6 xTaskNotifyWait() API 函数</h3>
+<p><code>xTaskNotifyWait()</code> 是 <code>ulTaskNotifyTake()</code> 的增强版本。它允许任务在通知状态尚未 pending 时，以可选超时方式等待其变为 pending。<code>xTaskNotifyWait()</code> 支持在函数入口与出口分别清除调用任务通知值中的指定位。</p>
+<p><a name="list10.9" title="清单 10.9 xTaskNotifyWait() API 函数原型"></a></p>
+<pre><code class="language-c">BaseType_t xTaskNotifyWait( uint32_t   ulBitsToClearOnEntry,
+                                     uint32_t   ulBitsToClearOnExit,
+                                     uint32_t   *pulNotificationValue,
+                                     TickType_t xTicksToWait );
+</code></pre>
+<p><strong><em>清单 10.9</em></strong> <em><code>xTaskNotifyWait()</code> API 函数原型</em></p>
+<p><strong>xTaskNotifyWait() 参数与返回值</strong></p>
+<ul>
+<li><code>ulBitsToClearOnEntry</code></li>
+</ul>
+<p>若调用任务在进入 <code>xTaskNotifyWait()</code> 前并非 pending，则 <code>ulBitsToClearOnEntry</code> 中置位的 bit 会在函数入口处从任务通知值中清除。</p>
+<p>例如，若 <code>ulBitsToClearOnEntry</code> 为 0x01，则清除任务通知值 bit0；若设为 0xffffffff（<code>ULONG_MAX</code>），则清除通知值全部 bit（即清零）。</p>
+<ul>
+<li><code>ulBitsToClearOnExit</code></li>
+</ul>
+<p>若调用任务因收到通知而退出 <code>xTaskNotifyWait()</code>，或调用时已是 pending，则 <code>ulBitsToClearOnExit</code> 中置位的 bit 会在函数返回前从任务通知值中清除。</p>
+<p>清位操作发生在通知值写入 <code>*pulNotificationValue</code> 之后（见下文 <code>pulNotificationValue</code> 说明）。</p>
+<p>例如，若 <code>ulBitsToClearOnExit</code> 为 0x03，则函数返回前会清除通知值 bit0 与 bit1。</p>
+<p>将 <code>ulBitsToClearOnExit</code> 设为 0xffffffff（<code>ULONG_MAX</code>）可清除通知值全部 bit（即清零）。</p>
+<ul>
+<li><code>pulNotificationValue</code></li>
+</ul>
+<p>用于传出任务通知值。写入 <code>*pulNotificationValue</code> 的值是“按 <code>ulBitsToClearOnExit</code> 清位之前”的通知值。</p>
+<p><code>pulNotificationValue</code> 是可选参数，如不需要可设为 NULL。</p>
+<ul>
+<li><code>xTicksToWait</code></li>
+</ul>
+<p>调用任务在阻塞态等待通知状态变为 pending 的最长时间。</p>
+<p>阻塞时间以 tick 周期表示，绝对时间取决于 tick 频率。可用 <code>pdMS_TO_TICKS()</code> 将毫秒转换为 tick。</p>
+<p>若设为 <code>portMAX_DELAY</code>，任务将无限期等待（不超时），前提是 <code>FreeRTOSConfig.h</code> 中 <code>INCLUDE_vTaskSuspend</code> 设为 1。</p>
+<ul>
+<li>返回值</li>
+</ul>
+<p>可能返回两个值：</p>
+<ul>
+<li>
+<p><code>pdTRUE</code></p>
+<p>表示 <code>xTaskNotifyWait()</code> 返回是因为收到了通知，或调用时任务本就已有 pending 通知。</p>
+<p>若指定了阻塞时间（<code>xTicksToWait</code> 非 0），调用任务可能先进入阻塞态等待通知状态变为 pending，并在超时前收到通知。</p>
+</li>
+<li>
+<p><code>pdFALSE</code></p>
+<p>表示 <code>xTaskNotifyWait()</code> 返回时调用任务未收到任务通知。</p>
+<p>若 <code>xTicksToWait</code> 非 0，说明调用任务曾阻塞等待通知状态变为 pending，但在超时前未等到。</p>
+</li>
+</ul>
+<h3 id="1037-uart">10.3.7 在外设驱动中使用任务通知：UART 示例</h3>
+<p>外设驱动库通常提供用于常见硬件接口操作的函数。常见外设包括 UART、SPI、ADC、以太网口等。此类库函数通常包括：外设初始化、向外设发送数据、从外设接收数据等。</p>
+<p>有些外设操作完成时间较长，例如高精度 ADC 转换、大包 UART 发送。对此，驱动库函数可以通过轮询（反复读取）外设状态寄存器来判断操作何时结束。但这种轮询通常很浪费：在没有有效处理发生时，它可能占满 100% 处理器时间。对于多任务系统，这种浪费尤其昂贵，因为轮询外设的任务可能阻止了低优先级任务执行，而后者可能有真正有价值的工作要做。</p>
+<p>为避免处理器时间浪费，高效的 RTOS 感知驱动应采用中断驱动，并让发起耗时操作的任务可选择进入阻塞态等待完成。这样，在该任务阻塞期间，低优先级任务可运行；也避免任务在无法产生有效工作时占用处理器。</p>
+<p>RTOS 感知驱动库常见做法是使用二值信号量将任务置入阻塞态。清单 10.10 的伪代码演示了该技术，给出了一个 RTOS 感知 UART 发送库函数的轮廓。清单 10.10 中：</p>
+<ul>
+<li>
+<p><code>xUART</code> 是描述 UART 外设并保存状态信息的结构体。其成员 <code>xTxSemaphore</code> 类型为 <code>SemaphoreHandle_t</code>，假设该信号量已创建。</p>
+</li>
+<li>
+<p><code>xUART_Send()</code> 函数不包含互斥逻辑。若多个任务会调用 <code>xUART_Send()</code>，应用编写者需在应用层自行管理互斥，例如先获取一个互斥量再调用 <code>xUART_Send()</code>。</p>
+</li>
+<li>
+<p><code>xSemaphoreTake()</code> 用于在启动 UART 发送后将调用任务置入阻塞态。</p>
+</li>
+<li>
+<p><code>xSemaphoreGiveFromISR()</code> 用于在发送完成后（即 UART 发送完成 ISR 执行时）将任务从阻塞态移出。</p>
+</li>
+</ul>
+<p><a name="list10.10" title="清单 10.10 使用二值信号量实现驱动库发送函数的伪代码"></a></p>
+<pre><code class="language-c">/* Driver library function to send data to a UART. */
+
+BaseType_t xUART_Send( xUART *pxUARTInstance, 
+                              uint8_t *pucDataSource, 
+                              size_t uxLength )
+{
+     BaseType_t xReturn;
+
+     /* Ensure the UART's transmit semaphore is not already available by 
+         attempting to take the semaphore without a timeout. */
+     xSemaphoreTake( pxUARTInstance-&gt;xTxSemaphore, 0 );
+
+     /* Start the transmission. */
+     UART_low_level_send( pxUARTInstance, pucDataSource, uxLength );
+
+     /* Block on the semaphore to wait for the transmission to complete. If 
+         the semaphore is obtained then xReturn will get set to pdPASS. If the 
+         semaphore take operation times out then xReturn will get set to pdFAIL. 
+         Note that, if the interrupt occurs between UART_low_level_send() being 
+         called, and xSemaphoreTake() being called, then the event will be 
+         latched in the binary semaphore, and the call to xSemaphoreTake() will 
+         return immediately. */
+     xReturn = xSemaphoreTake( pxUARTInstance-&gt;xTxSemaphore, 
+                                        pxUARTInstance-&gt;xTxTimeout );
+
+     return xReturn;
+}
+/*-----------------------------------------------------------*/
+
+/* The service routine for the UART's transmit end interrupt, which executes 
+    after the last byte has been sent to the UART. */
+void xUART_TransmitEndISR( xUART *pxUARTInstance )
+{
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+     /* Clear the interrupt. */
+     UART_low_level_interrupt_clear( pxUARTInstance );
+
+     /* Give the Tx semaphore to signal the end of the transmission. If a task 
+         is Blocked waiting for the semaphore then the task will be removed from
+         the Blocked state. */
+     xSemaphoreGiveFromISR( pxUARTInstance-&gt;xTxSemaphore, 
+                                    &amp;xHigherPriorityTaskWoken );
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 10.10</em></strong> <em>使用二值信号量实现驱动库发送函数的伪代码</em></p>
+<p>清单 10.10 的方法完全可行，也非常常见，但有一些缺点：</p>
+<ul>
+<li>
+<p>库使用了多个信号量，增加 RAM 占用。</p>
+</li>
+<li>
+<p>信号量必须先创建再使用，因此使用信号量的库必须先显式初始化。</p>
+</li>
+<li>
+<p>信号量是通用对象，适配广泛场景；其内部包含“允许多个任务阻塞等待信号量可用”以及“信号量可用时确定性选择唤醒哪个任务”的逻辑。执行这些逻辑需要时间，而在清单 10.10 的场景中，同一时刻最多只会有一个任务等待该信号量，这些额外开销并不必要。</p>
+</li>
+</ul>
+<p>清单 10.11 展示了如何用任务通知替代二值信号量，避免上述缺点。</p>
+<blockquote>
+<p><em>注意：如果库使用任务通知，库文档必须明确说明：调用库函数可能改变调用任务的通知状态和通知值。</em></p>
+</blockquote>
+<p>在清单 10.11 中：</p>
+<ul>
+<li>
+<p><code>xUART</code> 结构体中的 <code>xTxSemaphore</code> 成员替换为 <code>xTaskToNotify</code>。<code>xTaskToNotify</code> 类型为 <code>TaskHandle_t</code>，用于保存等待 UART 操作完成的任务句柄。</p>
+</li>
+<li>
+<p>使用 FreeRTOS API 函数 <code>xTaskGetCurrentTaskHandle()</code> 获取当前运行态任务句柄。</p>
+</li>
+<li>
+<p>库不再创建 FreeRTOS 对象，因此无 RAM 额外开销，也无需显式初始化。</p>
+</li>
+<li>
+<p>任务通知直接发送给等待 UART 完成的任务，因此不会执行不必要的调度逻辑。</p>
+</li>
+</ul>
+<p><code>xUART</code> 结构体成员 <code>xTaskToNotify</code> 同时被任务与 ISR 访问，因此要考虑处理器如何更新该值：</p>
+<ul>
+<li>
+<p>若更新 <code>xTaskToNotify</code> 只需一次内存写操作，则可像清单 10.11 那样在临界区外更新。
+  例如 <code>xTaskToNotify</code> 为 32 位变量（<code>TaskHandle_t</code> 为 32 位类型），且 FreeRTOS 运行在 32 位处理器上。</p>
+</li>
+<li>
+<p>若更新 <code>xTaskToNotify</code> 需要多次内存写操作，则只能在临界区内更新；否则 ISR 可能在其处于不一致状态时访问该值。
+  例如 <code>xTaskToNotify</code> 为 32 位变量，而 FreeRTOS 运行在 16 位处理器上，更新全部 32 位需要两次 16 位写操作。</p>
+</li>
+</ul>
+<p>在 FreeRTOS 内部实现中，<code>TaskHandle_t</code> 本质是指针类型，因此 <code>sizeof( TaskHandle_t )</code> 总等于 <code>sizeof( void * )</code>。</p>
+<p><a name="list10.11" title="清单 10.11 使用任务通知实现驱动库发送函数的伪代码"></a></p>
+<pre><code class="language-c">/* Driver library function to send data to a UART. */
+BaseType_t xUART_Send( xUART *pxUARTInstance, 
+                              uint8_t *pucDataSource, 
+                              size_t uxLength )
+{
+     BaseType_t xReturn;
+
+     /* Save the handle of the task that called this function. The book text
+         contains notes as to whether the following line needs to be protected 
+         by a critical section or not. */
+     pxUARTInstance-&gt;xTaskToNotify = xTaskGetCurrentTaskHandle();
+
+     /* Ensure the calling task does not already have a notification pending by 
+         calling ulTaskNotifyTake() with the xClearCountOnExit parameter set to 
+         pdTRUE, and a block time of 0 (don't block). */
+     ulTaskNotifyTake( pdTRUE, 0 );
+
+     /* Start the transmission. */
+     UART_low_level_send( pxUARTInstance, pucDataSource, uxLength );
+
+     /* Block until notified that the transmission is complete. If the 
+         notification is received then xReturn will be set to 1 because the ISR 
+         will have incremented this task's notification value to 1 (pdTRUE). If 
+         the operation times out then xReturn will be 0 (pdFALSE) because this 
+         task's notification value will not have been changed since it was 
+         cleared to 0 above. Note that, if the ISR executes between the calls to
+         UART_low_level_send() and the call to ulTaskNotifyTake(), then the 
+         event will be latched in the task's notification value, and the call to 
+         ulTaskNotifyTake() will return immediately. */
+     xReturn = ( BaseType_t ) ulTaskNotifyTake( pdTRUE, 
+                                                              pxUARTInstance-&gt;xTxTimeout );
+
+     return xReturn;
+}
+/*-----------------------------------------------------------*/
+
+/* The ISR that executes after the last byte has been sent to the UART. */
+void xUART_TransmitEndISR( xUART *pxUARTInstance )
+{
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+     /* This function should not execute unless there is a task waiting to be 
+         notified. Test this condition with an assert. This step is not strictly
+         necessary, but will aid debugging. configASSERT() is described in 
+         section 12.2. */
+     configASSERT( pxUARTInstance-&gt;xTaskToNotify != NULL );
+
+     /* Clear the interrupt. */
+     UART_low_level_interrupt_clear( pxUARTInstance );
+
+     /* Send a notification directly to the task that called xUART_Send(). If 
+         the task is Blocked waiting for the notification then the task will be 
+         removed from the Blocked state. */
+     vTaskNotifyGiveFromISR( pxUARTInstance-&gt;xTaskToNotify,
+                                     &amp;xHigherPriorityTaskWoken );
+
+     /* Now there are no tasks waiting to be notified. Set the xTaskToNotify 
+         member of the xUART structure back to NULL. This step is not strictly 
+         necessary but will aid debugging. */
+     pxUARTInstance-&gt;xTaskToNotify = NULL;
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 10.11</em></strong> <em>使用任务通知实现驱动库发送函数的伪代码</em></p>
+<p>在接收函数中，任务通知同样可以替代信号量。清单 10.12 的伪代码给出了 RTOS 感知 UART 接收库函数的轮廓。结合清单 10.12：</p>
+<ul>
+<li>
+<p><code>xUART_Receive()</code> 函数不包含互斥逻辑。若多个任务会调用 <code>xUART_Receive()</code>，应用编写者需在应用层自行管理互斥，例如先获取互斥量再调用该函数。</p>
+</li>
+<li>
+<p>UART 接收 ISR 把收到的字符放入 RAM 缓冲区，<code>xUART_Receive()</code> 从该缓冲区取出字符并返回。</p>
+</li>
+<li>
+<p><code>xUART_Receive()</code> 的 <code>uxWantedBytes</code> 参数用于指定希望接收的字符数。若 RAM 缓冲区中的字符不足，则调用任务进入阻塞态，等待“缓冲区字符数增加”的通知。<code>while()</code> 循环会重复该过程，直到缓冲区字符数满足要求或发生超时。</p>
+</li>
+<li>
+<p>调用任务可能多次进入阻塞态，因此会动态调整阻塞时间，扣除自 <code>xUART_Receive()</code> 调用以来已耗时，确保函数总耗时不超过 <code>xUART</code> 结构体 <code>xRxTimeout</code> 指定值。该调整通过 FreeRTOS 辅助函数 <code>vTaskSetTimeOutState()</code> 与 <code>xTaskCheckForTimeOut()</code> 完成。</p>
+</li>
+</ul>
+<p><a name="list10.12" title="清单 10.12 使用任务通知实现驱动库接收函数的伪代码"></a></p>
+<pre><code class="language-c">/* Driver library function to receive data from a UART. */
+
+size_t xUART_Receive( xUART *pxUARTInstance, 
+                             uint8_t *pucBuffer,
+                             size_t uxWantedBytes )
+{
+     size_t uxReceived = 0;
+     TickType_t xTicksToWait;
+     TimeOut_t xTimeOut;
+
+     /* Record the time at which this function was entered. */
+     vTaskSetTimeOutState( &amp;xTimeOut );
+
+     /* xTicksToWait is the timeout value - it is initially set to the maximum 
+         receive timeout for this UART instance. */
+     xTicksToWait = pxUARTInstance-&gt;xRxTimeout;
+
+     /* Save the handle of the task that called this function. The book text 
+         contains notes as to whether the following line needs to be protected 
+         by a critical section or not. */
+     pxUARTInstance-&gt;xTaskToNotify = xTaskGetCurrentTaskHandle();
+
+     /* Loop until the buffer contains the wanted number of bytes, or a
+         timeout occurs. */
+     while( UART_bytes_in_rx_buffer( pxUARTInstance ) &lt; uxWantedBytes )
+     {
+          /* Look for a timeout, adjusting xTicksToWait to account for the time
+              spent in this function so far. */
+          if( xTaskCheckForTimeOut( &amp;xTimeOut, &amp;xTicksToWait ) != pdFALSE )
+          {
+                /* Timed out before the wanted number of bytes were available, 
+                    exit the loop. */
+                break;
+          }
+
+          /* The receive buffer does not yet contain the required amount of 
+              bytes. Wait for a maximum of xTicksToWait ticks to be notified that 
+              the receive interrupt service routine has placed more data into the 
+              buffer. It does not matter if the calling task already had a 
+              notification pending when it called this function, if it did, it
+              would just iteration around this while loop one extra time. */
+          ulTaskNotifyTake( pdTRUE, xTicksToWait );
+     }
+
+     /* No tasks are waiting for receive notifications, so set xTaskToNotify
+         back to NULL. The book text contains notes as to whether the following 
+         line needs to be protected by a critical section or not. */
+     pxUARTInstance-&gt;xTaskToNotify = NULL;
+
+     /* Attempt to read uxWantedBytes from the receive buffer into pucBuffer. 
+         The actual number of bytes read (which might be less than uxWantedBytes)
+         is returned. */
+     uxReceived = UART_read_from_receive_buffer( pxUARTInstance, 
+                                                                pucBuffer,
+                                                                uxWantedBytes );
+     return uxReceived;
+}
+
+/*-----------------------------------------------------------*/
+
+/* The interrupt service routine for the UART's receive interrupt */
+void xUART_ReceiveISR( xUART *pxUARTInstance )
+{
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+     /* Copy received data into this UART's receive buffer and clear the
+         interrupt. */
+     UART_low_level_receive( pxUARTInstance );
+
+     /* If a task is waiting to be notified of the new data then notify it now. */
+     if( pxUARTInstance-&gt;xTaskToNotify != NULL )
+     {
+          vTaskNotifyGiveFromISR( pxUARTInstance-&gt;xTaskToNotify,
+                                          &amp;xHigherPriorityTaskWoken );
+          portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+     }
+}
+</code></pre>
+<p><strong><em>清单 10.12</em></strong> <em>使用任务通知实现驱动库接收函数的伪代码</em></p>
+<h3 id="1038-adc">10.3.8 在外设驱动中使用任务通知：ADC 示例</h3>
+<p>上一节演示了如何在 ISR 中使用 <code>vTaskNotifyGiveFromISR()</code> 发送任务通知。<code>vTaskNotifyGiveFromISR()</code> 使用简单，但能力有限：它只能发送“无值事件”，不能携带数据。本节演示如何使用 <code>xTaskNotifyFromISR()</code> 在发送通知事件的同时携带数据。</p>
+<p>该技术通过清单 10.13 的伪代码演示，清单给出了一个 RTOS 感知 ADC ISR 的轮廓。清单 10.13 中：</p>
+<ul>
+<li>
+<p>假设至少每 50 毫秒触发一次 ADC 转换。</p>
+</li>
+<li>
+<p><code>ADC_ConversionEndISR()</code> 是 ADC 转换结束中断 ISR，每次新的 ADC 值可用时执行。</p>
+</li>
+<li>
+<p><code>vADCTask()</code> 任务负责处理 ADC 产生的每个值。假设任务创建时已将其句柄保存在 <code>xADCTaskToNotify</code>。</p>
+</li>
+<li>
+<p><code>ADC_ConversionEndISR()</code> 使用 <code>xTaskNotifyFromISR()</code>，并将 <code>eAction</code> 参数设为 <code>eSetValueWithoutOverwrite</code>，把 ADC 转换结果写入 <code>vADCTask()</code> 的通知值并发送通知。</p>
+</li>
+<li>
+<p><code>vADCTask()</code> 使用 <code>xTaskNotifyWait()</code> 等待“新 ADC 值可用”的通知，并从其通知值读取 ADC 结果。</p>
+</li>
+</ul>
+<p><a name="list10.13" title="清单 10.13 使用任务通知向任务传递数值的伪代码"></a></p>
+<pre><code class="language-c">/* A task that uses an ADC. */
+void vADCTask( void *pvParameters )
+{
+     uint32_t ulADCValue;
+     BaseType_t xResult;
+
+     /* The rate at which ADC conversions are triggered. */
+     const TickType_t xADCConversionFrequency = pdMS_TO_TICKS( 50 );
+
+     for( ;; )
+     {
+          /* Wait for the next ADC conversion result. */
+          xResult = xTaskNotifyWait(
+                          /* The new ADC value will overwrite the old value, so there
+                              is no need to clear any bits before waiting for the new 
+                              notification value. */
+                          0,
+                          /* Future ADC values will overwrite the existing value, so
+                              there is no need to clear any bits before exiting 
+                              xTaskNotifyWait(). */
+                          0,
+                          /* The address of the variable into which the task's 
+                              notification value (which holds the latest ADC 
+                              conversion result) will be copied. */
+                          &amp;ulADCValue,
+                          /* A new ADC value should be received every 
+                              xADCConversionFrequency ticks. */
+                          xADCConversionFrequency * 2 );
+
+          if( xResult == pdPASS )
+          {
+                /* A new ADC value was received. Process it now. */
+                ProcessADCResult( ulADCValue );
+          }
+          else
+          {
+                /* The call to xTaskNotifyWait() did not return within the expected
+                    time, something must be wrong with the input that triggers the 
+                    ADC conversion, or with the ADC itself. Handle the error here. */
+          }
+     }
+}
+
+/*-----------------------------------------------------------*/
+
+/* The interrupt service routine that executes each time an ADC conversion 
+    completes. */
+void ADC_ConversionEndISR( xADC *pxADCInstance )
+{
+     uint32_t ulConversionResult;
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE, xResult;
+
+     /* Read the new ADC value and clear the interrupt. */
+     ulConversionResult = ADC_low_level_read( pxADCInstance );
+
+     /* Send a notification, and the ADC conversion result, directly to
+         vADCTask(). */
+     xResult = xTaskNotifyFromISR( xADCTaskToNotify, /* xTaskToNotify parameter */
+                                             ulConversionResult, /* ulValue parameter */
+                                             eSetValueWithoutOverwrite, /* eAction parameter. */
+                                             &amp;xHigherPriorityTaskWoken );
+
+     /* If the call to xTaskNotifyFromISR() returns pdFAIL then the task is not
+         keeping up with the rate at which ADC values are being generated. 
+         configASSERT() is described in section 11.2. */
+     configASSERT( xResult == pdPASS );
+     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
+</code></pre>
+<p><strong><em>清单 10.13</em></strong> <em>使用任务通知向任务传递数值的伪代码</em></p>
+<h3 id="1039">10.3.9 在应用中直接使用任务通知</h3>
+<p>本节通过一个假设应用进一步展示任务通知的能力。该应用包含以下功能：</p>
+<ul>
+<li>
+<p>应用通过慢速互联网连接与远程数据服务器通信：向其发送数据，并向其请求数据。后文将该远程数据服务器称为 <em>cloud server</em>（云服务器）。</p>
+</li>
+<li>
+<p>任务向云服务器请求数据后，必须进入阻塞态等待所请求数据返回。</p>
+</li>
+<li>
+<p>任务向云服务器发送数据后，必须进入阻塞态等待云服务器返回“数据已正确接收”的确认。</p>
+</li>
+</ul>
+<p>软件设计示意如图 10.6。图 10.6 中：</p>
+<ul>
+<li>
+<p>与云服务器建立和管理多条互联网连接的复杂性被封装在一个 FreeRTOS 任务中。该任务在 FreeRTOS 应用中扮演代理服务器角色，称为 <em>server task</em>（服务器任务）。</p>
+</li>
+<li>
+<p>应用任务通过调用 <code>CloudRead()</code> 从云服务器读数据。<code>CloudRead()</code> 并不直接与云服务器通信，而是先通过队列把读取请求发给服务器任务，再通过任务通知从服务器任务接收请求结果。</p>
+</li>
+<li>
+<p>应用任务通过调用 <code>CloudWrite()</code> 向云服务器写数据。<code>CloudWrite()</code> 同样不直接与云服务器通信，而是通过队列把写请求发给服务器任务，再通过任务通知接收写操作结果。</p>
+</li>
+</ul>
+<p><code>CloudRead()</code> 与 <code>CloudWrite()</code> 发送给服务器任务的结构体见清单 10.14。</p>
+<p><a name="fig10.6" title="图 10.6 从应用任务到云服务器及返回的通信路径"></a></p>
+<hr />
+<p><img alt="" src="../media/image81.png" />  <br />
+<strong><em>图 10.6</em></strong> <em>从应用任务到云服务器及返回的通信路径</em></p>
+<hr />
+<p><a name="list10.14" title="清单 10.14 发送到服务器任务队列中的结构体与数据类型"></a></p>
+<pre><code class="language-c">typedef enum CloudOperations
+{
+     eRead, /* Send data to the cloud server. */
+     eWrite /* Receive data from the cloud server. */
+} Operation_t;
+
+typedef struct CloudCommand
+{
+     Operation_t eOperation; /* The operation to perform (read or write). */
+     uint32_t ulDataID; /* Identifies the data being read or written. */
+     uint32_t ulDataValue; /* Only used when writing data to the cloud server. */
+     TaskHandle_t xTaskToNotify;/* The handle of the task performing the operation. */
+} CloudCommand_t;
+</code></pre>
+<p><strong><em>清单 10.14</em></strong> <em>发送到服务器任务队列中的结构体与数据类型</em></p>
+<p><code>CloudRead()</code> 的伪代码见清单 10.15。该函数先把请求发给服务器任务，再调用 <code>xTaskNotifyWait()</code> 进入阻塞态，等待“请求数据可用”的通知。</p>
+<p>清单 10.16 给出了服务器任务处理读请求的伪代码。当数据从云服务器接收完成后，服务器任务会调用 <code>xTaskNotify()</code>（<code>eAction</code> 设为 <code>eSetValueWithOverwrite</code>）来解除应用任务阻塞，并把接收到的数据发送给应用任务。</p>
+<p>清单 10.16 为简化场景，假设 <code>GetCloudData()</code> 不需要等待云服务器返回值。</p>
+<p><a name="list10.15" title="清单 10.15 CloudRead API 函数实现"></a></p>
+<pre><code class="language-c">/* ulDataID identifies the data to read. pulValue holds the address of the 
+    variable into which the data received from the cloud server is to be written. */
+BaseType_t CloudRead( uint32_t ulDataID, uint32_t *pulValue )
+{
+     CloudCommand_t xRequest;
+     BaseType_t xReturn;
+
+     /* Set the CloudCommand_t structure members to be correct for this read
+         request. */
+     xRequest.eOperation = eRead; /* This is a request to read data. */
+     xRequest.ulDataID = ulDataID; /* A code that identifies the data to read. */
+     xRequest.xTaskToNotify = xTaskGetCurrentTaskHandle(); /* Handle of the
+                                                                                 calling task. */
+
+     /* Ensure there are no notifications already pending by reading the
+         notification value with a block time of 0, then send the structure to 
+         the server task. */
+     xTaskNotifyWait( 0, 0, NULL, 0 );
+     xQueueSend( xServerTaskQueue, &amp;xRequest, portMAX_DELAY );
+
+     /* Wait for a notification from the server task. The server task writes
+         the value received from the cloud server directly into this task's 
+         notification value, so there is no need to clear any bits in the 
+         notification value on entry to or exit from the xTaskNotifyWait() 
+         function. The received value is written to *pulValue, so pulValue is
+         passed as the address to which the notification value is written. */
+     xReturn = xTaskNotifyWait( 0, /* No bits cleared on entry */
+                                         0, /* No bits to clear on exit */
+                                         pulValue, /* Notification value into *pulValue */
+                                         pdMS_TO_TICKS( 250 ) ); /* Wait 250ms maximum */
+
+     /* If xReturn is pdPASS, then the value was obtained. If xReturn is pdFAIL,
+         then the request timed out. */
+     return xReturn;
+}
+</code></pre>
+<p><strong><em>清单 10.15</em></strong> <em>CloudRead API 函数实现</em></p>
+<p><a name="list10.16" title="清单 10.16 服务器任务处理读请求"></a></p>
+<pre><code class="language-c">void ServerTask( void *pvParameters )
+{
+     CloudCommand_t xCommand;
+     uint32_t ulReceivedValue;
+
+     for( ;; )
+     {
+          /* Wait for the next CloudCommand_t structure to be received from a task */
+          xQueueReceive( xServerTaskQueue, &amp;xCommand, portMAX_DELAY );
+
+          switch( xCommand.eOperation ) /* Was it a read or write request? */
+          {
+                case eRead:
+
+                     /* Obtain the requested data item from the remote cloud server */
+                     ulReceivedValue = GetCloudData( xCommand.ulDataID );
+
+                     /* Call xTaskNotify() to send both a notification and the value
+                         received from the cloud server to the task that made the 
+                         request. The handle of the task is obtained from the 
+                         CloudCommand_t structure. */
+                     xTaskNotify( xCommand.xTaskToNotify, /* The task's handle is in
+                                                                          the structure */
+                                      ulReceivedValue, /* Cloud data sent as notification 
+                                                                 value */
+                                      eSetValueWithOverwrite );
+                     break;
+
+                     /* Other switch cases go here. */
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 10.16</em></strong> <em>服务器任务处理读请求</em></p>
+<p><code>CloudWrite()</code> 伪代码见清单 10.17。为演示目的，<code>CloudWrite()</code> 返回一个按位状态码，其中每一位都有独立含义。清单 10.17 顶部给出 4 个示例状态位的 <code>#define</code>。</p>
+<p>任务会先清除这 4 个状态位，再把请求发给服务器任务，然后调用 <code>xTaskNotifyWait()</code> 进入阻塞态等待状态通知。</p>
+<p><a name="list10.17" title="清单 10.17 CloudWrite API 函数实现"></a></p>
+<pre><code class="language-c">/* Status bits used by the cloud write operation. */
+#define SEND_SUCCESSFUL_BIT ( 0x01 &lt;&lt; 0 )
+#define OPERATION_TIMED_OUT_BIT ( 0x01 &lt;&lt; 1 )
+#define NO_INTERNET_CONNECTION_BIT ( 0x01 &lt;&lt; 2 )
+#define CANNOT_LOCATE_CLOUD_SERVER_BIT ( 0x01 &lt;&lt; 3 )
+
+/* A mask that has the four status bits set. */
+#define CLOUD_WRITE_STATUS_BIT_MASK ( SEND_SUCCESSFUL_BIT |
+                                                  OPERATION_TIMED_OUT_BIT |
+                                                  NO_INTERNET_CONNECTION_BIT |
+                                                  CANNOT_LOCATE_CLOUD_SERVER_BIT )
+
+uint32_t CloudWrite( uint32_t ulDataID, uint32_t ulDataValue )
+{
+     CloudCommand_t xRequest;
+     uint32_t ulNotificationValue;
+
+     /* Set the CloudCommand_t structure members to be correct for this
+         write request. */
+     xRequest.eOperation = eWrite; /* This is a request to write data */
+     xRequest.ulDataID = ulDataID; /* A code that identifies the data being
+                                                 written */
+     xRequest.ulDataValue = ulDataValue; /* Value of the data written to the
+                                                         cloud server. */
+     xRequest.xTaskToNotify = xTaskGetCurrentTaskHandle(); /* Handle of the 
+                                                                                 calling task. */
+
+     /* Clear the three status bits relevant to the write operation by calling
+         xTaskNotifyWait() with the ulBitsToClearOnExit parameter set to
+         CLOUD_WRITE_STATUS_BIT_MASK, and a block time of 0. The current
+         notification value is not required, so the pulNotificationValue 
+         parameter is set to NULL. */
+     xTaskNotifyWait( 0, CLOUD_WRITE_STATUS_BIT_MASK, NULL, 0 );
+
+     /* Send the request to the server task. */
+     xQueueSend( xServerTaskQueue, &amp;xRequest, portMAX_DELAY );
+
+     /* Wait for a notification from the server task. The server task writes
+         a bitwise status code into this task's notification value, which is 
+         written to ulNotificationValue. */
+     xTaskNotifyWait( 0, /* No bits cleared on entry. */
+                            CLOUD_WRITE_STATUS_BIT_MASK, /* Clear relevant bits to 0 on exit. */
+                            &amp;ulNotificationValue, /* Notified value. */
+                            pdMS_TO_TICKS( 250 ) ); /* Wait a maximum of 250ms. */
+
+     /* Return the status code to the calling task. */
+     return ( ulNotificationValue &amp; CLOUD_WRITE_STATUS_BIT_MASK );
+}
+</code></pre>
+<p><strong><em>清单 10.17</em></strong> <em>CloudWrite API 函数实现</em></p>
+<p>服务器任务处理写请求的伪代码见清单 10.18。当数据发送到云服务器后，服务器任务会调用 <code>xTaskNotify()</code>（<code>eAction</code> 设为 <code>eSetBits</code>）解除应用任务阻塞，并向其发送按位状态码。由于接收任务通知值中只会改动 <code>CLOUD_WRITE_STATUS_BIT_MASK</code> 常量定义的这些位，因此接收任务仍可把通知值中其他位用于其他用途。</p>
+<p>清单 10.18 也是简化场景，假设 <code>SetCloudData()</code> 不需要等待远程云服务器确认。</p>
+<p><a name="list10.18" title="清单 10.18 服务器任务处理发送请求"></a></p>
+<pre><code class="language-c">void ServerTask( void *pvParameters )
+{
+     CloudCommand_t xCommand;
+     uint32_t ulBitwiseStatusCode;
+
+     for( ;; )
+     {
+          /* Wait for the next message. */
+          xQueueReceive( xServerTaskQueue, &amp;xCommand, portMAX_DELAY );
+
+          /* Was it a read or write request? */
+          switch( xCommand.eOperation )
+          {
+                case eWrite:
+
+                /* Send the data to the remote cloud server. SetCloudData() returns
+                    a bitwise status code that only uses the bits defined by the
+                    CLOUD_WRITE_STATUS_BIT_MASK definition (shown in Listing 10.17). */
+                ulBitwiseStatusCode = SetCloudData( xCommand.ulDataID,
+                                                                xCommand.ulDataValue );
+
+                /* Send a notification to the task that made the write request. 
+                    The eSetBits action is used so any status bits set in 
+                    ulBitwiseStatusCode will be set in the notification value of 
+                    the task being notified. All the other bits remain unchanged. 
+                    The handle of the task is obtained from the CloudCommand_t
+                    structure. */
+                xTaskNotify( xCommand.xTaskToNotify, /* The task's handle is in 
+                                                                     the structure. */
+                                 ulBitwiseStatusCode,    /* Cloud data sent as 
+                                                                     notification value. */
+                                 eSetBits );
+                break;
+
+                /* Other switch cases go here. */
+          }
+     }
+}
+</code></pre>
+<p><strong><em>清单 10.18</em></strong> <em>服务器任务处理发送请求</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2180 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="prev" href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/">
+      
+      
+        <link rel="next" href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>3 堆内存管理 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3 堆内存管理
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.1 先决条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.3 在静态与动态内存分配之间切换
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.4 使用动态内存分配
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#315" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.5 动态内存分配选项
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 示例内存分配方案
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 示例内存分配方案">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321-heap_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1 Heap_1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322-heap_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2 Heap_2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323-heap_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3 Heap_3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#324-heap_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.4 Heap_4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#325-heap_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.5 Heap_5
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#326-heap_5vportdefineheapregions-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.6 初始化 heap_5：vPortDefineHeapRegions() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 与堆相关的实用函数和宏
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 与堆相关的实用函数和宏">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#331" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.1 定义堆起始地址
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#332-xportgetfreeheapsize-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.2 xPortGetFreeHeapSize() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#333-xportgetminimumeverfreeheapsize-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.3 xPortGetMinimumEverFreeHeapSize() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#334-vportgetheapstats-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.4 vPortGetHeapStats() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.5 收集按任务划分的堆使用统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#336-malloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.6 Malloc 失败钩子函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#337" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.7 将任务栈放入高速内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 使用静态内存分配
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 使用静态内存分配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#341" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.1 启用静态内存分配
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#342" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2 静态的内核内部内存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4.2 静态的内核内部内存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3421-vapplicationgettimertaskmemory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2.1 vApplicationGetTimerTaskMemory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3422-vapplicationgetidletaskmemory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2.2 vApplicationGetIdleTaskMemory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 简介
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.1 先决条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.2 范围
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.3 在静态与动态内存分配之间切换
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.4 使用动态内存分配
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#315" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.5 动态内存分配选项
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 示例内存分配方案
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 示例内存分配方案">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321-heap_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1 Heap_1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322-heap_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2 Heap_2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323-heap_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3 Heap_3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#324-heap_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.4 Heap_4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#325-heap_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.5 Heap_5
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#326-heap_5vportdefineheapregions-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.6 初始化 heap_5：vPortDefineHeapRegions() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 与堆相关的实用函数和宏
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 与堆相关的实用函数和宏">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#331" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.1 定义堆起始地址
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#332-xportgetfreeheapsize-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.2 xPortGetFreeHeapSize() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#333-xportgetminimumeverfreeheapsize-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.3 xPortGetMinimumEverFreeHeapSize() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#334-vportgetheapstats-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.4 vPortGetHeapStats() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.5 收集按任务划分的堆使用统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#336-malloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.6 Malloc 失败钩子函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#337" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3.7 将任务栈放入高速内存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 使用静态内存分配
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 使用静态内存分配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#341" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.1 启用静态内存分配
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#342" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2 静态的内核内部内存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4.2 静态的内核内部内存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3421-vapplicationgettimertaskmemory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2.1 vApplicationGetTimerTaskMemory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3422-vapplicationgetidletaskmemory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4.2.2 vApplicationGetIdleTaskMemory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="3">3 堆内存管理</h1>
+<h2 id="31">3.1 简介</h2>
+<h3 id="311">3.1.1 先决条件</h3>
+<p>要使用 FreeRTOS，前提是具备合格的 C 编程能力，因此本章假定读者
+熟悉如下概念：</p>
+<ul>
+<li>构建 C 项目时各个编译与链接阶段的区别。</li>
+<li>什么是栈和堆。</li>
+<li>标准 C 库中的 <code>malloc()</code> 与 <code>free()</code> 函数。</li>
+</ul>
+<h3 id="312">3.1.2 范围</h3>
+<p>本章涵盖：</p>
+<ul>
+<li>FreeRTOS 在何时分配 RAM。</li>
+<li>FreeRTOS 提供的五种示例内存分配方案。</li>
+<li>如何选择合适的内存分配方案。</li>
+</ul>
+<h3 id="313">3.1.3 在静态与动态内存分配之间切换</h3>
+<p>后续章节会介绍任务、队列、信号量、事件组等内核对象。保存这些对象
+所需的 RAM 可以在编译期静态分配，也可以在运行时动态分配。
+动态分配可减少设计和规划工作量、简化 API，并最小化 RAM 占用。
+静态分配则更具确定性，无需处理内存分配失败，并消除了堆碎片风险
+（即堆中总空闲内存足够，但没有一块可用的连续内存）。</p>
+<p>仅当在 FreeRTOSConfig.h 中将 <code>configSUPPORT_STATIC_ALLOCATION</code>
+设置为 1 时，才会提供使用静态分配内存创建内核对象的 FreeRTOS API。
+仅当在 FreeRTOSConfig.h 中将 <code>configSUPPORT_DYNAMIC_ALLOCATION</code>
+设置为 1 或保持未定义时，才会提供使用动态分配内存创建内核对象的
+FreeRTOS API。两个常量同时设为 1 是合法的。</p>
+<p>关于 <code>configSUPPORT_STATIC_ALLOCATION</code> 的更多信息见
+3.4 节使用静态内存分配。</p>
+<h3 id="314">3.1.4 使用动态内存分配</h3>
+<p>动态内存分配是 C 编程中的概念，并非 FreeRTOS 或多任务特有概念。
+之所以与 FreeRTOS 相关，是因为内核对象可选择通过动态内存来创建，
+而通用的 C 库 <code>malloc()</code> 与 <code>free()</code> 可能因以下一个或多个原因并不适用：</p>
+<ul>
+<li>在小型嵌入式系统上并不总是可用。</li>
+<li>实现体积可能较大，会占用宝贵的代码空间。</li>
+<li>通常不是线程安全的。</li>
+<li>不具确定性；每次调用执行所需时间可能不同。</li>
+<li>可能发生碎片问题（堆中空闲内存足够，但没有可用连续块）。</li>
+<li>可能使链接器配置更复杂。</li>
+<li>若允许堆空间增长到与其他变量使用的内存重叠，可能导致难以调试的错误。</li>
+</ul>
+<h3 id="315">3.1.5 动态内存分配选项</h3>
+<p>FreeRTOS 早期版本使用内存池分配方案：在编译期预分配不同大小的内存块池，
+然后由内存分配函数返回这些块。虽然块分配在实时系统中很常见，但它已从
+FreeRTOS 中移除，因为在极小型嵌入式系统中其 RAM 利用率低，导致大量支持请求。</p>
+<p>FreeRTOS 现在将内存分配视为可移植层的一部分（而非核心代码的一部分）。
+原因是不同嵌入式系统对动态内存分配和时序的要求不同，单一算法只会适用于
+一部分应用。此外，将动态内存分配从核心代码中分离后，应用开发者可在需要时
+提供自己的特定实现。</p>
+<p>当 FreeRTOS 需要 RAM 时，它调用 <code>pvPortMalloc()</code> 而不是 <code>malloc()</code>。
+同样，当 FreeRTOS 释放先前分配的 RAM 时，它调用 <code>vPortFree()</code> 而不是 <code>free()</code>。
+<code>pvPortMalloc()</code> 的原型与标准 C 库 <code>malloc()</code> 相同，<code>vPortFree()</code> 的原型与
+标准 C 库 <code>free()</code> 相同。</p>
+<p><code>pvPortMalloc()</code> 与 <code>vPortFree()</code> 是公开函数，因此应用代码也可以直接调用。</p>
+<p>FreeRTOS 提供了 <code>pvPortMalloc()</code> 与 <code>vPortFree()</code> 的五种示例实现，
+本章都会说明。FreeRTOS 应用既可以使用其中一种示例实现，也可以提供自定义实现。</p>
+<p>这五个示例分别定义在 heap_1.c、heap_2.c、heap_3.c、
+heap_4.c 和 heap_5.c 中，这些文件都位于
+FreeRTOS/Source/portable/MemMang 目录下。</p>
+<h2 id="32">3.2 示例内存分配方案</h2>
+<h3 id="321-heap_1">3.2.1 Heap_1</h3>
+<p>在小型、专用嵌入式系统中，常见做法是在启动 FreeRTOS 调度器之前就创建
+任务和其他内核对象。此时，内核仅会在应用开始执行任何实时功能之前
+（动态）分配内存，且这些内存会在应用整个生命周期内保持分配状态。
+这意味着所选分配方案无需考虑确定性和碎片等复杂问题，而可优先考虑
+代码体积与简洁性等属性。</p>
+<p>Heap_1.c 实现了一个非常基础的 <code>pvPortMalloc()</code> 版本，且未实现
+<code>vPortFree()</code>。从不删除任务或其他内核对象的应用可以考虑使用 heap_1。
+某些商业关键和安全关键系统本来会禁止动态内存分配，但也可能采用 heap_1。
+关键系统通常禁止动态内存分配，是因为它可能带来非确定性、内存碎片和
+分配失败等不确定性。而 heap_1 始终是确定性的，且不会产生内存碎片。</p>
+<p>heap_1 对 <code>pvPortMalloc()</code> 的实现方式很简单：每次调用时，都从一个名为
+FreeRTOS heap 的 <code>uint8_t</code> 数组中切出一个更小的块。
+FreeRTOSConfig.h 中的 <code>configTOTAL_HEAP_SIZE</code> 常量用于设置该数组的字节大小。
+将堆实现为静态分配数组会让 FreeRTOS 看起来占用了大量 RAM，
+因为堆成为了 FreeRTOS 数据的一部分。</p>
+<p>每个动态分配的任务都会触发两次 <code>pvPortMalloc()</code> 调用：
+第一次分配任务控制块（TCB），第二次分配任务栈。
+图 3.1 展示了随着任务创建，heap_1 如何对该数组进行切分。</p>
+<p>参见图 3.1：</p>
+<ul>
+<li>
+<p><strong>A</strong> 显示创建任何任务之前的数组状态整个数组都是空闲的。</p>
+</li>
+<li>
+<p><strong>B</strong> 显示创建一个任务之后的数组状态。</p>
+</li>
+<li>
+<p><strong>C</strong> 显示创建三个任务之后的数组状态。</p>
+</li>
+</ul>
+<p><a name="fig3.1" title="Figure 3.1 RAM being allocated from the heap\_1 array each time a task is created"></a></p>
+<hr />
+<p><img alt="" src="../media/image05.png" />
+<strong><em>图 3.1</em></strong> <em>每次创建任务时，从 heap_1 数组中分配 RAM</em></p>
+<hr />
+<h3 id="322-heap_2">3.2.2 Heap_2</h3>
+<p>heap_2 已被 heap_4 取代，后者功能更完善。
+出于向后兼容，heap_2 仍保留在 FreeRTOS 发行包中，
+但不建议在新设计中使用。</p>
+<p>heap_2.c 同样通过切分由 <code>configTOTAL_HEAP_SIZE</code> 定义大小的数组来工作。
+它使用最佳适配（best-fit）算法进行分配，并且与 heap_1 不同，
+它实现了 <code>vPortFree()</code>。同样地，将堆实现为静态分配数组会让 FreeRTOS
+看起来占用了大量 RAM，因为堆成为了 FreeRTOS 数据的一部分。</p>
+<p>最佳适配算法确保 <code>pvPortMalloc()</code> 使用与请求字节数最接近的空闲内存块。
+例如，考虑如下场景：</p>
+<ul>
+<li>堆中有三个空闲内存块，大小分别为 5 字节、25 字节和 100 字节。</li>
+<li><code>pvPortMalloc()</code> 请求 20 字节 RAM。</li>
+</ul>
+<p>能够容纳请求大小的最小空闲块是 25 字节块，因此 <code>pvPortMalloc()</code> 会先将
+25 字节块切分为 20 字节和 5 字节两个块，然后返回指向 20 字节块的指针<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">1</a></sup>。
+新的 5 字节块仍可供后续 <code>pvPortMalloc()</code> 调用使用。</p>
+<p>与 heap_4 不同，heap_2 不会把相邻空闲块合并成更大的单块，
+因此比 heap_4 更容易出现碎片。不过，如果分配并随后释放的块
+始终大小相同，碎片就不是问题。</p>
+<p><a name="fig3.2" title="Figure 3.2 RAM being allocated and freed from the heap\_2 array as tasks are created and deleted"></a></p>
+<hr />
+<p><img alt="" src="../media/image06.png" />
+<strong><em>图 3.2</em></strong> <em>随着任务的创建与删除，从 heap_2 数组中分配并释放 RAM</em></p>
+<hr />
+<p>图 3.2 展示了在任务被创建、删除、再次创建时，最佳适配算法如何工作。
+参见图 3.2：</p>
+<ul>
+<li>
+<p><strong>A</strong> 显示分配了三个任务后的数组状态。数组顶部仍有一大块空闲块。</p>
+</li>
+<li>
+<p><strong>B</strong> 显示删除其中一个任务后的数组状态。数组顶部的大空闲块仍在。
+  另外还新增了两个较小空闲块，它们此前保存被删除任务的 TCB 和栈。</p>
+</li>
+<li>
+<p><strong>C</strong> 显示再次创建一个任务后的状态。创建该任务时，
+  <code>xTaskCreate()</code> API 函数内部调用了两次 <code>pvPortMalloc()</code>：一次分配新 TCB，
+  一次分配任务栈。本书 3.4 节会介绍 <code>xTaskCreate()</code>。</p>
+</li>
+</ul>
+<p>每个 TCB 大小都相同，因此最佳适配算法会复用先前被删除任务 TCB
+  所在的 RAM 块来存放新任务的 TCB。</p>
+<p>如果新任务分配的栈大小与先前删除任务的栈大小相同，
+  则最佳适配算法也会复用先前栈所在 RAM 块来存放新任务栈。</p>
+<p>数组顶部那块更大的未分配内存保持不变。</p>
+<p>heap_2 不具确定性，但其速度仍快于大多数标准库 <code>malloc()</code>/<code>free()</code> 实现。</p>
+<h3 id="323-heap_3">3.2.3 Heap_3</h3>
+<p>heap_3.c 使用标准库 <code>malloc()</code> 与 <code>free()</code>，
+因此堆大小由链接器配置决定，而不使用 <code>configTOTAL_HEAP_SIZE</code> 常量。</p>
+<p>heap_3 通过在执行期间临时挂起 FreeRTOS 调度器，使 <code>malloc()</code> 和 <code>free()</code>
+变为线程安全。第 8 章资源管理会介绍线程安全和调度器挂起。</p>
+<h3 id="324-heap_4">3.2.4 Heap_4</h3>
+<p>与 heap_1 和 heap_2 一样，heap_4 通过把一个数组切分成小块来工作。
+同前，数组为静态分配，并由 <code>configTOTAL_HEAP_SIZE</code> 确定大小，
+因此堆作为 FreeRTOS 数据的一部分会让 FreeRTOS 看起来占用较多 RAM。</p>
+<p>heap_4 使用首次适配（first-fit）算法分配内存。与 heap_2 不同，
+heap_4 会将相邻的空闲内存块合并（coalesce）为一个更大的块，
+从而降低内存碎片风险。</p>
+<p>首次适配算法确保 <code>pvPortMalloc()</code> 使用第一个足够容纳请求字节数的空闲块。
+例如，考虑如下场景：</p>
+<ul>
+<li>堆中有三个空闲内存块，按它们在数组中的出现顺序，
+  分别是 5 字节、200 字节和 100 字节。</li>
+<li><code>pvPortMalloc()</code> 请求 20 字节 RAM。</li>
+</ul>
+<p>第一个能容纳请求大小的空闲块是 200 字节块，所以 <code>pvPortMalloc()</code> 会先把
+200 字节块切分为 20 字节和 180 字节两个块<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">2</a></sup>，然后返回指向 20 字节块的指针。
+新的 180 字节块仍可供后续 <code>pvPortMalloc()</code> 调用使用。</p>
+<p>heap_4 会将相邻空闲块合并为更大的单块，从而降低碎片风险，
+这使它适合反复分配和释放不同大小 RAM 块的应用。</p>
+<p><a name="fig3.3" title="Figure 3.3 RAM being allocated and freed from the heap\_4 array"></a></p>
+<hr />
+<p><img alt="" src="../media/image07.png" />
+<strong><em>图 3.3</em></strong> <em>从 heap_4 数组中分配与释放 RAM</em></p>
+<hr />
+<p>图 3.3 展示了带内存合并的 heap_4 首次适配算法如何工作。
+参见图 3.3：</p>
+<ul>
+<li>
+<p><strong>A</strong> 显示创建三个任务后的数组状态。数组顶部仍有一大块空闲块。</p>
+</li>
+<li>
+<p><strong>B</strong> 显示删除其中一个任务后的数组状态。数组顶部的大空闲块仍在。
+  在被删除任务原先 TCB 和栈所在位置，又出现了一个空闲块。
+  与 heap_2 示例不同，heap_4 会把此前分别存放被删除任务 TCB 和栈的
+  两个内存块合并成更大的单个空闲块。</p>
+</li>
+<li>
+<p><strong>C</strong> 显示创建一个 FreeRTOS 队列后的状态。
+  本书 5.3 节介绍用于动态分配队列的 <code>xQueueCreate()</code> API。
+  <code>xQueueCreate()</code> 会调用 <code>pvPortMalloc()</code> 分配队列所需 RAM。
+  由于 heap_4 使用首次适配算法，<code>pvPortMalloc()</code> 会从第一个足够大的
+  空闲 RAM 块中分配队列所需内存；在图 3.3 中，该块就是删除任务后释放的 RAM。
+  队列并未耗尽该空闲块，因此该块会被一分为二，未使用部分仍可供后续
+  <code>pvPortMalloc()</code> 调用使用。</p>
+</li>
+<li>
+<p><strong>D</strong> 显示应用代码直接调用 <code>pvPortMalloc()</code>（而非间接调用 FreeRTOS API）
+  之后的状态。用户分配块足够小，可放入第一个空闲块，
+  即位于队列所分配内存与其后 TCB 所分配内存之间的那一块。</p>
+</li>
+</ul>
+<p>由删除任务释放出的内存此时被分成三个独立块：第一块存放队列，
+  第二块存放用户分配内存，第三块仍为空闲。</p>
+<ul>
+<li>
+<p><strong>E</strong> 显示删除队列后的状态；删除队列会自动释放其占用内存。
+  这时用户分配块两侧都出现了空闲内存。</p>
+</li>
+<li>
+<p><strong>F</strong> 显示释放用户分配内存后的状态。用户分配块先前占用的内存
+  已与其两侧空闲内存合并，形成一个更大的单一空闲块。</p>
+</li>
+</ul>
+<p>heap_4 不具确定性，但速度快于大多数标准库 <code>malloc()</code>/<code>free()</code> 实现。</p>
+<h3 id="325-heap_5">3.2.5 Heap_5</h3>
+<p>heap_5 使用与 heap_4 相同的分配算法。与只能从单个数组分配内存的
+heap_4 不同，heap_5 可以把多个相互分离的内存空间合并为一个堆。
+当 FreeRTOS 所运行系统提供的 RAM 在内存映射中不是单个连续块时，
+heap_5 会非常有用。</p>
+<h3 id="326-heap_5vportdefineheapregions-api">3.2.6 初始化 heap_5：vPortDefineHeapRegions() API 函数</h3>
+<p><code>vPortDefineHeapRegions()</code> 通过指定每个独立内存区的起始地址与大小，
+来初始化由 heap_5 管理的堆。heap_5 是唯一一个需要显式初始化的
+内置堆分配方案，且在调用 <code>vPortDefineHeapRegions()</code> 之前不能使用。
+这意味着任务、队列、信号量等内核对象在此调用之前都不能动态创建。</p>
+<p><a name="list3.1" title="Listing 3.1 The vPortDefineHeapRegions() API function prototype"></a></p>
+<pre><code class="language-c">void vPortDefineHeapRegions( const HeapRegion_t * const pxHeapRegions );
+</code></pre>
+<p><strong><em>清单 3.1</em></strong> <em>vPortDefineHeapRegions() API 函数原型</em></p>
+<p><code>vPortDefineHeapRegions()</code> 仅接收一个参数：<code>HeapRegion_t</code> 结构体数组。
+每个结构体定义一个将成为堆组成部分的内存块起始地址与大小
+整个结构体数组共同定义完整堆空间。</p>
+<p><a name="list3.2" title="Listing 3.2 The HeapRegion\_t structure"></a></p>
+<pre><code class="language-c">typedef struct HeapRegion
+{
+    /* The start address of a block of memory that will be part of the heap.*/
+    uint8_t *pucStartAddress;
+
+    /* The size of the block of memory in bytes. */
+    size_t xSizeInBytes;
+
+} HeapRegion_t;
+</code></pre>
+<p><strong><em>清单 3.2</em></strong> <em>HeapRegion_t 结构体</em></p>
+<p><strong>参数：</strong></p>
+<ul>
+<li><code>pxHeapRegions</code></li>
+</ul>
+<p>指向 <code>HeapRegion_t</code> 结构体数组起始位置的指针。
+  每个结构体定义一个将成为堆组成部分的内存块起始地址和大小。</p>
+<p>数组中的 <code>HeapRegion_t</code> 结构体必须按起始地址升序排列；
+  描述最低起始地址内存区的 <code>HeapRegion_t</code> 必须位于数组首位，
+  描述最高起始地址内存区的 <code>HeapRegion_t</code> 必须位于数组末位。</p>
+<p>用一个 <code>HeapRegion_t</code> 结构体标记数组结束，该结构体的
+  <code>pucStartAddress</code> 成员应设置为 <code>NULL</code>。</p>
+<p>举例来说，考虑图 3.4 <strong>A</strong> 所示的假想内存映射，其中包含三个
+彼此分离的 RAM 块：RAM1、RAM2 和 RAM3。假定可执行代码放在只读存储器中，
+图中未画出该部分。</p>
+<p><a name="fig3.4" title="Figure 3.4 Memory Map"></a></p>
+<hr />
+<p><img alt="" src="../media/image08.png" />
+<strong><em>图 3.4</em></strong> <em>内存映射</em></p>
+<hr />
+<p>清单 3.3 给出了一个 <code>HeapRegion_t</code> 结构体数组，该数组整体描述了这三个
+RAM 块的全部范围。</p>
+<p><a name="list3.3" title="Listing 3.3 An array of HeapRegion\_t structures that together describe the 3 regions of RAM in their entirety"></a></p>
+<pre><code class="language-c">/* Define the start address and size of the three RAM regions. */
+#define RAM1_START_ADDRESS ( ( uint8_t * ) 0x00010000 )
+#define RAM1_SIZE ( 64 * 1024 )
+
+#define RAM2_START_ADDRESS ( ( uint8_t * ) 0x00020000 )
+#define RAM2_SIZE ( 32 * 1024 )
+
+#define RAM3_START_ADDRESS ( ( uint8_t * ) 0x00030000 )
+#define RAM3_SIZE ( 32 * 1024 )
+
+/* Create an array of HeapRegion_t definitions, with an index for each
+   of the three RAM regions, and terminate the array with a HeapRegion_t
+   structure containing a NULL address. The HeapRegion_t structures must
+   appear in start address order, with the structure that contains the
+   lowest start address appearing first. */
+const HeapRegion_t xHeapRegions[] =
+{
+    { RAM1_START_ADDRESS, RAM1_SIZE },
+    { RAM2_START_ADDRESS, RAM2_SIZE },
+    { RAM3_START_ADDRESS, RAM3_SIZE },
+    { NULL,               0         } /* Marks the end of the array. */
+};
+
+int main( void )
+{
+    /* Initialize heap_5. */
+    vPortDefineHeapRegions( xHeapRegions );
+
+    /* Add application code here. */
+}
+</code></pre>
+<p><strong><em>清单 3.3</em></strong> <em>共同完整描述 3 个 RAM 区域的 HeapRegion_t 结构体数组</em></p>
+<p>尽管清单 3.3 对 RAM 的描述是正确的，但它并非可用示例，
+因为它把所有 RAM 都分配给了堆，导致没有 RAM 留给其他变量使用。</p>
+<p>在构建流程的链接阶段，链接器会为每个变量分配 RAM 地址。
+可供链接器使用的 RAM 通常由链接器配置文件（如 linker script）描述。
+在图 3.4 <strong>B</strong> 中，假设链接脚本包含了 RAM1 的信息，
+但未包含 RAM2 与 RAM3 的信息。结果，链接器把变量放入 RAM1，
+使 RAM1 中只有地址 0x0001nnnn 以上部分可供 heap_5 使用。
+0x0001nnnn 的具体值取决于应用中所有变量大小之和。
+链接器使 RAM2 和 RAM3 完全未被使用，因此 RAM2 与 RAM3 的全部空间
+都可供 heap_5 使用。</p>
+<p>若直接使用清单 3.3 的代码，会导致 heap_5 在 0x0001nnnn 以下分配的 RAM
+与变量占用 RAM 重叠。
+如果把 <code>xHeapRegions[]</code> 数组中第一个 <code>HeapRegion_t</code> 的起始地址
+从 0x00010000 改为 0x0001nnnn，则堆不会与链接器使用 RAM 重叠。
+但这并不是推荐方案，因为：</p>
+<ul>
+<li>起始地址可能不易确定。</li>
+<li>链接器使用的 RAM 数量在未来构建中可能变化，
+  这会导致必须更新 <code>HeapRegion_t</code> 结构体中使用的起始地址。</li>
+<li>构建工具无法知道、也就无法告警链接器使用 RAM 与 heap_5 使用 RAM
+  是否发生重叠。</li>
+</ul>
+<p>清单 3.4 展示了一个更方便、可维护性更高的示例。
+它声明了一个名为 <code>ucHeap</code> 的数组。<code>ucHeap</code> 是普通变量，
+因此会成为链接器分配到 RAM1 的数据的一部分。
+<code>xHeapRegions</code> 数组中的第一个 <code>HeapRegion_t</code> 结构体描述了 <code>ucHeap</code> 的
+起始地址与大小，因此 <code>ucHeap</code> 也成为 heap_5 管理内存的一部分。
+可以逐步增大 <code>ucHeap</code>，直到链接器使用的 RAM 占满 RAM1，
+如图 3.4 <strong>C</strong> 所示。</p>
+<p><a name="list3.4" title="Listing 3.4 An array of HeapRegion\_t structures that describe all of RAM2, all of RAM3, but only part of RAM1"></a></p>
+<pre><code class="language-c">/* Define the start address and size of the two RAM regions not used by
+   the linker. */
+#define RAM2_START_ADDRESS ( ( uint8_t * ) 0x00020000 )
+#define RAM2_SIZE ( 32 * 1024 )
+
+#define RAM3_START_ADDRESS ( ( uint8_t * ) 0x00030000 )
+#define RAM3_SIZE ( 32 * 1024 )
+
+/* Declare an array that will be part of the heap used by heap_5. The
+   array will be placed in RAM1 by the linker. */
+#define RAM1_HEAP_SIZE ( 30 * 1024 )
+static uint8_t ucHeap[ RAM1_HEAP_SIZE ];
+
+/* Create an array of HeapRegion_t definitions. Whereas in Listing 3.3 the
+   first entry described all of RAM1, so heap_5 will have used all of
+   RAM1, this time the first entry only describes the ucHeap array, so
+   heap_5 will only use the part of RAM1 that contains the ucHeap array.
+   The HeapRegion_t structures must still appear in start address order,
+   with the structure that contains the lowest start address appearing first. */
+
+const HeapRegion_t xHeapRegions[] =
+{
+    { ucHeap,             RAM1_HEAP_SIZE },
+    { RAM2_START_ADDRESS, RAM2_SIZE },
+    { RAM3_START_ADDRESS, RAM3_SIZE },
+    { NULL,               0 }           /* Marks the end of the array. */
+};
+</code></pre>
+<p><strong><em>清单 3.4</em></strong> <em>描述 RAM2 全部、RAM3 全部和 RAM1 部分区域的 HeapRegion_t 结构体数组</em></p>
+<p>清单 3.4 所示技术的优点包括：</p>
+<ul>
+<li>无需使用硬编码起始地址。</li>
+<li><code>HeapRegion_t</code> 结构体中使用的地址将由链接器自动设置，
+  因此即使链接器在后续构建中使用的 RAM 发生变化，地址也始终正确。</li>
+<li>分配给 heap_5 的 RAM 不可能与链接器放入 RAM1 的数据重叠。</li>
+<li>若 <code>ucHeap</code> 过大，应用将无法通过链接。</li>
+</ul>
+<h2 id="33">3.3 与堆相关的实用函数和宏</h2>
+<h3 id="331">3.3.1 定义堆起始地址</h3>
+<p>heap_1、heap_2 和 heap_4 都从一个由 <code>configTOTAL_HEAP_SIZE</code>
+确定大小的静态分配数组中分配内存。本节将这些分配方案统称为 heap_n。</p>
+<p>有时需要把堆放在特定内存地址。例如，动态创建任务时分配的任务栈来自堆，
+因此可能需要把堆放在高速内部存储器中，而不是低速外部存储器中。
+（另一个将任务栈放入高速存储器的方法见下文小节：将任务栈放入高速内存。）
+编译期配置常量 <code>configAPPLICATION_ALLOCATED_HEAP</code> 允许应用自行声明数组，
+以替代原本在 heap_n.c 源文件中的声明。
+在应用代码中声明该数组后，开发者就可以指定其起始地址。</p>
+<p>如果在 FreeRTOSConfig.h 中将 <code>configAPPLICATION_ALLOCATED_HEAP</code> 设为 1，
+则使用 FreeRTOS 的应用必须分配一个名为 <code>ucHeap</code> 的 <code>uint8_t</code> 数组，
+其大小由 <code>configTOTAL_HEAP_SIZE</code> 常量确定。</p>
+<p>将变量放置到特定内存地址所需语法取决于所用编译器，
+请参考编译器文档。下面给出两个编译器示例：</p>
+<ul>
+<li>清单 3.5 展示 GCC 语法：声明该数组并将其放入名为 <code>.my_heap</code> 的内存段。</li>
+<li>清单 3.6 展示 IAR 语法：声明该数组并将其放在绝对地址 0x20000000。</li>
+</ul>
+<p><a name="list3.5" title="Listing 3.5 Using GCC syntax to declare the array that will be used by heap\_4, and place the array in a memory section named .my\_heap"></a></p>
+<pre><code class="language-c">uint8_t ucHeap[ configTOTAL_HEAP_SIZE ] __attribute__ ( ( section( &quot;.my_heap&quot; ) ) );
+</code></pre>
+<p><strong><em>清单 3.5</em></strong> <em>使用 GCC 语法声明将被 heap_4 使用的数组，并将其放入名为 .my_heap 的内存段</em></p>
+<p><a name="list3.6" title="Listing 3.6 Using IAR syntax to declare the array that will be used by heap\_4, and place the array at the absolute address 0x20000000"></a></p>
+<pre><code class="language-c">uint8_t ucHeap[ configTOTAL_HEAP_SIZE ] @ 0x20000000;
+</code></pre>
+<p><strong><em>清单 3.6</em></strong> <em>使用 IAR 语法声明将被 heap_4 使用的数组，并将其放在绝对地址 0x20000000</em></p>
+<h3 id="332-xportgetfreeheapsize-api">3.3.2 xPortGetFreeHeapSize() API 函数</h3>
+<p><code>xPortGetFreeHeapSize()</code> API 函数返回调用时堆中空闲字节数。
+它不提供堆碎片信息。</p>
+<p>heap_3 未实现 <code>xPortGetFreeHeapSize()</code>。</p>
+<p><a name="list3.7" title="Listing 3.7 The xPortGetFreeHeapSize() API function prototype"></a></p>
+<pre><code class="language-c">size_t xPortGetFreeHeapSize( void );
+</code></pre>
+<p><strong><em>清单 3.7</em></strong> <em>xPortGetFreeHeapSize() API 函数原型</em></p>
+<p><strong>返回值：</strong></p>
+<ul>
+<li><code>xPortGetFreeHeapSize()</code> 返回调用时堆中尚未分配的字节数。</li>
+</ul>
+<h3 id="333-xportgetminimumeverfreeheapsize-api">3.3.3 xPortGetMinimumEverFreeHeapSize() API 函数</h3>
+<p><code>xPortGetMinimumEverFreeHeapSize()</code> API 函数返回自 FreeRTOS 应用开始执行以来，
+堆中曾出现过的最小未分配字节数。</p>
+<p><code>xPortGetMinimumEverFreeHeapSize()</code> 返回值可指示应用距离耗尽堆空间
+最近到什么程度。例如，若该函数返回 200，表示应用启动后某个时刻
+曾距离堆耗尽仅剩 200 字节。</p>
+<p><code>xPortGetMinimumEverFreeHeapSize()</code> 还可用于优化堆大小。
+例如，在执行完你已知堆占用最高的代码后，如果该函数返回 2000，
+则 <code>configTOTAL_HEAP_SIZE</code> 最多可减少 2000 字节。</p>
+<p><code>xPortGetMinimumEverFreeHeapSize()</code> 仅在 heap_4 和 heap_5 中实现。</p>
+<p><a name="list3.8" title="Listing 3.8 The xPortGetMinimumEverFreeHeapSize() API function prototype"></a></p>
+<pre><code class="language-c">size_t xPortGetMinimumEverFreeHeapSize( void );
+</code></pre>
+<p><strong><em>清单 3.8</em></strong> <em>xPortGetMinimumEverFreeHeapSize() API 函数原型</em></p>
+<p><strong>返回值：</strong></p>
+<ul>
+<li><code>xPortGetMinimumEverFreeHeapSize()</code> 返回自 FreeRTOS 应用开始执行以来，
+  堆中曾出现过的最小未分配字节数。</li>
+</ul>
+<h3 id="334-vportgetheapstats-api">3.3.4 vPortGetHeapStats() API 函数</h3>
+<p>heap_4 和 heap_5 实现了 <code>vPortGetHeapStats()</code>，该函数通过引用传参方式
+填充 <code>HeapStats_t</code> 结构体，且这是它唯一的参数。</p>
+<p>清单 3.9 展示了 <code>vPortGetHeapStats()</code> 函数原型。
+清单 3.10 展示了 <code>HeapStats_t</code> 结构体成员。</p>
+<p><a name="list3.9" title="Listing 3.9 The vPortGetHeapStatus() API function prototype"></a></p>
+<pre><code class="language-c">void vPortGetHeapStats( HeapStats_t *xHeapStats );
+</code></pre>
+<p><strong><em>清单 3.9</em></strong> <em>vPortGetHeapStatus() API 函数原型</em></p>
+<p><a name="list3.10" title="Listing 3.10 The HeapStatus\_t() structure"></a></p>
+<pre><code class="language-c">/* Prototype of the vPortGetHeapStats() function. */
+void vPortGetHeapStats( HeapStats_t *xHeapStats );
+
+/* Definition of the HeapStats_t structure. All sizes specified in bytes. */
+typedef struct xHeapStats
+{
+    /* The total heap size currently available - this is the sum of all the
+       free blocks, not the largest available block. */
+    size_t xAvailableHeapSpaceInBytes;
+
+    /* The size of the largest free block within the heap at the time
+       vPortGetHeapStats() is called. */
+    size_t xSizeOfLargestFreeBlockInBytes;
+
+    /* The size of the smallest free block within the heap at the time
+       vPortGetHeapStats() is called. */
+    size_t xSizeOfSmallestFreeBlockInBytes;
+
+    /* The number of free memory blocks within the heap at the time
+       vPortGetHeapStats() is called. */
+    size_t xNumberOfFreeBlocks;
+
+    /* The minimum amount of total free memory (sum of all free blocks)
+       there has been in the heap since the system booted. */
+    size_t xMinimumEverFreeBytesRemaining;
+
+    /* The number of calls to pvPortMalloc() that have returned a valid
+       memory block. */
+    size_t xNumberOfSuccessfulAllocations;
+
+    /* The number of calls to vPortFree() that has successfully freed a
+       block of memory. */
+    size_t xNumberOfSuccessfulFrees;
+} HeapStats_t;
+</code></pre>
+<p><strong><em>清单 3.10</em></strong> <em>HeapStatus_t() 结构体</em></p>
+<h3 id="335">3.3.5 收集按任务划分的堆使用统计</h3>
+<p>应用开发者可以使用如下跟踪宏来收集按任务划分的堆使用统计：
+- <code>traceMALLOC</code>
+- <code>traceFREE</code></p>
+<p>清单 3.11 展示了一个使用这些跟踪宏收集按任务堆使用统计的实现示例。</p>
+<p><a name="list3.11" title="Listing 3.11 Collecting Per-task Heap Usage Statistics"></a></p>
+<pre><code class="language-c">#define mainNUM_ALLOCATION_ENTRIES          512
+#define mainNUM_PER_TASK_ALLOCATION_ENTRIES 32
+
+/*-----------------------------------------------------------*/
+
+/*
+ * +-----------------+--------------+----------------+-------------------+
+ * | Allocating Task | Entry in use | Allocated Size | Allocated Pointer |
+ * +-----------------+--------------+----------------+-------------------+
+ * |                 |              |                |                   |
+ * +-----------------+--------------+----------------+-------------------+
+ * |                 |              |                |                   |
+ * +-----------------+--------------+----------------+-------------------+
+ */
+typedef struct AllocationEntry
+{
+    BaseType_t xInUse;
+    TaskHandle_t xAllocatingTaskHandle;
+    size_t uxAllocatedSize;
+    void * pvAllocatedPointer;
+} AllocationEntry_t;
+
+AllocationEntry_t xAllocationEntries[ mainNUM_ALLOCATION_ENTRIES ];
+
+/*
+ * +------+-----------------------+----------------------+
+ * | Task | Memory Currently Held | Max Memory Ever Held |
+ * +------+-----------------------+----------------------+
+ * |      |                       |                      |
+ * +------+-----------------------+----------------------+
+ * |      |                       |                      |
+ * +------+-----------------------+----------------------+
+ */
+typedef struct PerTaskAllocationEntry
+{
+    TaskHandle_t xTask;
+    size_t uxMemoryCurrentlyHeld;
+    size_t uxMaxMemoryEverHeld;
+} PerTaskAllocationEntry_t;
+
+PerTaskAllocationEntry_t xPerTaskAllocationEntries[ mainNUM_PER_TASK_ALLOCATION_ENTRIES ];
+
+/*-----------------------------------------------------------*/
+
+void TracepvPortMalloc( size_t uxAllocatedSize, void * pv )
+{
+    size_t i;
+    TaskHandle_t xAllocatingTaskHandle;
+    AllocationEntry_t * pxAllocationEntry = NULL;
+    PerTaskAllocationEntry_t * pxPerTaskAllocationEntry = NULL;
+
+    if( xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED )
+    {
+        xAllocatingTaskHandle = xTaskGetCurrentTaskHandle();
+
+        for( i = 0; i &lt; mainNUM_ALLOCATION_ENTRIES; i++ )
+        {
+            if( xAllocationEntries[ i ].xInUse == pdFALSE )
+            {
+                pxAllocationEntry = &amp;( xAllocationEntries[ i ] );
+                break;
+            }
+        }
+
+        /* Do we already have an entry in the per task table? */
+        for( i = 0; i &lt; mainNUM_PER_TASK_ALLOCATION_ENTRIES; i++ )
+        {
+            if( xPerTaskAllocationEntries[ i ].xTask == xAllocatingTaskHandle )
+            {
+                pxPerTaskAllocationEntry = &amp;( xPerTaskAllocationEntries[ i ] );
+                break;
+            }
+        }
+
+        /* We do not have an entry in the per task table. Find an empty slot. */
+        if( pxPerTaskAllocationEntry == NULL )
+        {
+            for( i = 0; i &lt; mainNUM_PER_TASK_ALLOCATION_ENTRIES; i++ )
+            {
+                if( xPerTaskAllocationEntries[ i ].xTask == NULL )
+                {
+                    pxPerTaskAllocationEntry = &amp;( xPerTaskAllocationEntries[ i ] );
+                    break;
+                }
+            }
+        }
+
+        /* Ensure that we have space in both the tables. */
+        configASSERT( pxAllocationEntry != NULL );
+        configASSERT( pxPerTaskAllocationEntry != NULL );
+
+        pxAllocationEntry-&gt;xAllocatingTaskHandle = xAllocatingTaskHandle;
+        pxAllocationEntry-&gt;xInUse = pdTRUE;
+        pxAllocationEntry-&gt;uxAllocatedSize = uxAllocatedSize;
+        pxAllocationEntry-&gt;pvAllocatedPointer = pv;
+
+        pxPerTaskAllocationEntry-&gt;xTask = xAllocatingTaskHandle;
+        pxPerTaskAllocationEntry-&gt;uxMemoryCurrentlyHeld += uxAllocatedSize;
+        if( pxPerTaskAllocationEntry-&gt;uxMaxMemoryEverHeld &lt; pxPerTaskAllocationEntry-&gt;uxMemoryCurrentlyHeld )
+        {
+            pxPerTaskAllocationEntry-&gt;uxMaxMemoryEverHeld = pxPerTaskAllocationEntry-&gt;uxMemoryCurrentlyHeld;
+        }
+    }
+}
+/*-----------------------------------------------------------*/
+
+void TracevPortFree( void * pv )
+{
+    size_t i;
+    AllocationEntry_t * pxAllocationEntry = NULL;
+    PerTaskAllocationEntry_t * pxPerTaskAllocationEntry = NULL;
+
+    for( i = 0; i &lt; mainNUM_ALLOCATION_ENTRIES; i++ )
+    {
+        if( ( xAllocationEntries[ i ].xInUse == pdTRUE ) &amp;&amp;
+            ( xAllocationEntries[ i ].pvAllocatedPointer == pv ) )
+        {
+            pxAllocationEntry = &amp;( xAllocationEntries [ i ] );
+            break;
+        }
+    }
+
+    /* Attempt to free a block that was never allocated. */
+    configASSERT( pxAllocationEntry != NULL );
+
+    for( i = 0; i &lt; mainNUM_PER_TASK_ALLOCATION_ENTRIES; i++ )
+    {
+        if( xPerTaskAllocationEntries[ i ].xTask == pxAllocationEntry-&gt;xAllocatingTaskHandle )
+        {
+            pxPerTaskAllocationEntry = &amp;( xPerTaskAllocationEntries[ i ] );
+            break;
+        }
+    }
+
+    /* An entry must exist in the per task table. */
+    configASSERT( pxPerTaskAllocationEntry != NULL );
+
+    pxPerTaskAllocationEntry-&gt;uxMemoryCurrentlyHeld -= pxAllocationEntry-&gt;uxAllocatedSize;
+
+    pxAllocationEntry-&gt;xInUse = pdFALSE;
+    pxAllocationEntry-&gt;xAllocatingTaskHandle = NULL;
+    pxAllocationEntry-&gt;uxAllocatedSize = 0;
+    pxAllocationEntry-&gt;pvAllocatedPointer = NULL;
+}
+/*-----------------------------------------------------------*/
+
+/* The following goes in FreeRTOSConfig.h: */
+extern void TracepvPortMalloc( size_t uxAllocatedSize, void * pv );
+extern void TracevPortFree( void * pv );
+
+#define traceMALLOC( pvReturn, xAllocatedBlockSize ) \
+TracepvPortMalloc( xAllocatedBlockSize, pvReturn )
+
+#define traceFREE( pv, xAllocatedBlockSize ) \
+TracevPortFree( pv )
+</code></pre>
+<p><strong><em>清单 3.11</em></strong> <em>收集按任务划分的堆使用统计</em></p>
+<h3 id="336-malloc">3.3.6 Malloc 失败钩子函数</h3>
+<p>与标准库 <code>malloc()</code> 函数类似，当 <code>pvPortMalloc()</code> 无法分配所请求的 RAM 时，
+会返回 NULL。malloc 失败钩子函数（或回调）是由应用提供的函数，
+当 <code>pvPortMalloc()</code> 返回 NULL 时会被调用。
+要触发该回调，必须在 FreeRTOSConfig.h 中将 <code>configUSE_MALLOC_FAILED_HOOK</code>
+设置为 1。如果在某个使用动态内存分配来创建内核对象的 FreeRTOS API 内部
+触发了 malloc 失败钩子，则该对象不会被创建。</p>
+<p>若在 FreeRTOSConfig.h 中将 <code>configUSE_MALLOC_FAILED_HOOK</code> 设为 1，
+则应用必须提供一个名称与原型如清单 3.12 所示的 malloc 失败钩子函数。
+应用可按自身需要实现该函数。许多 FreeRTOS 示例应用将分配失败视为致命错误，
+但这并非生产系统最佳实践；生产系统应当能够优雅地从分配失败中恢复。</p>
+<p><a name="list3.12" title="Listing 3.12 The malloc failed hook function name and prototype"></a></p>
+<pre><code class="language-c">void vApplicationMallocFailedHook( void );
+</code></pre>
+<p><strong><em>清单 3.12</em></strong> <em>malloc 失败钩子函数名称与原型</em></p>
+<h3 id="337">3.3.7 将任务栈放入高速内存</h3>
+<p>由于栈会被高频读写，因此应放在高速内存中；但堆未必希望放在同一位置。
+FreeRTOS 通过 <code>pvPortMallocStack()</code> 和 <code>vPortFreeStack()</code> 宏，
+可选地使在 FreeRTOS API 代码中分配的栈使用独立内存分配器。
+如果希望栈来自 <code>pvPortMalloc()</code> 管理的堆，则保持 <code>pvPortMallocStack()</code> 与
+<code>vPortFreeStack()</code> 未定义即可它们默认分别调用 <code>pvPortMalloc()</code> 与
+<code>vPortFree()</code>。否则，可如清单 3.13 所示，把这些宏定义为调用应用提供函数。</p>
+<p><a name="list3.13" title="Listing 3.13 Mapping the pvPortMallocStack() and vPortFreeStack() macros to an application defined memory allocator"></a></p>
+<pre><code class="language-c">/* Functions provided by the application writer than allocate and free
+   memory from a fast area of RAM. */
+
+void *pvMallocFastMemory( size_t xWantedSize );
+
+void vPortFreeFastMemory( void *pvBlockToFree );
+
+/* Add the following to FreeRTOSConfig.h to map the pvPortMallocStack()
+   and vPortFreeStack() macros to the functions that use fast memory. */
+
+#define pvPortMallocStack( x ) pvMallocFastMemory( x )
+
+#define vPortFreeStack( x ) vPortFreeFastMemory( x )
+</code></pre>
+<p><strong><em>清单 3.13</em></strong> <em>将 pvPortMallocStack() 与 vPortFreeStack() 宏映射到应用定义的内存分配器</em></p>
+<h2 id="34">3.4 使用静态内存分配</h2>
+<p>3.1.4 节列出了动态内存分配的一些缺点。为了避免这些问题，
+静态内存分配允许开发者显式创建应用所需的每个内存块。
+这有如下优点：</p>
+<ul>
+<li>所有必需内存在编译期即可确定。</li>
+<li>所有内存行为都具有确定性。</li>
+</ul>
+<p>除此之外还有其他优点，但这些优点也带来一些复杂性。
+主要复杂性在于：需要增加少量用户函数来管理部分内核内存；
+其次，需要确保所有静态内存在合适作用域中声明。</p>
+<h3 id="341">3.4.1 启用静态内存分配</h3>
+<p>在 FreeRTOSConfig.h 中将 <code>configSUPPORT_STATIC_ALLOCATION</code> 设为 1
+即可启用静态内存分配。启用后，内核会启用所有内核函数的 <code>static</code> 版本：</p>
+<ul>
+<li><code>xTaskCreateStatic</code></li>
+<li><code>xEventGroupCreateStatic</code></li>
+<li><code>xEventGroupGetStaticBuffer</code></li>
+<li><code>xQueueGenericCreateStatic</code></li>
+<li><code>xQueueGenericGetStaticBuffers</code></li>
+<li><code>xQueueCreateMutexStatic</code></li>
+<li><em>当 <code>configUSE_MUTEXES</code> 为 1 时</em></li>
+<li><code>xQueueCreateCountingSemaphoreStatic</code></li>
+<li><em>当 <code>configUSE_COUNTING_SEMAPHORES</code> 为 1 时</em></li>
+<li><code>xStreamBufferGenericCreateStatic</code></li>
+<li><code>xStreamBufferGetStaticBuffers</code></li>
+<li><code>xTimerCreateStatic</code></li>
+<li><em>当 <code>configUSE_TIMERS</code> 为 1 时</em></li>
+<li><code>xTimerGetStaticBuffer</code></li>
+<li><em>当 <code>configUSE_TIMERS</code> 为 1 时</em></li>
+</ul>
+<p>这些函数会在本书对应章节中进行说明。</p>
+<h3 id="342">3.4.2 静态的内核内部内存</h3>
+<p>启用静态内存分配器后，空闲任务和定时器任务（若启用）将使用
+由用户函数提供的静态内存。这些用户函数为：</p>
+<ul>
+<li><code>vApplicationGetTimerTaskMemory</code></li>
+<li><em>当 <code>configUSE_TIMERS</code> 为 1 时</em></li>
+<li><code>vApplicationGetIdleTaskMemory</code></li>
+</ul>
+<h4 id="3421-vapplicationgettimertaskmemory">3.4.2.1 vApplicationGetTimerTaskMemory</h4>
+<p>如果 <code>configSUPPORT_STATIC_ALLOCATION</code> 与 <code>configUSE_TIMERS</code> 均启用，
+内核会调用 <code>vApplicationGetTimerTaskMemory()</code>，让应用创建并返回用于
+定时器任务 TCB 和定时器任务栈的内存缓冲区。函数还会返回定时器任务栈大小。
+清单 3.14 给出了该函数的推荐实现。</p>
+<p><a name="list3.14" title="Listing 3.14 Typical implementation of vApplicationGetTimerTaskMemory"></a></p>
+<pre><code class="language-c">void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer,
+                                     StackType_t **ppxTimerTaskStackBuffer,
+                                     uint32_t *pulTimerTaskStackSize )
+{
+  /* If the buffers to be provided to the Timer task are declared inside this
+  function then they must be declared static - otherwise they will be allocated on
+  the stack and hence would not exists after this function exits. */
+  static StaticTask_t xTimerTaskTCB;
+  static StackType_t uxTimerTaskStack[ configMINIMAL_STACK_SIZE ];
+
+  /* Pass out a pointer to the StaticTask_t structure in which the Timer task's
+  state will be stored. */
+  *ppxTimerTaskTCBBuffer = &amp;xTimerTaskTCB;
+
+  /* Pass out the array that will be used as the Timer task's stack. */
+  *ppxTimerTaskStackBuffer = uxTimerTaskStack;
+
+  /* Pass out the stack size of the array pointed to by *ppxTimerTaskStackBuffer.
+  Note the stack size is a count of StackType_t */
+  *pulTimerTaskStackSize = sizeof(uxTimerTaskStack) / sizeof(*uxTimerTaskStack);
+}
+</code></pre>
+<p><strong><em>清单 3.14</em></strong> <em>vApplicationGetTimerTaskMemory 的典型实现</em></p>
+<p>由于任何系统（包括 SMP）都只有一个定时器任务，
+因此该问题的一个有效解法是在 <code>vApplicationGetTimeTaskMemory()</code> 函数中
+分配静态缓冲区，并把缓冲区指针返回给内核。</p>
+<h4 id="3422-vapplicationgetidletaskmemory">3.4.2.2 vApplicationGetIdleTaskMemory</h4>
+<p>当某个核心没有可调度工作时，会运行空闲任务。空闲任务执行一些后台维护操作，
+若启用，还可触发用户的 <code>vTaskIdleHook()</code>。
+在对称多处理系统（SMP）中，其余核心还存在非维护型空闲任务，
+这些任务在内部以 <code>configMINIMAL_STACK_SIZE</code> 字节静态分配。</p>
+<p>调用 <code>vApplicationGetIdleTaskMemory</code> 是为了让应用创建主空闲任务所需缓冲区。
+清单 3.15 展示了 <code>vApplicationIdleTaskMemory()</code> 函数的典型实现：
+使用静态局部变量创建所需缓冲区。</p>
+<p><a name="list3.15" title="Listing 3.15 Typical implementation of vApplicationGetIdleTaskMemory"></a></p>
+<pre><code class="language-c">void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
+                                    StackType_t **ppxIdleTaskStackBuffer,
+                                    uint32_t *pulIdleTaskStackSize )
+{
+  static StaticTask_t xIdleTaskTCB;
+  static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
+
+  *ppxIdleTaskTCBBuffer = &amp;xIdleTaskTCB;
+  *ppxIdleTaskStackBuffer = uxIdleTaskStack;
+  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+}
+</code></pre>
+<p><strong><em>清单 3.15</em></strong> <em>vApplicationGetIdleTaskMemory 的典型实现</em></p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:2">
+<p>这是简化描述，因为 heap_2 会在堆区内保存块大小信息，
+因此切分后两个块大小之和实际上会小于 25。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>这是简化描述，因为 heap_4 会在堆区内保存块大小信息，
+因此切分后两个块大小之和实际上会小于 200 字节。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

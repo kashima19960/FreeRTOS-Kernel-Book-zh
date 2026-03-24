@@ -1,0 +1,1826 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kashima19960.github.io/FreeRTOS-Kernel-Book-zh/ch12-%E5%BC%80%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81/">
+      
+      
+        <link rel="prev" href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/">
+      
+      
+        <link rel="next" href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>12 开发者支持 - FreeRTOS Kernel Book zh</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#12" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-header__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FreeRTOS Kernel Book zh
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              12 开发者支持
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FreeRTOS Kernel Book zh" class="md-nav__button md-logo" aria-label="FreeRTOS Kernel Book zh" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FreeRTOS Kernel Book zh
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    目录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch01-%E5%89%8D%E8%A8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch02-FreeRTOS%20%E5%86%85%E6%A0%B8%E5%88%86%E5%8F%91%E5%8C%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 FreeRTOS 内核分发包
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch03-%E5%A0%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 堆内存管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch04-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 任务管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch05-%E9%98%9F%E5%88%97%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 队列管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch06-%E8%BD%AF%E4%BB%B6%E5%AE%9A%E6%97%B6%E5%99%A8%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 软件定时器管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch07-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 中断管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch08-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 资源管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch09-%E4%BA%8B%E4%BB%B6%E7%BB%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 事件组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch10-%E4%BB%BB%E5%8A%A1%E9%80%9A%E7%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 任务通知
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-%E4%BD%8E%E5%8A%9F%E8%80%97%E6%94%AF%E6%8C%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 低功耗支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 开发者支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#121" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 引言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-configassert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 configASSERT() 断言机制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.2 configASSERT() 断言机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1221-configassert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2.1 configASSERT() 定义示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-freertos-tracealyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 适用于 FreeRTOS 的 Tracealyzer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 与调试相关的 Hook（回调）函数
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.4 与调试相关的 Hook（回调）函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1241-malloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4.1 Malloc 失败钩子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1242" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4.2 栈溢出钩子
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#125" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 查看运行时与任务状态信息
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.5 查看运行时与任务状态信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1251" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.1 任务运行时间统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1252" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.2 运行时间统计时钟
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1253" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.3 配置应用以采集运行时间统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1254-uxtaskgetsystemstate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.4 uxTaskGetSystemState() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1255-vtasklisttasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.5 vTaskListTasks() 辅助函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1256-vtaskgetruntimestatistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.6 vTaskGetRunTimeStatistics() 辅助函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1257" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.7 生成并显示运行时间统计——完整示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#126-hook-trace-hook-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 跟踪 Hook 宏（Trace Hook Macros）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.6 跟踪 Hook 宏（Trace Hook Macros）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1261-trace-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.1 可用的 Trace Hook 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1262-trace-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.2 定义 Trace Hook 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1263-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.3 FreeRTOS 感知型调试器插件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 故障排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E4%B9%A6%E5%90%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    书名
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BC%A9%E7%95%A5%E8%AF%AD%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    缩略语表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#121" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 引言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-configassert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 configASSERT() 断言机制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.2 configASSERT() 断言机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1221-configassert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2.1 configASSERT() 定义示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-freertos-tracealyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 适用于 FreeRTOS 的 Tracealyzer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 与调试相关的 Hook（回调）函数
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.4 与调试相关的 Hook（回调）函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1241-malloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4.1 Malloc 失败钩子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1242" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4.2 栈溢出钩子
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#125" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 查看运行时与任务状态信息
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.5 查看运行时与任务状态信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1251" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.1 任务运行时间统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1252" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.2 运行时间统计时钟
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1253" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.3 配置应用以采集运行时间统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1254-uxtaskgetsystemstate-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.4 uxTaskGetSystemState() API 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1255-vtasklisttasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.5 vTaskListTasks() 辅助函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1256-vtaskgetruntimestatistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.6 vTaskGetRunTimeStatistics() 辅助函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1257" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5.7 生成并显示运行时间统计——完整示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#126-hook-trace-hook-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 跟踪 Hook 宏（Trace Hook Macros）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.6 跟踪 Hook 宏（Trace Hook Macros）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1261-trace-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.1 可用的 Trace Hook 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1262-trace-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.2 定义 Trace Hook 宏
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1263-freertos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6.3 FreeRTOS 感知型调试器插件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="12">12 开发者支持</h1>
+<h2 id="121">12.1 引言</h2>
+<p>本章重点介绍一组用于最大化开发效率的特性，它们可以帮助你：</p>
+<ul>
+<li>观察应用的实际运行行为。</li>
+<li>发现可优化的机会。</li>
+<li>在错误发生的第一时间捕获问题。</li>
+</ul>
+<h2 id="122-configassert">12.2 <code>configASSERT()</code> 断言机制</h2>
+<p>在 C 语言中，宏 <code>assert()</code> 用于验证程序中的“断言（假设）”。断言由一个 C 表达式表示；如果表达式求值为假（0），则认为断言失败。例如，清单 12.1 检查了指针 <code>pxMyPointer</code> 不为 NULL 的断言。</p>
+<p><a name="list12.1" title="清单 12.1 使用标准 C assert() 宏检查 pxMyPointer 不为 NULL"></a></p>
+<pre><code class="language-c">/* Test the assertion that pxMyPointer is not NULL */
+assert( pxMyPointer != NULL );
+</code></pre>
+<p><strong><em>清单 12.1</em></strong> <em>使用标准 C assert() 宏检查 pxMyPointer 不为 NULL</em></p>
+<p>应用开发者需要通过提供 <code>assert()</code> 宏实现，来指定断言失败时应采取的动作。</p>
+<p>FreeRTOS 源码本身不调用 <code>assert()</code>，因为并非所有用于编译 FreeRTOS 的编译器都提供 <code>assert()</code>。<br />
+因此，FreeRTOS 源码中大量使用的是 <code>configASSERT()</code> 宏。应用开发者可在 <code>FreeRTOSConfig.h</code> 中定义该宏，其行为与标准 C 的 <code>assert()</code> 完全一致。</p>
+<p>断言失败必须视为致命错误。不要尝试继续执行已经触发断言失败的那一行之后的代码。</p>
+<blockquote>
+<p><em>使用 <code>configASSERT()</code> 能通过立即捕获并定位许多常见错误来源来提高开发效率。强烈建议在开发或调试 FreeRTOS 应用时定义 <code>configASSERT()</code>。</em></p>
+</blockquote>
+<p>定义 <code>configASSERT()</code> 会显著提升运行期调试能力，但也会增加代码体积，并因此降低执行速度。如果未提供 <code>configASSERT()</code> 定义，则会使用默认空定义，且所有 <code>configASSERT()</code> 调用都会被 C 预处理器完全移除。</p>
+<h3 id="1221-configassert">12.2.1 <code>configASSERT()</code> 定义示例</h3>
+<p>清单 12.2 中的 <code>configASSERT()</code> 定义适合在调试器控制下运行应用时使用。任何断言失败都会让执行停在失败行，因此当调试会话暂停时，调试器显示的就是触发失败的代码行。</p>
+<p><a name="list12.2" title="清单 12.2 在调试器控制下执行时可用的简易 configASSERT() 定义"></a></p>
+<pre><code class="language-c">/* Disable interrupts so the tick interrupt stops executing, then sit
+     in a loop so execution does not move past the line that failed the
+     assertion. If the hardware supports a debug break instruction, then the
+     debug break instruction can be used in place of the for() loop. */
+
+#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for(;;); }
+</code></pre>
+<p><strong><em>清单 12.2</em></strong> <em>在调试器控制下执行时可用的简易 configASSERT() 定义</em></p>
+<p>清单 12.3 中的 <code>configASSERT()</code> 定义适合不在调试器控制下运行的场景。它会打印或记录触发断言失败的源码位置。失败位置通过标准 C 的 <code>__FILE__</code> 获取文件名，通过 <code>__LINE__</code> 获取行号。</p>
+<p><a name="list12.3" title="清单 12.3 记录断言失败源码行的 configASSERT() 定义"></a></p>
+<pre><code class="language-c">/* This function must be defined in a C source file, not the FreeRTOSConfig.h 
+     header file. */
+void vAssertCalled( const char *pcFile, uint32_t ulLine )
+{
+        /* Inside this function, pcFile holds the name of the source file that 
+             contains the line that detected the error, and ulLine holds the line 
+             number in the source file. The pcFile and ulLine values can be printed 
+             out, or otherwise recorded, before the following infinite loop is 
+             entered. */
+        RecordErrorInformationHere( pcFile, ulLine );
+
+        /* Disable interrupts so the tick interrupt stops executing, then sit in a 
+             loop so execution does not move past the line that failed the assertion. */
+        taskDISABLE_INTERRUPTS();
+        for( ;; );
+}
+/*-----------------------------------------------------------*/
+
+/* These following two lines must be placed in FreeRTOSConfig.h. */
+extern void vAssertCalled( const char *pcFile, unsigned long ulLine );
+#define configASSERT( x ) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
+</code></pre>
+<p><strong><em>清单 12.3</em></strong> <em>记录断言失败源码行的 configASSERT() 定义</em></p>
+<h2 id="123-freertos-tracealyzer">12.3 适用于 FreeRTOS 的 Tracealyzer</h2>
+<p>Tracealyzer for FreeRTOS 是由 FreeRTOS 合作伙伴 Percepio 提供的运行时诊断与优化工具。</p>
+<p>Tracealyzer for FreeRTOS 可捕获有价值的动态行为信息，并以相互关联的图形视图进行展示。该工具还能同时显示多个同步视图。</p>
+<p>在分析、排障或优化 FreeRTOS 应用时，这些被捕获的信息极具价值。</p>
+<p>Tracealyzer for FreeRTOS 可与传统调试器并行使用，它提供更高层次、基于时间维度的视角，对调试器的视图形成补充。</p>
+<p><a name="fig12.1" title="图 12.1 FreeRTOS+Trace 包含超过 20 个互联视图"></a>
+<a name="fig12.2" title="图 12.2 FreeRTOS+Trace 主跟踪视图——20 多个互联跟踪视图之一"></a>
+<a name="fig12.3" title="图 12.3 FreeRTOS+Trace CPU 负载视图——20 多个互联跟踪视图之一"></a>
+<a name="fig12.4" title="图 12.4 FreeRTOS+Trace 响应时间视图——20 多个互联跟踪视图之一"></a>
+<a name="fig12.5" title="图 12.5 FreeRTOS+Trace 用户事件曲线视图——20 多个互联跟踪视图之一"></a>
+<a name="fig12.6" title="图 12.6 FreeRTOS+Trace 内核对象历史视图——20 多个互联跟踪视图之一"></a></p>
+<hr />
+<p><img alt="" src="../media/image82.png" /> <br />
+<strong><em>图 12.1</em></strong> <em>FreeRTOS+Trace 包含超过 20 个互联视图</em></p>
+<p><img alt="" src="../media/image83.png" /> <br />
+<strong><em>图 12.2</em></strong> <em>FreeRTOS+Trace 主跟踪视图——20 多个互联跟踪视图之一</em></p>
+<p><img alt="" src="../media/image84.png" /> <br />
+<strong><em>图 12.3</em></strong> <em>FreeRTOS+Trace CPU 负载视图——20 多个互联跟踪视图之一</em></p>
+<p><img alt="" src="../media/image85.png" /> <br />
+<strong><em>图 12.4</em></strong> <em>FreeRTOS+Trace 响应时间视图——20 多个互联跟踪视图之一</em></p>
+<p><img alt="" src="../media/image86.png" /> <br />
+<strong><em>图 12.5</em></strong> <em>FreeRTOS+Trace 用户事件曲线视图——20 多个互联跟踪视图之一</em></p>
+<p><img alt="" src="../media/image87.png" /> <br />
+<strong><em>图 12.6</em></strong> <em>FreeRTOS+Trace 内核对象历史视图——20 多个互联跟踪视图之一</em></p>
+<hr />
+<h2 id="124-hook">12.4 与调试相关的 Hook（回调）函数</h2>
+<h3 id="1241-malloc">12.4.1 Malloc 失败钩子</h3>
+<p>malloc 失败钩子（或回调）已在第 3 章“堆内存管理”中介绍。</p>
+<p>定义 malloc 失败钩子可确保当创建任务、队列、信号量或事件组失败时，应用开发者能立即得到通知。</p>
+<h3 id="1242">12.4.2 栈溢出钩子</h3>
+<p>栈溢出钩子的细节见 13.3 节“栈溢出”。</p>
+<p>定义栈溢出钩子可确保当任务使用的栈超过为其分配的栈空间时，应用开发者能收到通知。</p>
+<h2 id="125">12.5 查看运行时与任务状态信息</h2>
+<h3 id="1251">12.5.1 任务运行时间统计</h3>
+<p>任务运行时间统计用于反映每个任务获得了多少处理器时间。任务的<em>运行时间</em>是指自应用启动以来，该任务处于 Running 状态的总时长。</p>
+<p>运行时间统计主要用于项目开发阶段的性能分析与调试。它提供的信息仅在“运行时间统计时钟计数器溢出之前”有效。采集运行时间统计会增加任务上下文切换时间。</p>
+<p>若要获取二进制格式的运行时间统计信息，可调用 <code>uxTaskGetSystemState()</code> API。若要获取人类可读的 ASCII 表格格式，可调用辅助函数 <code>vTaskGetRunTimeStatistics()</code>。</p>
+<h3 id="1252">12.5.2 运行时间统计时钟</h3>
+<p>运行时间统计需要测量到小于一个 tick 周期的分数时间。因此，不能使用 RTOS tick 计数作为统计时钟，而应由应用代码提供独立时钟。</p>
+<p>建议将运行时间统计时钟频率设置为 tick 中断频率的 10~100 倍。时钟越快，统计越精确，但时间值也会越快溢出。</p>
+<p>理想情况下，时间值应来自一个自由运行（free-running）的 32 位外设定时器/计数器，并可在无额外处理开销下直接读取。</p>
+<p>若受外设条件或时钟频率限制无法做到，可采用以下替代（但效率较低）方案：</p>
+<ul>
+<li>
+<p>配置一个外设，以期望的运行时间统计时钟频率周期性产生中断，再用中断次数作为运行时间统计时钟。</p>
+<p>如果该周期中断仅用于提供运行时间统计时钟，则此方法效率很低。<br />
+但若应用本身已存在频率合适的周期中断，那么在该 ISR 中额外统计中断次数会是简单且高效的做法。</p>
+</li>
+<li>
+<p>通过组合 16 位自由运行定时器当前值与其溢出次数，构造一个 32 位值：</p>
+<ul>
+<li>16 位定时器当前值作为 32 位值的低 16 位。</li>
+<li>定时器溢出次数作为 32 位值的高 16 位。</li>
+</ul>
+</li>
+</ul>
+<p>通过恰当但相对复杂的处理，也可以把 RTOS tick 计数与 ARM Cortex-M 的 SysTick 当前计数值组合起来，生成运行时间统计时钟。FreeRTOS 下载包中的部分示例工程展示了该方法。</p>
+<h3 id="1253">12.5.3 配置应用以采集运行时间统计</h3>
+<p>下面是采集任务运行时间统计所需宏的说明。最初这些宏设计在 RTOS 端口层中定义，因此使用 <code>port</code> 前缀；但实践中在 <code>FreeRTOSConfig.h</code> 中定义更方便。</p>
+<p><strong>采集运行时间统计所用宏</strong></p>
+<ul>
+<li>
+<p><code>configGENERATE_RUN_TIME_STATS</code></p>
+<p>该宏必须在 FreeRTOSConfig.h 中设为 1。设为 1 后，调度器会在适当时机调用本节其它宏。</p>
+</li>
+<li>
+<p><code>portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()</code></p>
+<p>该宏必须用于初始化提供运行时间统计时钟的外设。</p>
+</li>
+<li>
+<p><code>portGET_RUN_TIME_COUNTER_VALUE()</code> 或 <code>portALT_GET_RUN_TIME_COUNTER_VALUE(Time)</code></p>
+<p>必须提供这两个宏中的一个，用于返回当前运行时间统计时钟值。该值是应用自启动以来、以运行时间统计时钟单位表示的总运行时间。</p>
+<p>若使用第一个宏，它必须定义为“求值后即得到当前时钟值”。<br />
+若使用第二个宏，它必须定义为“将当前时钟值写入其 <code>Time</code> 参数”。</p>
+</li>
+</ul>
+<h3 id="1254-uxtaskgetsystemstate-api">12.5.4 <code>uxTaskGetSystemState()</code> API 函数</h3>
+<p><code>uxTaskGetSystemState()</code> 提供 FreeRTOS 调度器管理下每个任务的状态快照。信息以 <code>TaskStatus_t</code> 结构体数组形式返回，数组中每个索引对应一个任务。<code>TaskStatus_t</code> 见清单 12.5，相关字段说明见后文。</p>
+<p><a name="list12.4" title="清单 12.4 uxTaskGetSystemState() API 函数原型"></a></p>
+<pre><code class="language-c">UBaseType_t uxTaskGetSystemState( TaskStatus_t * const pxTaskStatusArray,
+                                                                    const UBaseType_t uxArraySize,
+                                                                    configRUN_TIME_COUNTER_TYPE * const pulTotalRunTime );
+</code></pre>
+<p><strong><em>清单 12.4</em></strong> <em>uxTaskGetSystemState() API 函数原型</em></p>
+<blockquote>
+<p>注：为保持向后兼容，<code>configRUN_TIME_COUNTER_TYPE</code> 默认是 <code>uint32_t</code>；如果 <code>uint32_t</code> 过于受限，可在 FreeRTOSConfig.h 中覆写。</p>
+</blockquote>
+<p><strong><code>uxTaskGetSystemState()</code> 参数与返回值</strong></p>
+<ul>
+<li>
+<p><code>pxTaskStatusArray</code></p>
+<p>指向 <code>TaskStatus_t</code> 结构体数组的指针。</p>
+<p>数组至少要为每个任务预留一个 <code>TaskStatus_t</code> 结构。任务数量可通过 <code>uxTaskGetNumberOfTasks()</code> API 获取。</p>
+<p><code>TaskStatus_t</code> 结构体见清单 12.5，字段说明见下一列表。</p>
+</li>
+<li>
+<p><code>uxArraySize</code></p>
+<p><code>pxTaskStatusArray</code> 所指数组的大小。该大小是“数组索引个数（即 <code>TaskStatus_t</code> 结构体个数）”，不是字节数。</p>
+</li>
+<li>
+<p><code>pulTotalRunTime</code></p>
+<p>若 <code>FreeRTOSConfig.h</code> 中 <code>configGENERATE_RUN_TIME_STATS</code> 设为 1，则 <code>uxTaskGetSystemState()</code> 会把自目标启动以来的总运行时间（由应用提供的运行时间统计时钟定义）写入 <code>*pulTotalRunTime</code>。</p>
+<p><code>pulTotalRunTime</code> 是可选参数；若不需要总运行时间，可传入 NULL。</p>
+</li>
+<li>
+<p>返回值</p>
+<p>返回被 <code>uxTaskGetSystemState()</code> 实际填充的 <code>TaskStatus_t</code> 结构体数量。</p>
+<p>正常情况下，返回值应与 <code>uxTaskGetNumberOfTasks()</code> 一致；若传入的 <code>uxArraySize</code> 太小，则返回 0。</p>
+</li>
+</ul>
+<p><a name="list12.5" title="清单 12.5 TaskStatus_t 结构体"></a></p>
+<pre><code class="language-c">typedef struct xTASK_STATUS
+{
+        TaskHandle_t xHandle;
+        const char *pcTaskName;
+        UBaseType_t xTaskNumber;
+        eTaskState eCurrentState;
+        UBaseType_t uxCurrentPriority;
+        UBaseType_t uxBasePriority;
+        configRUN_TIME_COUNTER_TYPE ulRunTimeCounter;
+        StackType_t * pxStackBase;
+        #if ( ( portSTACK_GROWTH &gt; 0 ) || ( configRECORD_STACK_HIGH_ADDRESS == 1 ) )
+                StackType_t * pxTopOfStack;
+                StackType_t * pxEndOfStack;
+        #endif
+        uint16_t usStackHighWaterMark;
+        #if ( ( configUSE_CORE_AFFINITY == 1 ) &amp;&amp; ( configNUMBER_OF_CORES &gt; 1 ) )
+                UBaseType_t uxCoreAffinityMask;
+        #endif
+} TaskStatus_t;
+</code></pre>
+<p><strong><em>清单 12.5</em></strong> <em>TaskStatus_t 结构体</em></p>
+<p><strong><code>TaskStatus_t</code> 结构体成员</strong></p>
+<ul>
+<li>
+<p><code>xHandle</code></p>
+<p>本结构体信息对应任务的句柄。</p>
+</li>
+<li>
+<p><code>pcTaskName</code></p>
+<p>任务的人类可读文本名称。</p>
+</li>
+<li>
+<p><code>xTaskNumber</code></p>
+<p>每个任务都有唯一的 <code>xTaskNumber</code> 值。</p>
+<p>若应用在运行时创建并删除任务，可能出现“一个新任务获得了与历史已删除任务相同的句柄”的情况。<code>xTaskNumber</code> 的作用就是让应用代码和内核感知调试器能够区分：当前仍有效的任务，和曾使用同句柄但已删除的旧任务。</p>
+</li>
+<li>
+<p><code>eCurrentState</code></p>
+<p>保存任务状态的枚举类型。
+<code>eCurrentState</code> 可取下列值：</p>
+<ul>
+<li><code>eRunning</code></li>
+<li><code>eReady</code></li>
+<li><code>eBlocked</code></li>
+<li><code>eSuspended</code></li>
+<li><code>eDeleted</code></li>
+</ul>
+<p>任务仅会在很短时间内被报告为 <code>eDeleted</code>：从 <code>vTaskDelete()</code> 删除任务到 Idle 任务释放该任务内部数据结构与栈所占内存之间。过了这段时间，任务将彻底不存在，继续使用其句柄将是无效操作。</p>
+</li>
+<li>
+<p><code>uxCurrentPriority</code></p>
+<p>调用 <code>uxTaskGetSystemState()</code> 时任务的当前优先级。只有在任务依据 8.3 节“互斥量（及二值信号量）”介绍的优先级继承机制临时提升了优先级时，<code>uxCurrentPriority</code> 才会高于应用最初分配的优先级。</p>
+</li>
+<li>
+<p><code>uxBasePriority</code></p>
+<p>应用开发者为任务分配的基础优先级。仅当 FreeRTOSConfig.h 中 <code>configUSE_MUTEXES</code> 设为 1 时该字段有效。</p>
+</li>
+<li>
+<p><code>ulRunTimeCounter</code></p>
+<p>任务自创建以来累计使用的总运行时间。该时间是绝对值，使用应用开发者提供的运行时间统计时钟。仅当 FreeRTOSConfig.h 中 <code>configGENERATE_RUN_TIME_STATS</code> 设为 1 时该字段有效。</p>
+</li>
+<li>
+<p><code>pxStackBase</code></p>
+<p>指向该任务所分配栈区的基地址。</p>
+</li>
+<li>
+<p><code>pxTopOfStack</code></p>
+<p>指向该任务所分配栈区的当前栈顶地址。仅当栈向上增长（即 <code>portSTACK_GROWTH</code> 大于 0）或 FreeRTOSConfig.h 中 <code>configRECORD_STACK_HIGH_ADDRESS</code> 设为 1 时该字段有效。</p>
+</li>
+<li>
+<p><code>pxEndOfStack</code></p>
+<p>指向该任务所分配栈区的结束地址。仅当栈向上增长（即 <code>portSTACK_GROWTH</code> 大于 0）或 FreeRTOSConfig.h 中 <code>configRECORD_STACK_HIGH_ADDRESS</code> 设为 1 时该字段有效。</p>
+</li>
+<li>
+<p><code>usStackHighWaterMark</code></p>
+<p>任务栈高水位。即任务自创建以来“曾经保留下来的最小剩余栈空间”。该值可反映任务距离栈溢出有多近；值越接近 0，表示越接近溢出。<code>usStackHighWaterMark</code> 的单位是字节。</p>
+</li>
+<li>
+<p><code>uxCoreAffinityMask</code></p>
+<p>位掩码，表示任务可运行的 CPU 核。核编号范围为 0 到 <code>configNUMBER_OF_CORES - 1</code>。例如，可在核 0 和核 1 上运行的任务，其 <code>uxCoreAffinityMask</code> 为 0x03。仅当 <code>configUSE_CORE_AFFINITY</code> 设为 1 且 <code>configNUMBER_OF_CORES</code> 大于 1 时该字段可用。</p>
+</li>
+</ul>
+<h3 id="1255-vtasklisttasks">12.5.5 <code>vTaskListTasks()</code> 辅助函数</h3>
+<p><code>vTaskListTasks()</code> 提供与 <code>uxTaskGetSystemState()</code> 类似的任务状态信息，但其输出是人类可读的 ASCII 表格，而不是二进制数组。</p>
+<p><code>vTaskListTasks()</code> 是处理器开销很高的函数，并且会让调度器长时间保持挂起。因此建议仅用于调试，不建议在生产实时系统中使用。</p>
+<p>当 <code>configUSE_TRACE_FACILITY</code> 设为 1 且 FreeRTOSConfig.h 中 <code>configUSE_STATS_FORMATTING_FUNCTIONS</code> 大于 0 时，<code>vTaskListTasks()</code> 可用。</p>
+<p><a name="list12.6" title="清单 12.6 vTaskListTasks() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskListTasks( char * pcWriteBuffer, size_t uxBufferLength );
+</code></pre>
+<p><strong><em>清单 12.6</em></strong> <em>vTaskListTasks() API 函数原型</em></p>
+<p><strong><code>vTaskListTasks()</code> 参数</strong></p>
+<ul>
+<li>
+<p><code>pcWriteBuffer</code></p>
+<p>指向字符缓冲区的指针，格式化且人类可读的表格会写入该缓冲区。默认假设该缓冲区足够大以容纳完整报告。通常每个任务约 40 字节空间即可。</p>
+</li>
+<li>
+<p><code>uxBufferLength</code></p>
+<p><code>pcWriteBuffer</code> 的长度。</p>
+</li>
+</ul>
+<p><code>vTaskListTasks()</code> 的输出示例见图 12.7。输出中：</p>
+<ul>
+<li>
+<p>每一行对应一个任务的信息。</p>
+</li>
+<li>
+<p>第一列是任务名。</p>
+</li>
+<li>
+<p>第二列是任务状态：<code>X</code> 表示 Running，<code>R</code> 表示 Ready，<code>B</code> 表示 Blocked，<code>S</code> 表示 Suspended，<code>D</code> 表示任务已删除。任务仅会在很短时间内显示为删除状态：从 <code>vTaskDelete()</code> 删除任务到 Idle 任务释放该任务内部数据结构与栈内存之间。之后任务将彻底不存在，继续使用其句柄将是无效操作。</p>
+</li>
+<li>
+<p>第三列是任务优先级。</p>
+</li>
+<li>
+<p>第四列是任务栈高水位。详见 <code>usStackHighWaterMark</code> 说明。</p>
+</li>
+<li>
+<p>第五列是分配给任务的唯一编号。详见 <code>xTaskNumber</code> 说明。</p>
+</li>
+</ul>
+<p><a name="fig12.7" title="图 12.7 vTaskListTasks() 生成的输出示例"></a></p>
+<hr />
+<p><img alt="" src="../media/image88.png" /> <br />
+<strong><em>图 12.7</em></strong> <em>vTaskListTasks() 生成的输出示例</em></p>
+<hr />
+<blockquote>
+<p>注：<br />
+<code>vTaskListTasks</code> 的旧版本是 <code>vTaskList</code>。<code>vTaskList</code> 假设 <code>pcWriteBuffer</code> 的长度为 <code>configSTATS_BUFFER_MAX_LENGTH</code>。该函数仅为向后兼容保留。新应用建议使用 <code>vTaskListTasks</code>，并显式提供 <code>pcWriteBuffer</code> 长度。</p>
+</blockquote>
+<p><a name="list12.7" title="清单 12.7 vTaskList() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskList( signed char *pcWriteBuffer );
+</code></pre>
+<p><strong><em>清单 12.7</em></strong> <em>vTaskList() API 函数原型</em></p>
+<pre><code>**`vTaskList()` 参数**
+
+- `pcWriteBuffer`
+
+    指向字符缓冲区的指针，格式化且人类可读的表格会写入其中。由于该函数不做边界检查，缓冲区必须足够大，能够容纳完整表格。
+</code></pre>
+<h3 id="1256-vtaskgetruntimestatistics">12.5.6 <code>vTaskGetRunTimeStatistics()</code> 辅助函数</h3>
+<p><code>vTaskGetRunTimeStatistics()</code> 将采集到的运行时间统计格式化为人类可读的 ASCII 表格。</p>
+<p><code>vTaskGetRunTimeStatistics()</code> 是处理器开销很高的函数，且会让调度器长时间保持挂起。因此建议仅用于调试，不建议用于生产实时系统。</p>
+<p>当 FreeRTOSConfig.h 中 <code>configGENERATE_RUN_TIME_STATS</code> 设为 1、<code>configUSE_STATS_FORMATTING_FUNCTIONS</code> 大于 0 且 <code>configUSE_TRACE_FACILITY</code> 设为 1 时，<code>vTaskGetRunTimeStatistics()</code> 可用。</p>
+<p><a name="list12.8" title="清单 12.8 vTaskGetRunTimeStatistics() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskGetRunTimeStatistics( char * pcWriteBuffer, size_t uxBufferLength );
+</code></pre>
+<p><strong><em>清单 12.8</em></strong> <em>vTaskGetRunTimeStatistics() API 函数原型</em></p>
+<p><strong><code>vTaskGetRunTimeStatistics()</code> 参数</strong></p>
+<ul>
+<li>
+<p><code>pcWriteBuffer</code></p>
+<p>指向字符缓冲区的指针，格式化且人类可读的表格会写入其中。默认假设该缓冲区足够大以容纳完整报告。通常每个任务约 40 字节空间即可。</p>
+</li>
+<li>
+<p><code>uxBufferLength</code> </p>
+<p><code>pcWriteBuffer</code> 的长度。</p>
+</li>
+</ul>
+<p><code>vTaskGetRunTimeStatistics()</code> 的输出示例见图 12.8。输出中：</p>
+<ul>
+<li>
+<p>每一行对应一个任务的信息。</p>
+</li>
+<li>
+<p>第一列是任务名。</p>
+</li>
+<li>
+<p>第二列是任务处于 Running 状态的绝对时长。详见 <code>ulRunTimeCounter</code> 说明。</p>
+</li>
+<li>
+<p>第三列是任务 Running 时长占系统自启动以来总时间的百分比。显示出来的百分比总和通常会低于期望的 100%，因为统计与计算使用整数运算，结果向下取整到最近整数。</p>
+</li>
+</ul>
+<p><a name="fig12.8" title="图 12.8 vTaskGetRunTimeStatistics() 生成的输出示例"></a></p>
+<hr />
+<p><img alt="" src="../media/image89.png" /> <br />
+<strong><em>图 12.8</em></strong> <em>vTaskGetRunTimeStatistics() 生成的输出示例</em></p>
+<hr />
+<blockquote>
+<p>注：<br />
+<code>vTaskGetRunTimeStatistics</code> 的旧版本是 <code>vTaskGetRunTimeStats</code>。<code>vTaskGetRunTimeStats</code> 假设 <code>pcWriteBuffer</code> 长度为 <code>configSTATS_BUFFER_MAX_LENGTH</code>。该函数仅用于向后兼容。新应用建议使用 <code>vTaskGetRunTimeStatistics</code> 并显式提供 <code>pcWriteBuffer</code> 长度。</p>
+</blockquote>
+<p><a name="list12.9" title="清单 12.9 vTaskGetRunTimeStats() API 函数原型"></a></p>
+<pre><code class="language-c">void vTaskGetRunTimeStats( signed char *pcWriteBuffer );
+</code></pre>
+<p><strong><em>清单 12.9</em></strong> <em>vTaskGetRunTimeStats() API 函数原型</em></p>
+<pre><code>**`vTaskGetRunTimeStats()` 参数**
+
+- `pcWriteBuffer`
+
+    指向字符缓冲区的指针，格式化且人类可读的表格会写入其中。该缓冲区必须足够大以容纳完整表格，因为函数不执行边界检查。
+</code></pre>
+<h3 id="1257">12.5.7 生成并显示运行时间统计——完整示例</h3>
+<p>本示例使用一个假设的 16 位定时器来构造 32 位运行时间统计时钟。该计数器被配置为：每当 16 位计数达到最大值时触发一次中断（即溢出中断）。ISR 中统计溢出次数。</p>
+<p>该 32 位值由两部分组成：</p>
+<ul>
+<li>高 16 位：溢出次数计数。</li>
+<li>低 16 位：当前 16 位计数器值。</li>
+</ul>
+<p>中断服务例程的伪代码见清单 12.10。</p>
+<p><a name="list12.10" title="清单 12.10 用于统计定时器溢出次数的 16 位定时器溢出中断处理函数"></a></p>
+<pre><code class="language-c">void TimerOverflowInterruptHandler( void )
+{
+        /* Just count the number of interrupts. */
+        ulOverflowCount++;
+
+        /* Clear the interrupt. */
+        ClearTimerInterrupt();
+}
+</code></pre>
+<p><strong><em>清单 12.10</em></strong> <em>用于统计定时器溢出次数的 16 位定时器溢出中断处理函数</em></p>
+<p>清单 12.11 展示了在 FreeRTOSConfig.h 中新增的宏定义，用于启用运行时间统计采集。</p>
+<p><a name="list12.11" title="清单 12.11 在 FreeRTOSConfig.h 中新增、用于启用运行时间统计采集的宏"></a></p>
+<pre><code class="language-c">/* Set configGENERATE_RUN_TIME_STATS to 1 to enable collection of run-time 
+     statistics. When this is done, both portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()
+     and portGET_RUN_TIME_COUNTER_VALUE() or 
+     portALT_GET_RUN_TIME_COUNTER_VALUE(x) must also be defined. */
+#define configGENERATE_RUN_TIME_STATS 1
+
+/* portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() is defined to call the function 
+     that sets up the hypothetical 16-bit timer (the function's implementation 
+     is not shown). */
+void vSetupTimerForRunTimeStats( void );
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()  vSetupTimerForRunTimeStats()
+
+/* portALT_GET_RUN_TIME_COUNTER_VALUE() is defined to set its parameter to the
+     current run-time counter/time value. The returned time value is 32-bits 
+     long, and is formed by shifting the count of 16-bit timer overflows into 
+     the top two bytes of a 32-bit number, then bitwise ORing the result with 
+     the current 16-bit counter value. */
+#define portALT_GET_RUN_TIME_COUNTER_VALUE( ulCountValue )                  \
+{                                                                           \
+        extern volatile unsigned long ulOverflowCount;                          \
+                                                                                                                                                        \
+        /* Disconnect the clock from the counter so it does not change          \
+             while its value is being used. */                                    \
+        PauseTimer();                                                           \
+                                                                                                                                                        \
+        /* The number of overflows is shifted into the most significant         \
+             two bytes of the returned 32-bit value. */                           \
+        ulCountValue = ( ulOverflowCount &lt;&lt; 16UL );                             \
+                                                                                                                                                        \
+        /* The current counter value is used as the two least significant       \
+             bytes of the returned 32-bit value. */                               \
+        ulCountValue |= ( unsigned long ) ReadTimerCount();                     \
+                                                                                                                                                        \
+        /* Reconnect the clock to the counter. */                               \
+        ResumeTimer();                                                          \
+}
+</code></pre>
+<p><strong><em>清单 12.11</em></strong> <em>在 FreeRTOSConfig.h 中新增、用于启用运行时间统计采集的宏</em></p>
+<p>清单 12.12 中的任务每 5 秒打印一次采集到的运行时间统计数据。</p>
+<p><a name="list12.12" title="清单 12.12 输出采集到的运行时间统计信息的任务"></a></p>
+<pre><code class="language-c">#define RUN_TIME_STATS_STRING_BUFFER_LENGTH       512
+
+/* For clarity, calls to fflush() have been omitted from this code listing. */
+static void prvStatsTask( void *pvParameters )
+{
+        TickType_t xLastExecutionTime;
+
+        /* The buffer used to hold the formatted run-time statistics text needs to
+             be quite large. It is therefore declared static to ensure it is not
+             allocated on the task stack. This makes this function non re-entrant. */
+        static signed char cStringBuffer[ RUN_TIME_STATS_STRING_BUFFER_LENGTH ];
+
+        /* The task will run every 5 seconds. */
+        const TickType_t xBlockPeriod = pdMS_TO_TICKS( 5000 );
+
+        /* Initialize xLastExecutionTime to the current time. This is the only
+             time this variable needs to be written to explicitly. Afterwards it is 
+             updated internally within the vTaskDelayUntil() API function. */
+        xLastExecutionTime = xTaskGetTickCount();
+
+        /* As per most tasks, this task is implemented in an infinite loop. */
+        for( ;; )
+        {
+                /* Wait until it is time to run this task again. */
+                xTaskDelayUntil( &amp;xLastExecutionTime, xBlockPeriod );
+
+                /* Generate a text table from the run-time stats. This must fit into
+                     the cStringBuffer array. */
+                vTaskGetRunTimeStatistics( cStringBuffer, RUN_TIME_STATS_STRING_BUFFER_LENGTH );
+
+                /* Print out column headings for the run-time stats table. */
+                printf( &quot;\nTask\t\tAbs\t\t\t%%\n&quot; );
+                printf( &quot;-------------------------------------------------------------\n&quot; );
+
+                /* Print out the run-time stats themselves. The table of data contains
+                     multiple lines, so the vPrintMultipleLines() function is called 
+                     instead of calling printf() directly. vPrintMultipleLines() simply 
+                     calls printf() on each line individually, to ensure the line 
+                     buffering works as expected. */ 
+                vPrintMultipleLines( cStringBuffer );
+        }
+}
+</code></pre>
+<p><strong><em>清单 12.12</em></strong> <em>输出采集到的运行时间统计信息的任务</em></p>
+<h2 id="126-hook-trace-hook-macros">12.6 跟踪 Hook 宏（Trace Hook Macros）</h2>
+<p>Trace 宏是放置在 FreeRTOS 源码关键位置的宏。默认情况下，这些宏为空实现，因此不会生成代码，也没有运行时开销。通过覆写默认空实现，应用开发者可以：</p>
+<ul>
+<li>
+<p>在不修改 FreeRTOS 源文件的前提下，将代码插入 FreeRTOS 执行路径。</p>
+</li>
+<li>
+<p>利用目标硬件可用的任意手段输出详细执行时序信息。Trace 宏在 FreeRTOS 源码中的分布足够广，可据此构建完整且细粒度的调度活动跟踪和性能剖析日志。</p>
+</li>
+</ul>
+<h3 id="1261-trace-hook">12.6.1 可用的 Trace Hook 宏</h3>
+<p>若逐一详述所有宏会占据大量篇幅。下面列出对应用开发者最有价值的一组常用宏。</p>
+<p>下列说明多次提到变量 <code>pxCurrentTCB</code>。<code>pxCurrentTCB</code> 是 FreeRTOS 私有变量，保存当前 Running 状态任务的句柄；凡是从 <code>FreeRTOS/Source/tasks.c</code> 调用的宏都可以访问该变量。</p>
+<p><strong>常用 Trace Hook 宏选摘</strong></p>
+<ul>
+<li>
+<p><code>traceTASK_INCREMENT_TICK(xTickCount)</code></p>
+<p>在 tick 中断中、tick 计数递增之前调用。参数 <code>xTickCount</code> 把新的 tick 计数值传入宏。</p>
+</li>
+<li>
+<p><code>traceTASK_SWITCHED_OUT()</code></p>
+<p>在选择新任务运行之前调用。此时 <code>pxCurrentTCB</code> 保存的是即将离开 Running 状态的任务句柄。</p>
+</li>
+<li>
+<p><code>traceTASK_SWITCHED_IN()</code></p>
+<p>在新任务被选中运行之后调用。此时 <code>pxCurrentTCB</code> 保存的是即将进入 Running 状态的任务句柄。</p>
+</li>
+<li>
+<p><code>traceBLOCKING_ON_QUEUE_RECEIVE(pxQueue)</code></p>
+<p>当前执行任务尝试从空队列读取，或尝试“获取”空信号量/互斥量而进入 Blocked 状态前立即调用。参数 <code>pxQueue</code> 将目标队列或信号量句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceBLOCKING_ON_QUEUE_SEND(pxQueue)</code></p>
+<p>当前执行任务尝试向满队列写入并进入 Blocked 状态前立即调用。参数 <code>pxQueue</code> 将目标队列句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_SEND(pxQueue)</code></p>
+<p>在 <code>xQueueSend()</code>、<code>xQueueSendToFront()</code>、<code>xQueueSendToBack()</code> 或任意信号量“give”函数内部，当发送/给出成功时调用。参数 <code>pxQueue</code> 将目标队列或信号量句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_SEND_FAILED(pxQueue)</code></p>
+<p>在 <code>xQueueSend()</code>、<code>xQueueSendToFront()</code>、<code>xQueueSendToBack()</code> 或任意信号量“give”函数内部，当发送/给出失败时调用。若队列已满，且在指定阻塞时间内仍为满，则操作失败。参数 <code>pxQueue</code> 将目标队列或信号量句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_RECEIVE(pxQueue)</code></p>
+<p>在 <code>xQueueReceive()</code> 或任意信号量“take”函数内部，当接收/获取成功时调用。参数 <code>pxQueue</code> 将目标队列或信号量句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_RECEIVE_FAILED(pxQueue)</code></p>
+<p>在 <code>xQueueReceive()</code> 或任意信号量“take”函数内部，当接收/获取失败时调用。若队列或信号量为空，且在指定阻塞时间内保持为空，则操作失败。参数 <code>pxQueue</code> 将目标队列或信号量句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_SEND_FROM_ISR(pxQueue)</code></p>
+<p>在 <code>xQueueSendFromISR()</code> 内部，当发送成功时调用。参数 <code>pxQueue</code> 将目标队列句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_SEND_FROM_ISR_FAILED(pxQueue)</code></p>
+<p>在 <code>xQueueSendFromISR()</code> 内部，当发送失败时调用。若队列已满则发送失败。参数 <code>pxQueue</code> 将目标队列句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_RECEIVE_FROM_ISR(pxQueue)</code></p>
+<p>在 <code>xQueueReceiveFromISR()</code> 内部，当接收成功时调用。参数 <code>pxQueue</code> 将目标队列句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceQUEUE_RECEIVE_FROM_ISR_FAILED(pxQueue)</code></p>
+<p>在 <code>xQueueReceiveFromISR()</code> 内部，当接收因队列已空而失败时调用。参数 <code>pxQueue</code> 将目标队列句柄传入宏。</p>
+</li>
+<li>
+<p><code>traceTASK_DELAY_UNTIL( xTimeToWake )</code></p>
+<p>在 <code>xTaskDelayUntil()</code> 内部、调用任务进入 Blocked 状态前立即调用。</p>
+</li>
+<li>
+<p><code>traceTASK_DELAY()</code></p>
+<p>在 <code>vTaskDelay()</code> 内部、调用任务进入 Blocked 状态前立即调用。</p>
+</li>
+</ul>
+<h3 id="1262-trace-hook">12.6.2 定义 Trace Hook 宏</h3>
+<p>每个 Trace 宏都有默认空定义。可通过在 FreeRTOSConfig.h 中重新定义宏来覆盖默认实现。若宏定义变得很长或很复杂，可将其放入一个新的头文件，再由 FreeRTOSConfig.h 引入该头文件。</p>
+<p>遵循软件工程最佳实践，FreeRTOS 采取严格的数据隐藏策略。Trace 宏允许在 FreeRTOS 源文件内部插入用户代码，因此 Trace 宏可见的数据类型与应用代码可见的数据类型可能不同：</p>
+<ul>
+<li>
+<p>在 <code>FreeRTOS/Source/tasks.c</code> 中，任务句柄是“指向任务描述结构（Task Control Block，TCB）的指针”；而在该文件外部，任务句柄是 <code>void*</code>。</p>
+</li>
+<li>
+<p>在 <code>FreeRTOS/Source/queue.c</code> 中，队列句柄是“指向队列描述结构的指针”；而在该文件外部，队列句柄是 <code>void*</code>。</p>
+</li>
+</ul>
+<blockquote>
+<p><em>若 Trace 宏直接访问了本应私有的 FreeRTOS 数据结构，必须格外谨慎，因为这些私有结构可能在 FreeRTOS 版本迭代时发生变化。</em></p>
+</blockquote>
+<h3 id="1263-freertos">12.6.3 FreeRTOS 感知型调试器插件</h3>
+<p>下面这些 IDE 提供了具备一定 FreeRTOS 感知能力的插件（列表可能并不完整）：</p>
+<p><img alt="" src="../media/image90.png" /></p>
+<ul>
+<li>
+<p>Eclipse（StateViewer）</p>
+</li>
+<li>
+<p>Eclipse（ThreadSpy）</p>
+</li>
+<li>
+<p>IAR（集成开发环境）</p>
+</li>
+<li>
+<p>ARM DS-5（开发套件）</p>
+</li>
+<li>
+<p>Atollic TrueStudio（开发环境）</p>
+</li>
+<li>
+<p>Microchip MPLAB（开发环境）</p>
+</li>
+<li>
+<p>iSYSTEM WinIDEA（开发环境）</p>
+</li>
+<li>
+<p>STM32CubeIDE（开发环境）</p>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
